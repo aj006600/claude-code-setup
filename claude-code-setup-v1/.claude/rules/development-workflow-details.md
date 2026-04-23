@@ -1,6 +1,6 @@
 # development-workflow-details.md
 
-> ⚠️ **本規則已遷移至 skill**
+> **本規則已遷移至 skill**
 >
 > 本檔案原有的詳細 TDD 開發流程（需求確認、開發、提交與 PR、Review 與 Merge 四階段）已完整遷移至：
 >

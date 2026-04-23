@@ -91,7 +91,7 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。這代�
 ### Step 2：展示 diff 取得 User 確認
 
 ```
-📋 CLAUDE.md 更新建議
+CLAUDE.md 更新建議
 
 **變更原因**：
 [為什麼需要更新]
@@ -171,7 +171,7 @@ git push origin docs/update-claude-md
 ### Step 4：向 User 確認更新結果
 
 ```
-✅ CLAUDE.md 已更新
+CLAUDE.md 已更新
 
 **更新摘要**：
 - [具體變更項目]
@@ -281,7 +281,7 @@ CLAUDE.md 底部的 `**Last Updated**` 與 `**Version**` 是「當前狀態快�
 
 ## 好做法 vs 不好做法
 
-### ✅ 好做法
+### 好做法
 ```
 User: "我更新了 SPEC.md，將 OrderService 從單體架構拆成
      OrderAPI / OrderWorker / OrderNotifier 三個獨立服務"
@@ -290,7 +290,7 @@ Claude:
 我注意到 SPEC.md 的架構變更會影響 CLAUDE.md 的 Project Overview、
 Tech Stack、Architecture 三個章節，先同步更新：
 
-📋 CLAUDE.md 更新建議
+CLAUDE.md 更新建議
 
 **變更原因**：
 SPEC.md 新增服務拆分定義，CLAUDE.md 須同步更新以維持規範一致性
@@ -323,7 +323,7 @@ SPEC.md 新增服務拆分定義，CLAUDE.md 須同步更新以維持規範一�
 是否確認這些更新？
 ```
 
-### ❌ 不好做法
+### 不好做法
 ```
 User: "我更新了 SPEC.md，將 OrderService 拆成微服務架構"
 

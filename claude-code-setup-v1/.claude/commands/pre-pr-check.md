@@ -76,16 +76,16 @@ If yes → hint: suggest activating `maintaining-readme-md` skill before PR.
 ## Final report
 
 ```
-🔍 Pre-PR Check Results
+Pre-PR Check Results
 
-[Level 1] Tests: ✅ <X> passed / FAILED
-[Level 2] Coverage: ✅ <X>% | ⚠️ <X>% (target 70%) - below: <modules>
-[Level 2] code-simplifier: ✅ clean | ⚠️ <N> suggestions (see above)
-[Level 2] ruff check: ✅ clean | ⚠️ <N> issues | ⏭ skipped (not installed)
-[Level 2] ruff format: ✅ clean | ⚠️ drift detected | ⏭ skipped (not installed)
-[Level 2] mypy: ✅ clean | ⚠️ <N> type errors | ⏭ skipped (not installed)
-[Level 3] SPEC.md: ✅ up to date | 💡 Status needs update for feature <Y>
-[Level 3] README: ✅ no user-facing change | 💡 user-facing changes detected
+[Level 1] Tests: <X> passed / FAILED
+[Level 2] Coverage: <X>% | below target 70%: <modules>
+[Level 2] code-simplifier: clean | <N> suggestions (see above)
+[Level 2] ruff check: clean | <N> issues | skipped (not installed)
+[Level 2] ruff format: clean | drift detected | skipped (not installed)
+[Level 2] mypy: clean | <N> type errors | skipped (not installed)
+[Level 3] SPEC.md: up to date | Status needs update for feature <Y>
+[Level 3] README: no user-facing change | user-facing changes detected
 
 Summary:
 - Hard gates: PASSED / FAILED

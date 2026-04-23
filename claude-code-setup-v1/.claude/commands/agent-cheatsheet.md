@@ -24,12 +24,12 @@ Check the system-reminder messages in the current session for:
 ## Present as
 
 ```
-🎯 Agents & Skills Cheatsheet (<Project Name>)
+Agents & Skills Cheatsheet (<Project Name>)
 
-ℹ️  Note: 若以下清單中的 plugin / skill / MCP 未出現在 current session 的 system-reminder，
-    代表該資源尚未安裝。請參考 template README 的 Prerequisites 章節進行安裝。
+Note: 若以下清單中的 plugin / skill / MCP 未出現在 current session 的 system-reminder，
+      代表該資源尚未安裝。請參考 template README 的 Prerequisites 章節進行安裝。
 
-━━ 🔧 Agents (via Agent tool) ━━
+━━ Agents (via Agent tool) ━━
 
 [Project-local]
 - <agent-name> — <purpose>, use when <context>
@@ -42,7 +42,7 @@ Check the system-reminder messages in the current session for:
 - Plan — architectural planning
 - feature-dev:code-architect / code-explorer / code-reviewer — feature dev specialists
 
-━━ 📚 Skills (via Skill tool) ━━
+━━ Skills (via Skill tool) ━━
 
 [Project maintenance] (trigger proactively per conversation context)
 - maintaining-spec-md — SPEC.md changes
@@ -51,7 +51,6 @@ Check the system-reminder messages in the current session for:
 
 [Feature development] (trigger at start / during / end of feature work)
 - tdd-feature-workflow (project) — 4-phase TDD orchestrator
-- superpowers:feature-dev — guided feature development
 - superpowers:executing-plans — execute written plans
 - superpowers:test-driven-development — TDD discipline
 - superpowers:writing-plans — plan authoring
@@ -73,14 +72,14 @@ Check the system-reminder messages in the current session for:
 - claude-api — Anthropic SDK / Claude API work
 - graphify — any input → knowledge graph
 
-━━ 🎯 Commands (slash) ━━
+━━ Commands (slash) ━━
 
 - /project-status — quick status snapshot
 - /pre-dev-check — pre-development check
 - /pre-pr-check — pre-PR full check (tests, coverage, simplify, SPEC, README hints)
 - /agent-cheatsheet — this cheat sheet
 
-━━ 🔌 MCPs ━━
+━━ MCPs ━━
 
 - context7 — up-to-date library documentation
 - arxiv-mcp-server — academic paper search

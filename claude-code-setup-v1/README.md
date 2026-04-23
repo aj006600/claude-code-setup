@@ -66,7 +66,7 @@ AI / LLM 導向的 sub-agents：
 ### Plugins / Skills
 | Plugin | 用途 | 引用位置 |
 |--------|------|---------|
-| `superpowers` | feature-dev / executing-plans / test-driven-development / verification-before-completion / finishing-a-development-branch 等 skills | `tdd-feature-workflow` skill |
+| `superpowers` | brainstorming / writing-plans / executing-plans / test-driven-development / verification-before-completion / finishing-a-development-branch 等 skills | `tdd-feature-workflow` skill |
 | `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | CLAUDE.md、git-rules.md、`/pre-pr-check` |
 | `code-review` | PR review workflow | CLAUDE.md |
 

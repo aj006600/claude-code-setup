@@ -43,7 +43,7 @@ Read `.claude/SPEC.md`. Ask User what feature they plan to work on. Verify:
 
 On all-pass:
 ```
-✅ Pre-dev check passed
+Pre-dev check passed
 
 Branch: dev (up to date with origin)
 Tests: <X> passed / 0 failed
@@ -54,7 +54,7 @@ Ready to create feature branch: feat/<feature-name>
 
 On failure(s):
 ```
-⚠️ Pre-dev check found <N> issue(s):
+Pre-dev check found <N> issue(s):
 - [specific issue 1]
 - [specific issue 2]
 

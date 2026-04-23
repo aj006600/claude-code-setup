@@ -1,13 +1,13 @@
 ---
 name: tdd-feature-workflow
-description: Use this skill whenever the user starts implementing a new feature, bug fix, refactor, or any multi-step code change in this project. Triggers include phrases like "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or saying they want to "繼續" an in-progress feature. Also use when user wants to finalize work and open a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to superpowers skills (brainstorming, writing-plans, executing-plans, test-driven-development, verification-before-completion, requesting-code-review, receiving-code-review, finishing-a-development-branch, systematic-debugging), commit-commands (/commit-push-pr), code-review (/code-review), project-local agents (test-automator, code-reviewer), and maintaining-* skills at appropriate checkpoints. The main flow strictly enforces TDD: SPEC.md first → (optional) brainstorming for design discussion → writing-plans → executing-plans with test-first discipline → verification → PR → review → merge with documentation sync. This skill deliberately does NOT integrate /feature-dev command in the main flow because /feature-dev does not enforce TDD. Trigger proactively even when the user does not explicitly mention "TDD" or "workflow" — any conversation about starting feature work, resuming feature work, or finalizing a feature branch in this project should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.
+description: Use this skill whenever the user starts implementing a new feature, bug fix, refactor, or any multi-step code change in this project. Triggers include phrases like "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or saying they want to "繼續" an in-progress feature. Also use when user wants to finalize work and open a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to superpowers skills (brainstorming, writing-plans, executing-plans, test-driven-development, verification-before-completion, requesting-code-review, receiving-code-review, finishing-a-development-branch, systematic-debugging), commit-commands (/commit-push-pr), code-review (/code-review), project-local agents (test-automator, code-reviewer), and maintaining-* skills at appropriate checkpoints. The main flow strictly enforces TDD: SPEC.md first → (optional) brainstorming for design discussion → writing-plans → executing-plans with test-first discipline → verification → PR → review → merge with documentation sync. Trigger proactively even when the user does not explicitly mention "TDD" or "workflow" — any conversation about starting feature work, resuming feature work, or finalizing a feature branch in this project should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.
 ---
 
 # TDD Feature Workflow（本專案開發編排）
 
 這個 skill 是本專案的**開發編排層**——扮演**專案經理**角色：負責完整開發生命週期的編排（需求→實作→PR→merge→文檔同步），在正確的時機委派給正確的 superpowers skill、commands、agents、maintaining-* skills，並注入專案專屬細節（uv、pytest、coverage 目標、專案架構——以 CLAUDE.md 的 Architecture 章節為準）。
 
-**核心原則：嚴格遵守 TDD**——所有實作路徑必須經過 `writing-plans → executing-plans` 的測試先行流程。本 skill 不把 `/feature-dev` command 納入主流程（因其未強制 TDD）。
+**核心原則：嚴格遵守 TDD**——所有實作路徑必須經過 `writing-plans → executing-plans` 的測試先行流程。
 
 ---
 
@@ -18,7 +18,6 @@ description: Use this skill whenever the user starts implementing a new feature,
 - 有測試但沒跑 coverage → 表面通過、實質不足
 - 改了功能但沒更新 SPEC / CLAUDE / README → 文檔漂移
 - 忘記用 `code-simplifier:code-simplifier` → 代碼品質不穩
-- 採用「一鍵全包」的替代流程 → 繞過 TDD 紀律、埋下品質債
 
 這個 skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程強制**的流程。它是「編排」，不取代既有 superpowers skills。
 
@@ -104,7 +103,7 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 - **深度探索 codebase** → 委派 `feature-dev:code-explorer` agent 做架構層探索
 - **想對比多個架構方案** → 並行委派 2-3 個 `feature-dev:code-architect` agent（分別聚焦最小改動 / 清潔架構 / 實用平衡）
 
-無論是否使用上述 agent，最終**必須透過 `writing-plans → executing-plans` 走 TDD 流程**。本 skill 不採用 `/feature-dev` command 作為實作入口，避免繞過 TDD 強制。
+無論是否使用上述 agent，最終**必須透過 `writing-plans → executing-plans` 走 TDD 流程**。
 
 #### 2.4 撰寫測試（Test-First）
 

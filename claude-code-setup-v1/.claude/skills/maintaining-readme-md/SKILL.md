@@ -86,7 +86,7 @@ README 是大多數人接觸專案的**第一印象**：
 ### 延後記錄範例（狀態 A）
 
 ```
-📝 已偵測到本次變更會影響 README.md
+已偵測到本次變更會影響 README.md
 
 偵測內容：新增 CSV 匯出功能
 影響文檔：README Features 章節、Usage 章節、可能需新增 docs/export-guide.md
@@ -159,7 +159,7 @@ Agent({
 將 agent 產出的內容組織成：
 
 ```
-📋 README / docs 更新建議
+README / docs 更新建議
 
 **變更原因**：
 [為什麼需要更新]
@@ -276,7 +276,7 @@ git push origin docs/update-readme-<feature>
 
 ## 好做法 vs 不好做法
 
-### ✅ 好做法
+### 好做法
 ```
 User: "CSV 匯出功能實作完成，測試都過了"
 
@@ -284,7 +284,7 @@ Claude:
 偵測到新功能實作完成（狀態 B：實作完成、未開 PR），
 啟用 maintaining-readme-md skill。
 
-📋 README / docs 更新建議
+README / docs 更新建議
 
 **變更原因**：新增 CSV 匯出功能
 
@@ -302,7 +302,7 @@ Claude:
 是否確認這些更新？
 ```
 
-### ❌ 不好做法
+### 不好做法
 ```
 User: "CSV 匯出功能實作完成"
 

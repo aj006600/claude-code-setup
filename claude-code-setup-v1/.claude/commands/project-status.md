@@ -31,7 +31,7 @@ Read `.claude/SPEC.md` and count occurrences of:
 ## Present as
 
 ```
-📊 Project Status
+Project Status
 
 Branch: <branch-name> (<sync status with remote>)
 Uncommitted: <N> files changed

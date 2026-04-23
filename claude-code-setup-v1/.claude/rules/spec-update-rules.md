@@ -1,6 +1,6 @@
 # spec-update-rules.md
 
-> ⚠️ **本規則已遷移至 skill**
+> **本規則已遷移至 skill**
 >
 > 本檔案原有的工作流程（何時更新、如何撰寫、初次建立 SPEC.md、版本管理、Change Log 維護等）已完整遷移至：
 >

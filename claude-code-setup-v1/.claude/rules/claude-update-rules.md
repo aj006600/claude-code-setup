@@ -1,6 +1,6 @@
 # claude-update-rules.md
 
-> ⚠️ **本規則已遷移至 skill**
+> **本規則已遷移至 skill**
 >
 > 本檔案原有的工作流程（何時更新、如何更新、分支策略、Semantic Versioning、CLAUDE-CHANGELOG.md 維護等）已完整遷移至：
 >
