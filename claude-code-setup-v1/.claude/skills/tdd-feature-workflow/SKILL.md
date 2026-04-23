@@ -1,11 +1,13 @@
 ---
 name: tdd-feature-workflow
-description: Use this skill whenever the user starts implementing a new feature, bug fix, refactor, or any multi-step code change in this project. Triggers include phrases like "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or saying they want to "繼續" an in-progress feature. Also use when user wants to finalize work and open a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to existing superpowers skills (brainstorming, writing-plans, executing-plans, test-driven-development, verification-before-completion, requesting-code-review, receiving-code-review, finishing-a-development-branch), feature-dev plugin resources (code-explorer / code-architect agents, /feature-dev command), commit-commands (/commit-push-pr), code-review (/code-review), project-local agents (test-automator, code-reviewer), and maintaining-* skills at appropriate checkpoints. It layers on project-specific details from CLAUDE.md (uv command patterns, pytest configuration, coverage target, project architecture). At Step 2.3 it offers three mutually-exclusive planning paths (A lightweight / B multi-architecture comparison / C /feature-dev full 7-phase) so the adopter can match workflow depth to feature complexity. Trigger proactively even when the user does not explicitly mention "TDD" or "workflow" — any conversation about starting feature work, resuming feature work, or finalizing a feature branch in this project should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.
+description: Use this skill whenever the user starts implementing a new feature, bug fix, refactor, or any multi-step code change in this project. Triggers include phrases like "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or saying they want to "繼續" an in-progress feature. Also use when user wants to finalize work and open a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to superpowers skills (brainstorming, writing-plans, executing-plans, test-driven-development, verification-before-completion, requesting-code-review, receiving-code-review, finishing-a-development-branch, systematic-debugging), commit-commands (/commit-push-pr), code-review (/code-review), project-local agents (test-automator, code-reviewer), and maintaining-* skills at appropriate checkpoints. The main flow strictly enforces TDD: SPEC.md first → (optional) brainstorming for design discussion → writing-plans → executing-plans with test-first discipline → verification → PR → review → merge with documentation sync. This skill deliberately does NOT integrate /feature-dev command in the main flow because /feature-dev does not enforce TDD. Trigger proactively even when the user does not explicitly mention "TDD" or "workflow" — any conversation about starting feature work, resuming feature work, or finalizing a feature branch in this project should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.
 ---
 
 # TDD Feature Workflow（本專案開發編排）
 
-這個 skill 是本專案的**開發編排層**——扮演**專案經理**角色：負責完整開發生命週期的編排（需求→實作→PR→merge→文檔同步），在正確的時機委派給正確的 superpowers skill、feature-dev resources、commands、agents、maintaining-* skills，並注入專案專屬細節（uv、pytest、coverage 目標、專案架構——以 CLAUDE.md 的 Architecture 章節為準）。
+這個 skill 是本專案的**開發編排層**——扮演**專案經理**角色：負責完整開發生命週期的編排（需求→實作→PR→merge→文檔同步），在正確的時機委派給正確的 superpowers skill、commands、agents、maintaining-* skills，並注入專案專屬細節（uv、pytest、coverage 目標、專案架構——以 CLAUDE.md 的 Architecture 章節為準）。
+
+**核心原則：嚴格遵守 TDD**——所有實作路徑必須經過 `writing-plans → executing-plans` 的測試先行流程。本 skill 不把 `/feature-dev` command 納入主流程（因其未強制 TDD）。
 
 ---
 
@@ -16,24 +18,9 @@ description: Use this skill whenever the user starts implementing a new feature,
 - 有測試但沒跑 coverage → 表面通過、實質不足
 - 改了功能但沒更新 SPEC / CLAUDE / README → 文檔漂移
 - 忘記用 `code-simplifier:code-simplifier` → 代碼品質不穩
-- 對複雜功能用輕量 plan、對簡單改動開大流程 → workflow depth 錯配
+- 採用「一鍵全包」的替代流程 → 繞過 TDD 紀律、埋下品質債
 
-這個 skill 把這些點串成**有執行順序、關鍵節點都有 hook、依複雜度選擇 workflow depth** 的流程。它是「編排」，不取代既有 superpowers / feature-dev resources。
-
----
-
-## 定位澄清：本 skill vs `feature-dev`
-
-| 維度 | **tdd-feature-workflow**（本 skill） | **feature-dev**（plugin） |
-|------|---|---|
-| 定位 | 專案經理（全生命週期編排） | Staff engineer（實作階段深度） |
-| 強制 TDD | ✅ 明確強制（測試先行） | ❌ 無 TDD phase |
-| SPEC.md 同步 | ✅ 階段 1 / 2.10 強制 hook | ❌ 無 |
-| 文檔同步（README / CLAUDE） | ✅ 階段 4.4 / 4.5 hook | ❌ 無 |
-| Branch / PR 管理 | ✅ 階段 2.2 / 3.4 / 4.6 | ❌ 無 |
-| 實作階段深度 | 輕量委派（writing-plans / executing-plans） | 7-phase 深度結構化 |
-
-**兩者非互斥，是上下層關係**：本 skill 在階段 2.3 可選擇啟用 `/feature-dev` 作為實作子流程（路徑 C），適合高複雜情境。
+這個 skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程強制**的流程。它是「編排」，不取代既有 superpowers skills。
 
 ---
 
@@ -43,14 +30,13 @@ description: Use this skill whenever the user starts implementing a new feature,
 |------|------|
 | 編排 4 階段流程、決定何時啟用什麼 | **本 skill** |
 | 需求確認、SPEC.md 建立 / 更新 | `maintaining-spec-md` skill |
-| 需求設計討論（對話式、需求模糊時） | `superpowers:brainstorming` skill |
+| 需求設計討論（對話式，需求模糊時） | `superpowers:brainstorming` skill |
 | 寫 plan（bite-sized TDD tasks） | `superpowers:writing-plans` skill |
 | 執行 plan（批次 + checkpoint） | `superpowers:executing-plans` skill |
 | TDD 紀律（測試先行） | `superpowers:test-driven-development` skill |
 | 寫測試（具體產出） | `test-automator` agent（project-local） |
-| Codebase 深度探索（複雜情境） | `feature-dev:code-explorer` agent |
-| 多方案架構設計（中等複雜） | `feature-dev:code-architect` agent（2-3 並行） |
-| 7-phase 一鍵全包（高複雜情境） | `/feature-dev` command |
+| Codebase 深度探索（選配，手動） | `feature-dev:code-explorer` agent |
+| 多方案架構探索（選配，手動） | `feature-dev:code-architect` agent |
 | 代碼實作 | Claude 本人 + `executing-plans` 搭配 |
 | 代碼簡化審查 | `code-simplifier:code-simplifier` agent（plugin） |
 | 完成前驗證 | `superpowers:verification-before-completion` skill |
@@ -110,88 +96,17 @@ git checkout dev && git pull origin dev
 git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rules.md
 ```
 
-#### 2.3 選擇規劃路徑（關鍵決策點）
+#### 2.3 寫 plan
 
-依功能複雜度選擇 3 條互斥路徑之一：
+啟用 `superpowers:writing-plans` skill 寫 plan（bite-sized TDD tasks）。
 
-| 情境 | 路徑 | 核心流程 |
-|------|------|----------|
-| 單檔案 bug fix、小功能、改動範圍明確 | **A（預設）** | `writing-plans` 直接寫 plan |
-| 2-3 檔案新功能、需架構方案比較 | **B（中等複雜）** | 並行 `code-architect` agents → User 選 → `writing-plans` |
-| 多檔案大重構、陌生 codebase、epic-level | **C（高複雜）** | `/feature-dev` 7-phase 一鍵全包 |
+**選配加強**（複雜功能可用，但**不取代**本流程）：
+- **深度探索 codebase** → 委派 `feature-dev:code-explorer` agent 做架構層探索
+- **想對比多個架構方案** → 並行委派 2-3 個 `feature-dev:code-architect` agent（分別聚焦最小改動 / 清潔架構 / 實用平衡）
 
----
-
-##### 路徑 A：輕量直寫（預設）
-
-1. 啟用 `superpowers:writing-plans` skill 寫 plan（bite-sized TDD tasks）
-2. 進入 2.4
-
-**何時用**：日常 ticket、bug fix、小功能；已知如何實作，不需要多方案對比。
-
----
-
-##### 路徑 B：多方案架構比較（中等複雜）
-
-1. 並行委派 2-3 個 `feature-dev:code-architect` agent，各自聚焦不同方向：
-
-```
-# 並行呼叫（同一 message 內 3 個 Agent tool）
-Agent({
-  subagent_type: "feature-dev:code-architect",
-  description: "Minimal-change architecture for <feature>",
-  prompt: "Design a minimal-change architecture for <feature>. Focus on reusing existing abstractions..."
-})
-Agent({
-  subagent_type: "feature-dev:code-architect",
-  description: "Clean architecture for <feature>",
-  prompt: "Design a clean architecture for <feature>. Focus on SOLID principles and proper layering..."
-})
-Agent({
-  subagent_type: "feature-dev:code-architect",
-  description: "Balanced architecture for <feature>",
-  prompt: "Design a balanced architecture for <feature> weighing pragmatism against technical purity..."
-})
-```
-
-2. 展示 2-3 方案的 trade-off 對比 → User 選擇
-3. 啟用 `superpowers:writing-plans` skill 把選定方案轉為可執行 plan
-4. 進入 2.4
-
-**何時用**：有多種可行實作方式、想對比 trade-off 再決定；2-3 個檔案同時改動。
-
----
-
-##### 路徑 C：`/feature-dev` 一鍵全包（高複雜）
-
-執行 command：
-```bash
-/feature-dev <功能描述>
-```
-
-`/feature-dev` 會自動走完 7-phase：
-1. Discovery — 釐清需求
-2. Codebase Exploration — 2-3 個 `code-explorer` 並行探索
-3. Clarifying Questions — 強制系統化澄清（不可跳過）
-4. Architecture Design — 2-3 個 `code-architect` 並行產出方案
-5. Implementation — 實作
-6. Quality Review — 3 個 `code-reviewer` 並行審查
-7. Summary — 完成文件
-
-完成後**直接跳到本 skill 的階段 3**（`/feature-dev` 已內含實作與 review）。
-
-**重要注意事項**：
-- `/feature-dev` **不包含 TDD 強制**（須自行確保測試充分，建議 Phase 5 實作時搭配 `test-driven-development` skill）
-- `/feature-dev` **不包含 SPEC.md 同步**（階段 1 仍須先走 `maintaining-spec-md` skill；結束後回頭更新 Status）
-- `/feature-dev` **不包含 branch / PR 管理**（仍由本 skill 處理 2.2 與階段 3、4）
-
-**何時用**：多檔案大重構、onboarding 新成員、陌生 codebase、epic-level 功能、需要強制結構化 clarification 與多方案對比。
-
----
+無論是否使用上述 agent，最終**必須透過 `writing-plans → executing-plans` 走 TDD 流程**。本 skill 不採用 `/feature-dev` command 作為實作入口，避免繞過 TDD 強制。
 
 #### 2.4 撰寫測試（Test-First）
-
-路徑 A / B 必走此步；路徑 C 若 `/feature-dev` 未覆蓋測試，補上。
 
 啟用 `superpowers:test-driven-development` skill 指引 TDD 紀律；實際產出可委派 `test-automator` agent：
 
@@ -302,7 +217,7 @@ Agent({
 ```bash
 /code-review
 ```
-此 command 啟動多個 reviewer agents 並行（類似 `/feature-dev` Phase 6 的 3 維度並行 review：簡潔性 / bug / 慣例）。
+此 command 啟動多個 reviewer agents 並行（多維度驗證：簡潔性 / bug / 慣例）。
 
 若發現問題 → 回到階段 2 修改，遵循 TDD。
 
@@ -362,7 +277,7 @@ git log --oneline -5
 
 ### Hotfix 流程（緊急生產問題）
 - 從 `main` 分支建立 `hotfix/<bug-name>`
-- 最小修改 + 測試覆蓋該 bug
+- 最小修改 + 測試覆蓋該 bug（仍遵循 TDD）
 - PR 到 `main` 與 `dev`（雙分支）
 - 事後補 `maintaining-readme-md` 檢查
 
@@ -373,8 +288,8 @@ git log --oneline -5
 
 ### Spike / Prototype
 - 建立 `spike/<name>` 分支（非正式 convention）
-- 不強制 TDD
-- 完成後：丟棄（刪分支）或採納（走正式階段 1-4）
+- Spike 階段不強制 TDD（純實驗）
+- 完成後：丟棄（刪分支）或採納（**採納必須重寫走正式階段 1-4 的 TDD 流程**，不直接 merge spike 代碼）
 
 ### Debug 深入（系統化除錯）
 啟用 `superpowers:systematic-debugging` skill — 適用於：
@@ -387,7 +302,7 @@ git log --oneline -5
 - `superpowers:using-git-worktrees` — 多分支隔離環境
 - `superpowers:dispatching-parallel-agents` — 獨立任務並行派發
 
-適用於：可拆分為 N 個互相獨立的子任務（例如同時改動 3 個服務）。
+適用於：可拆分為 N 個互相獨立的子任務（例如同時改動 3 個服務）。每個子任務仍各自走 TDD 流程。
 
 ### 子任務外包（spec-driven）
 啟用 `superpowers:subagent-driven-development` skill — 適用於：
@@ -401,7 +316,7 @@ git log --oneline -5
 ### 啟動前
 - [ ] User 的需求是新功能 / bug fix / refactor 哪一種？
 - [ ] SPEC.md 是否已涵蓋此需求？
-- [ ] 功能複雜度對應 2.3 哪條路徑（A / B / C）？
+- [ ] 是否需要 brainstorming 深化設計，或需求已清楚可直接進入 writing-plans？
 
 ### 各階段過渡前
 - [ ] 階段 1 → 2：SPEC.md 已更新且 User 確認？

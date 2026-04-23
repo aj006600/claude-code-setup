@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.0.2] - 2026-04-23
+
+### Changed
+- Development Workflow 核心原則明確寫入「嚴格遵守 TDD」：不採用 `/feature-dev` command 作為實作入口（因其未強制 TDD）。委派清單從錯誤的 `superpowers:feature-dev` 改為實際使用的 `brainstorming` / `writing-plans` / `executing-plans` / `test-driven-development` / `finishing-a-development-branch`
+- Available Agents & Skills > 功能開發段新增 `brainstorming` / `writing-plans` / `verification-before-completion` 三項常用 skill
+
+### Removed
+- 移除 Development Workflow 清單中錯誤的 `superpowers:feature-dev` 引用（feature-dev 是獨立 plugin 而非 superpowers 子項目）
+
+---
+
 ## [v1.0.1] - 2026-04-23
 
 ### Changed

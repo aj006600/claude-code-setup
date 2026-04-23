@@ -64,7 +64,7 @@
 ---
 
 ## Development Workflow (開發流程)
-**核心原則**：開發新功能 / bug 修復 / 重構時，啟用 `tdd-feature-workflow` skill。該 skill 會編排完整 4 階段 TDD 流程並委派給 superpowers skills（`superpowers:feature-dev`、`executing-plans`、`test-driven-development`、`finishing-a-development-branch`）與 local agents（`test-automator`、`code-reviewer`）。
+**核心原則**：開發新功能 / bug 修復 / 重構時，啟用 `tdd-feature-workflow` skill。該 skill 會編排完整 4 階段 TDD 流程並委派給 superpowers skills（`brainstorming`、`writing-plans`、`executing-plans`、`test-driven-development`、`finishing-a-development-branch`）與 local agents（`test-automator`、`code-reviewer`）。**嚴格遵守 TDD**：不採用 `/feature-dev` command 作為實作入口，避免繞過測試先行紀律。
 
 四階段速覽：
 
@@ -140,8 +140,11 @@ User 提需求 → 啟用 `maintaining-spec-md` skill → User 確認 SPEC.md �
 
 **功能開發**：
 - `tdd-feature-workflow` — 本專案 TDD 編排器（開始新功能時啟用）
-- `superpowers:executing-plans` — 執行 plan
+- `superpowers:brainstorming` — 需求設計討論（需求模糊時）
+- `superpowers:writing-plans` — 寫 bite-sized TDD plan
+- `superpowers:executing-plans` — 批次執行 plan + checkpoint
 - `superpowers:test-driven-development` — TDD 紀律
+- `superpowers:verification-before-completion` — 完成前強制自檢
 - `superpowers:finishing-a-development-branch` — branch 收尾
 
 ### 常用 Commands（slash）
@@ -184,4 +187,4 @@ User 提需求 → 啟用 `maintaining-spec-md` skill → User 確認 SPEC.md �
 ---
 
 **Last Updated**: 2026-04-23
-**Version**: v1.0.1
+**Version**: v1.0.2
