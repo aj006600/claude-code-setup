@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# Claude Code 個人設定（本地 overrides，不該進 repo）
+.claude/settings.local.json
+
+# 個人開發筆記
+memo/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+htmlcov/
+.coverage
+.pytest_cache/
