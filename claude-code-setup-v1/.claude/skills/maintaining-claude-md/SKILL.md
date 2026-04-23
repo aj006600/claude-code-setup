@@ -137,7 +137,7 @@ current_branch=$(git branch --show-current)
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines
 
-Authored-By: YiTsung_Chang <aj006600@gmail.com>"
+Authored-By: <YourName> <your-email@example.com>"
 ```
 
 **情況 B：在 `dev` / `qas` / `main` 分支**
@@ -149,7 +149,7 @@ git checkout -b docs/update-claude-md
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines
 
-Authored-By: YiTsung_Chang <aj006600@gmail.com>"
+Authored-By: <YourName> <your-email@example.com>"
 git push origin docs/update-claude-md
 # 建立 PR 到 dev
 ```

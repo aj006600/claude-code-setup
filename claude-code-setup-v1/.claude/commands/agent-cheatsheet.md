@@ -26,6 +26,9 @@ Check the system-reminder messages in the current session for:
 ```
 🎯 Agents & Skills Cheatsheet (<Project Name>)
 
+ℹ️  Note: 若以下清單中的 plugin / skill / MCP 未出現在 current session 的 system-reminder，
+    代表該資源尚未安裝。請參考 template README 的 Prerequisites 章節進行安裝。
+
 ━━ 🔧 Agents (via Agent tool) ━━
 
 [Project-local]

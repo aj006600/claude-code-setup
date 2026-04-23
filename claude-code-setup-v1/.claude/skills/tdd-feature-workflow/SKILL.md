@@ -148,7 +148,7 @@ uv run pytest tests/ --cov=src --cov-report=term-missing
 git add <relevant-files>
 git commit -m "<type>(<scope>): <description>
 
-Authored-By: YiTsung_Chang <aj006600@gmail.com>"
+Authored-By: <YourName> <your-email@example.com>"
 ```
 
 Commit 規範見 `.claude/rules/git-rules.md`。SPEC.md 變更須獨立 commit。

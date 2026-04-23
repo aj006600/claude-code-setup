@@ -38,7 +38,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `/agent-cheatsheet` — 可用資源速查
 
 ### 1 Advisory Hook
-- `pre-commit-advisory.sh` — commit message 檢查（Authored-By trailer）
+- `commit-message-advisory.sh` — Claude Code PreToolUse hook，檢查 commit message 的 Authored-By trailer（advisory only，不阻擋）
 
 ### 4 Reference Rules
 - `code-style.md` — Python 代碼風格（Required Standards + Recommended Tools 分層）
@@ -97,11 +97,13 @@ cp -r path/to/claude-code-setup-v1/.claude /path/to/your-project/
 
 ### Step 2：客製 CLAUDE.md
 
-開啟 `.claude/CLAUDE.md`，替換所有 `<!-- TEMPLATE: ... -->` 標示的區塊與 `<Placeholder>` 佔位符：
+開啟 `.claude/CLAUDE.md` 進行：
 
-- **Project Overview**：你的專案名稱與一句話描述
-- **Tech Stack**：framework 選擇、其他依賴
-- **Architecture**：你的實際目錄結構
+1. **刪除頂端的 `<!-- TEMPLATE NOTICE ... -->` 區塊**（採用後不再需要）
+2. 替換所有 `<!-- TEMPLATE: ... -->` 標示的區塊與 `<Placeholder>` 佔位符：
+   - **Project Overview**：你的專案名稱與一句話描述
+   - **Tech Stack**：framework 選擇、其他依賴
+   - **Architecture**：你的實際目錄結構
 
 ### Step 3：讓 Claude Code 建立 SPEC.md
 
@@ -126,17 +128,31 @@ Template 刻意**不**包含 SPEC.md（它是專案特定需求規格）。在�
 
 ### Step 5：更新 Git 身份資訊（重要）
 
-`.claude/rules/git-rules.md` 定義 commit message 需包含 `Authored-By` trailer：
+Template 的 commit message trailer 預設為 placeholder：
 
 ```
-Authored-By: YiTsung_Chang <aj006600@gmail.com>
+Authored-By: <YourName> <your-email@example.com>
 ```
 
-**請將 email 改為你的實際 email**。掃描並替換：
+**請將 `<YourName>` 與 `<your-email@example.com>` 替換為你的實際資訊**。先掃描所有出現位置：
 
 ```bash
-grep -rln "aj006600@gmail.com" .claude/
-# 確認清單後，手動或用 sed 批次替換
+grep -rln "your-email@example.com" .claude/
+grep -rln "<YourName>" .claude/
+```
+
+手動替換，或用 `sed` 批次處理（將 `Your Name` 與 `you@your-domain.com` 改為實際值）：
+
+```bash
+# macOS
+find .claude -type f -name "*.md" -exec sed -i '' \
+  -e 's/<YourName>/Your Name/g' \
+  -e 's/your-email@example.com/you@your-domain.com/g' {} +
+
+# Linux
+find .claude -type f -name "*.md" -exec sed -i \
+  -e 's/<YourName>/Your Name/g' \
+  -e 's/your-email@example.com/you@your-domain.com/g' {} +
 ```
 
 ### 完成：開始開發
@@ -167,7 +183,7 @@ grep -rln "aj006600@gmail.com" .claude/
 ├── commands/                 # Slash commands
 ├── agents/                   # Sub-agents
 └── hooks/
-    └── pre-commit-advisory.sh
+    └── commit-message-advisory.sh
 ```
 
 ---
@@ -189,7 +205,7 @@ A: `tdd-feature-workflow` skill 大量引用 superpowers。若不用：
 2. 將「啟用 `superpowers:xxx` skill」改為具體指令
 
 ### Q: Advisory hook 會擋住我的 commit 嗎？
-A: **不會**。Hook 設計為 advisory-only（`exit 0`），只在 stderr 輸出警告。若想升級為阻擋，編輯 `.claude/hooks/pre-commit-advisory.sh` 將 `exit 0` 改為 `exit 1`。
+A: **不會**。Hook 設計為 advisory-only（`exit 0`），只在 stderr 輸出警告。若想升級為阻擋，編輯 `.claude/hooks/commit-message-advisory.sh` 將警告分支的 `exit 0` 改為 `exit 1`。
 
 ### Q: 如何關閉 hook？
 A: 編輯 `.claude/settings.json`，移除或清空 `hooks` 區塊：

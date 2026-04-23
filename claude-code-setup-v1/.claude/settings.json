@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/pre-commit-advisory.sh"
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/commit-message-advisory.sh"
           }
         ]
       }

@@ -192,7 +192,7 @@ Agent({
 git add README.md docs/
 git commit -m "docs: update README and docs for <feature-name>
 
-Authored-By: YiTsung_Chang <aj006600@gmail.com>"
+Authored-By: <YourName> <your-email@example.com>"
 ```
 
 **狀態 D（已 merge，補救）**：
@@ -203,7 +203,7 @@ git checkout -b docs/update-readme-<feature>
 git add README.md docs/
 git commit -m "docs: retroactively update README for <feature>
 
-Authored-By: YiTsung_Chang <aj006600@gmail.com>"
+Authored-By: <YourName> <your-email@example.com>"
 git push origin docs/update-readme-<feature>
 # 建立 PR 到 dev
 ```

@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 # Advisory hook: warn when `git commit` command lacks `Authored-By` trailer.
 #
-# Behavior: exit 0 always (advisory only, does NOT block). If stabilized and
-# user wants enforcement, change `exit 0` at the bottom to `exit 1` in the
-# warning branch.
+# NOTE: This is a Claude Code PreToolUse hook (registered in .claude/settings.json).
+# It runs before Claude invokes the Bash tool. This is NOT a git pre-commit hook
+# (.git/hooks/pre-commit).
 #
-# Triggered by: PreToolUse hook on Bash tool (see .claude/settings.json)
+# Behavior: exit 0 always (advisory only, does NOT block). If you want to
+# enforce, change the final `exit 0` to `exit 1` inside the warning branch.
+#
+# Graceful degradation: if python3 is unavailable (e.g., template adopters who
+# switched to a non-Python stack), the hook silently no-ops.
+
+# Skip silently if python3 is not installed.
+command -v python3 >/dev/null 2>&1 || exit 0
 
 input=$(cat)
 

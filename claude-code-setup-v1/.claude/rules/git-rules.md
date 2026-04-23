@@ -30,7 +30,7 @@ dev (development) ← feat/<feature-name>
 ```
 <type>(<scope>): <description>
 
-Authored-By: YiTsung_Chang <aj006600@gmail.com>
+Authored-By: <YourName> <your-email@example.com>
 ```
 
 ### Type 類型

@@ -215,7 +215,7 @@ User 確認後：
      ```
      spec: <描述變更內容>
 
-     Authored-By: YiTsung_Chang <aj006600@gmail.com>
+     Authored-By: <YourName> <your-email@example.com>
      ```
 
 ### Step B5：向 User 確認更新結果
