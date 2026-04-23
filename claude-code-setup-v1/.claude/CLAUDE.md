@@ -166,8 +166,8 @@ User 提需求 → 啟用 `maintaining-spec-md` skill → User 確認 SPEC.md �
 - 先撰寫測試（TDD，委派 `test-automator` agent 或啟用 `superpowers:test-driven-development` skill）
 - 實作功能（啟用 `superpowers:executing-plans` skill；技術疑問用 `context7` MCP 查文檔）
 - 執行相關測試確認通過
-- 執行所有測試確認無 regression：`uv run pytest tests/ -v`
-- 檢查測試覆蓋率：`uv run pytest tests/ --cov=src --cov-report=term-missing`
+- 執行所有測試確認無 regression（依 Tech Stack 調整；Python 範例：`uv run pytest tests/ -v`）
+- 檢查測試覆蓋率（依 Tech Stack 調整；Python 範例：`uv run pytest tests/ --cov=src --cov-report=term-missing`）
 - 更新 SPEC.md 功能狀態（啟用 `maintaining-spec-md` skill）
 
 ### 提交與 PR
@@ -184,4 +184,4 @@ User 提需求 → 啟用 `maintaining-spec-md` skill → User 確認 SPEC.md �
 ---
 
 **Last Updated**: 2026-04-23
-**Version**: v1.0.0
+**Version**: v1.0.1

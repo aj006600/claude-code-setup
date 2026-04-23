@@ -145,6 +145,10 @@ Authored-By: <YourName> <your-email@example.com>"
 CLAUDE.md 的更新與任何功能分支無關（例如：User 單獨提出規範調整），建立獨立的 docs 分支：
 
 ```bash
+# 若 docs/update-claude-md 分支已存在（極端情境：同一天多次更新、前次 PR 未 merge、
+# local 分支未清理等），改用帶日期後綴避免衝突：
+# git checkout -b docs/update-claude-md-$(date +%Y%m%d)
+
 git checkout -b docs/update-claude-md
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines

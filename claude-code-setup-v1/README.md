@@ -235,11 +235,16 @@ A: 採 Semantic Versioning。`maintaining-claude-md` skill 會自動處理版本
 ### 新增 hook
 於 `.claude/hooks/` 建立 shell script，並在 `.claude/settings.json` 的 `hooks` 區塊註冊。
 
-Hook 類型：
+Hook 類型（依 lifecycle 順序）：
+- `SessionStart` — Claude Code session 開始時
+- `UserPromptSubmit` — User 提交 prompt 時
 - `PreToolUse` — tool 執行前觸發（可阻擋）
 - `PostToolUse` — tool 執行後觸發
-- `Stop` — Claude 回覆完成後觸發
-- `UserPromptSubmit` — User 提交 prompt 時觸發
+- `Notification` — 通知事件（如 Claude Code idle 等）
+- `PreCompact` — context 壓縮前
+- `SubagentStop` — subagent 完成時
+- `Stop` — Claude 回覆完成後
+- `SessionEnd` — session 結束時
 
 ### 修改 agent
 `.claude/agents/*.md` 為 local agents。修改 description 可改變觸發語境，修改 body 可改變行為。

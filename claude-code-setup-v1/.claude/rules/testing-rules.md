@@ -229,32 +229,9 @@ async def test_get_cached_hit():
     mock_redis.get.assert_awaited_once_with("key")
 ```
 
-### LLM / AI Service
+### 通用原則
 
-Mock response 以避免真的打 API（省 quota、測試穩定性）：
-
-```python
-# tests/unit/test_llm_service.py
-import pytest
-from unittest.mock import AsyncMock, patch
-
-from src.services.llm import call_llm
-
-
-@pytest.mark.asyncio
-async def test_llm_completion():
-    """測試 LLM 呼叫 — 使用 mock response"""
-    mock_response = {
-        "choices": [{"message": {"content": "mocked reply"}}]
-    }
-
-    with patch("openai.AsyncClient.chat.completions.create",
-               AsyncMock(return_value=mock_response)):
-        result = await call_llm("hello")
-        assert result == "mocked reply"
-```
-
-**原則**：測試不應依賴外部服務可用性或真實 API quota。若必要跑真實呼叫，標記 `@pytest.mark.integration` 或 `@pytest.mark.e2e` 並另用 CI job 執行。
+測試不應依賴外部服務可用性或真實 API quota。若必要跑真實呼叫，標記 `@pytest.mark.integration` 或 `@pytest.mark.e2e` 並另用 CI job 執行。
 
 ---
 

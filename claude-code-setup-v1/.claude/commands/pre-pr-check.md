@@ -31,6 +31,38 @@ Agent({
 ```
 If suggestions returned → WARNING. Summarize findings.
 
+### 2.3 Lint via `ruff check` (if available)
+```bash
+if command -v ruff >/dev/null 2>&1; then
+  uv run ruff check . || echo "[pre-pr-check] ruff check found issues"
+else
+  echo "[pre-pr-check] ruff not installed — skipping lint"
+fi
+```
+If issues found → WARNING. Surface specific rule violations; do not block.
+
+### 2.4 Format check via `ruff format --check` (if available)
+```bash
+if command -v ruff >/dev/null 2>&1; then
+  uv run ruff format . --check || echo "[pre-pr-check] files need formatting"
+else
+  echo "[pre-pr-check] ruff not installed — skipping format check"
+fi
+```
+If drift detected → WARNING. Suggest running `uv run ruff format .`; do not block.
+
+### 2.5 Type check via `mypy` (if available)
+```bash
+if command -v mypy >/dev/null 2>&1; then
+  uv run mypy src/ || echo "[pre-pr-check] mypy found type errors"
+else
+  echo "[pre-pr-check] mypy not installed — skipping type check"
+fi
+```
+If type errors found → WARNING. Summarize top issues; do not block.
+
+**Note**: Level 2.3-2.5 are tool-conditional — unavailable tools silently skip. Level 1 (tests) remains the only hard gate. This matches `code-style.md`'s "Recommended Tools" positioning.
+
 ## Level 3: Hints (inform only, no gate)
 
 ### 3.1 SPEC.md Status
@@ -49,6 +81,9 @@ If yes → hint: suggest activating `maintaining-readme-md` skill before PR.
 [Level 1] Tests: ✅ <X> passed / FAILED
 [Level 2] Coverage: ✅ <X>% | ⚠️ <X>% (target 70%) - below: <modules>
 [Level 2] code-simplifier: ✅ clean | ⚠️ <N> suggestions (see above)
+[Level 2] ruff check: ✅ clean | ⚠️ <N> issues | ⏭ skipped (not installed)
+[Level 2] ruff format: ✅ clean | ⚠️ drift detected | ⏭ skipped (not installed)
+[Level 2] mypy: ✅ clean | ⚠️ <N> type errors | ⏭ skipped (not installed)
 [Level 3] SPEC.md: ✅ up to date | 💡 Status needs update for feature <Y>
 [Level 3] README: ✅ no user-facing change | 💡 user-facing changes detected
 

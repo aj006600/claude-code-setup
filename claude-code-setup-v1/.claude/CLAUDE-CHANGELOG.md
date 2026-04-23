@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.0.1] - 2026-04-23
+
+### Changed
+- Development Checklist 的測試指令改為 tech-agnostic（加「依 Tech Stack 調整」並保留 Python 範例），讓 template 採用者改用其他語言時不被鎖死在 uv/pytest
+
+---
+
 ## [v1.0.0] - 2026-04-23
 
 ### Added
