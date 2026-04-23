@@ -37,8 +37,14 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `/pre-pr-check` — PR 前完整檢查（tests、coverage、code-simplifier、SPEC、README hints）
 - `/agent-cheatsheet` — 可用資源速查
 
-### 1 Advisory Hook
-- `commit-message-advisory.sh` — Claude Code PreToolUse hook，檢查 commit message 的 Authored-By trailer（advisory only，不阻擋）
+### 2 Advisory Hooks
+- `commit-message-advisory.sh` — PreToolUse hook：檢查 `git commit` message 是否含 `Authored-By` trailer
+- `secrets-scan-advisory.sh` — PreToolUse hook：`git commit` / `git add` 前掃 staged 檔名（`.env`、`*.pem`、`*.key`、`credentials.json` 等）與 staged diff 中的已知 secret pattern（AWS key、GitHub token、OpenAI key、Slack token、私鑰 header）
+
+兩者皆為 advisory only（`exit 0`，不阻擋）。
+
+### 1 CI Workflow
+- `.github/workflows/ci.yml` — GitHub Actions，PR 與 push 觸發 `ruff check` + `ruff format --check` + `mypy` + `pytest --cov`（與 `/pre-pr-check` 檢查項一致）
 
 ### 4 Reference Rules
 - `code-style.md` — Python 代碼風格（Required Standards + Recommended Tools 分層）
@@ -85,75 +91,43 @@ AI / LLM 導向的 sub-agents：
 
 ---
 
-## Quick Start（5 步驟）
+## Quick Start（3 步驟）
 
 ### Step 1：複製 setup
 
-將整個 `.claude/` 目錄複製到你的新專案根目錄：
+將 `.claude/`、`.github/` 複製到你的新專案根目錄：
 
 ```bash
 cp -r path/to/claude-code-setup-v1/.claude /path/to/your-project/
+cp -r path/to/claude-code-setup-v1/.github /path/to/your-project/
 ```
 
-### Step 2：客製 CLAUDE.md
+### Step 2：啟動 Claude Code 並提出第一個需求
 
-開啟 `.claude/CLAUDE.md` 進行：
-
-1. **刪除頂端的 `<!-- TEMPLATE NOTICE ... -->` 區塊**（採用後不再需要）
-2. 替換所有 `<!-- TEMPLATE: ... -->` 標示的區塊與 `<Placeholder>` 佔位符：
-   - **Project Overview**：你的專案名稱與一句話描述
-   - **Tech Stack**：framework 選擇、其他依賴
-   - **Architecture**：你的實際目錄結構
-
-### Step 3：讓 Claude Code 建立 SPEC.md
-
-Template 刻意**不**包含 SPEC.md（它是專案特定需求規格）。在新專案啟動 Claude Code，直接提出需求：
+直接說明你要建立什麼：
 
 ```
 我想建立一個 <專案名稱>，核心功能是 <描述>...
 ```
 
-`maintaining-spec-md` skill 會偵測到「沒有 SPEC.md」的情境並透過 Workflow A 建立初始版本。
+Claude Code 會自動完成：
 
-### Step 4：調整 Rules（視團隊需求）
+1. **建立 SPEC.md**：`maintaining-spec-md` skill 偵測到無 SPEC.md → Workflow A 起草
+2. **客製 CLAUDE.md**：`maintaining-claude-md` skill 偵測到 `<Placeholder>` 與 `<!-- TEMPLATE NOTICE -->` → Workflow A 填入 Project Name / framework / Architecture 等 placeholder、批次替換 `<YourName>` / `your-email@example.com`、移除 NOTICE 區塊
+3. 展示 diff → 你確認 → 一次 commit
 
-檢視 `.claude/rules/` 並根據團隊調整：
+若需求尚不明確，skill 會主動詢問；若對話尚未提供足夠資訊（例如 framework 尚未選定），對應 placeholder 暫不替換，由後續對話中的 Workflow B 補上。
+
+### Step 3：調整 Rules（視團隊需求）
+
+檢視 `.claude/rules/` 並依團隊調整：
 
 | Rule | 可客製項目 |
 |------|-----------|
 | `code-style.md` | Formatter / Linter / Type Checker 選擇、docstring 格式 |
 | `testing-rules.md` | Markers、Coverage 目標、factory 選擇 |
-| `git-rules.md` | Commit convention、`Authored-By` trailer |
+| `git-rules.md` | Commit convention 其他細節 |
 | `documentation-style.md` | 模板結構細節 |
-
-### Step 5：更新 Git 身份資訊（重要）
-
-Template 的 commit message trailer 預設為 placeholder：
-
-```
-Authored-By: <YourName> <your-email@example.com>
-```
-
-**請將 `<YourName>` 與 `<your-email@example.com>` 替換為你的實際資訊**。先掃描所有出現位置：
-
-```bash
-grep -rln "your-email@example.com" .claude/
-grep -rln "<YourName>" .claude/
-```
-
-手動替換，或用 `sed` 批次處理（將 `Your Name` 與 `you@your-domain.com` 改為實際值）：
-
-```bash
-# macOS
-find .claude -type f -name "*.md" -exec sed -i '' \
-  -e 's/<YourName>/Your Name/g' \
-  -e 's/your-email@example.com/you@your-domain.com/g' {} +
-
-# Linux
-find .claude -type f -name "*.md" -exec sed -i \
-  -e 's/<YourName>/Your Name/g' \
-  -e 's/your-email@example.com/you@your-domain.com/g' {} +
-```
 
 ### 完成：開始開發
 
@@ -183,7 +157,11 @@ find .claude -type f -name "*.md" -exec sed -i \
 ├── commands/                 # Slash commands
 ├── agents/                   # Sub-agents
 └── hooks/
-    └── commit-message-advisory.sh
+    ├── commit-message-advisory.sh
+    └── secrets-scan-advisory.sh
+.github/
+└── workflows/
+    └── ci.yml                # GitHub Actions CI
 ```
 
 ---
@@ -204,8 +182,8 @@ A: `tdd-feature-workflow` skill 大量引用 superpowers。若不用：
 1. 編輯 `.claude/skills/tdd-feature-workflow/SKILL.md` 各階段委派對象
 2. 將「啟用 `superpowers:xxx` skill」改為具體指令
 
-### Q: Advisory hook 會擋住我的 commit 嗎？
-A: **不會**。Hook 設計為 advisory-only（`exit 0`），只在 stderr 輸出警告。若想升級為阻擋，編輯 `.claude/hooks/commit-message-advisory.sh` 將警告分支的 `exit 0` 改為 `exit 1`。
+### Q: Advisory hooks 會擋住我的 commit 嗎？
+A: **不會**。兩個 hook（`commit-message-advisory.sh`、`secrets-scan-advisory.sh`）都是 advisory-only（`exit 0`），只在 stderr 輸出警告。若想升級為阻擋，編輯對應檔案將警告分支的 `exit 0` 改為 `exit 1`。
 
 ### Q: 如何關閉 hook？
 A: 編輯 `.claude/settings.json`，移除或清空 `hooks` 區塊：

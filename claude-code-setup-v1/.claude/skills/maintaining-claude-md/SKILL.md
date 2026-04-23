@@ -1,6 +1,6 @@
 ---
 name: maintaining-claude-md
-description: Use this skill whenever the user proposes new coding conventions, changes to project structure (adding or removing directories, reorganizing modules), workflow adjustments (git flow, CI/CD, documentation processes), testing strategy changes, docstring or naming convention updates, new technical dependencies, changes to the development checklist, or new project-specific constraints. Also use when SPEC.md's Project Overview / Tech Stack / Architecture sections have been updated and CLAUDE.md may need synchronous updating. The skill analyzes change impact, shows a diff for user confirmation, then updates `.claude/CLAUDE.md` with proper Semantic Versioning, adds a corresponding entry to `.claude/CLAUDE-CHANGELOG.md` (Keep a Changelog format), and commits both files together using branch-aware strategy (direct commit on feature branches, separate `docs/update-claude-md` branch on `dev`/`qas`/`main`). Trigger this skill proactively even when the user does not explicitly mention "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md synchronized with project practice is load-bearing for every subsequent Claude Code session.
+description: Use this skill whenever the user proposes new coding conventions, changes to project structure (adding or removing directories, reorganizing modules), workflow adjustments (git flow, CI/CD, documentation processes), testing strategy changes, docstring or naming convention updates, new technical dependencies, changes to the development checklist, or new project-specific constraints. Also use when SPEC.md's Project Overview / Tech Stack / Architecture sections have been updated and CLAUDE.md may need synchronous updating. Also use when CLAUDE.md still contains template placeholders (e.g., `<Project Name>`, `<your framework>`, `<your-modules>`, `<list project-specific dependencies here>`) or the `<!-- TEMPLATE NOTICE -->` block, and the conversation has revealed the corresponding decisions (project name, chosen framework, directory layout, dependencies, git identity for `<YourName>` / `<your-email@example.com>`) — the skill runs Workflow A to replace placeholders in one go. The skill analyzes change impact, shows a diff for user confirmation, then updates `.claude/CLAUDE.md` with proper Semantic Versioning, adds a corresponding entry to `.claude/CLAUDE-CHANGELOG.md` (Keep a Changelog format), and commits both files together using branch-aware strategy (direct commit on feature branches, separate `docs/update-claude-md` branch on `dev`/`qas`/`main`). Trigger this skill proactively even when the user does not explicitly mention "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md synchronized with project practice is load-bearing for every subsequent Claude Code session.
 ---
 
 # Maintaining CLAUDE.md
@@ -74,9 +74,117 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。這代�
 | Technical Context > Constraints 新增 | Project Overview 或 Tech Stack |
 | 架構層級重構 | Architecture |
 
+### 6. Template 未客製化（初次採用 template 後首次）
+- CLAUDE.md 仍含 `<Placeholder>`（如 `<Project Name>`、`<your framework>`、`<your-modules>`）
+- CLAUDE.md 頂端仍有 `<!-- TEMPLATE NOTICE -->` 區塊
+- `.claude/` 目錄內任何檔案仍含 `<YourName>` 或 `your-email@example.com`
+
+→ 對話揭示相應決策時觸發 **Workflow A**（初次客製化）；否則走 **Workflow B**（更新既有規範）。
+
 ---
 
-## Workflow：更新 CLAUDE.md 與 CLAUDE-CHANGELOG.md
+## Workflow A：初次客製化（template placeholder 替換）
+
+適用於採用 template 後首次進入本 skill——偵測到 CLAUDE.md 仍有 `<Placeholder>` 或 `<!-- TEMPLATE NOTICE -->` 區塊，且對話已提供足夠資訊做替換。
+
+### Step A1：偵測未客製化狀態
+
+```bash
+grep -l '<Placeholder>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md 2>/dev/null
+grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
+```
+
+任一條件成立 → Workflow A 適用。
+
+### Step A2：從對話推導資訊
+
+從 User 的第一個需求或明確表述中提取：
+
+| Placeholder | 來源 |
+|-------------|------|
+| `<Project Name>` | User 提到的專案名 |
+| `<One-sentence description of what this project does>` | User 第一個需求的摘要 |
+| `<your framework, e.g., FastAPI / ...>` | User 選擇的 web framework（若提及） |
+| `<list project-specific dependencies here, ...>` | 明確提到的 SDK / DB / 第三方依賴 |
+| Architecture 目錄樹的 `<project-name>` / `<your-modules>` | 從需求推導的模組切分 |
+| `<YourName>` / `<your-email@example.com>` | Git 身份，可從 `git config user.name` / `user.email` 讀取 |
+
+若資訊不完整，**主動詢問缺失項**（一次問清，避免多輪來回）。尚不能決定的項目（例如詳細模組切分），保留既有範例結構並告知 User「待後續決策明確時由 Workflow B 補上」。
+
+### Step A3：展示完整替換計畫
+
+向 User 展示：
+
+```
+Template 初次客製化計畫
+
+偵測到未客製化項目：
+- CLAUDE.md: <!-- TEMPLATE NOTICE --> 區塊 + N 處 <Placeholder>
+- .claude/ 下 M 個檔案含 <YourName> / your-email@example.com
+
+替換對照：
+- <Project Name> → [實際名稱]
+- <One-sentence description ...> → [描述]
+- <your framework, ...> → [framework]
+- <YourName> → [Git 用戶名]
+- your-email@example.com → [Git email]
+- ...
+
+另將清理：
+- CLAUDE.md 頂端的 <!-- TEMPLATE NOTICE --> 區塊
+
+版本影響：
+- CLAUDE.md 當前版本保持不變（初次客製化為資訊補入，不算規範變動）
+- 或升 patch（+0.0.1，視為 Fixed 類）——由 User 選擇
+
+是否確認執行？
+```
+
+若 User 只想試跑 template、尚未決定專案方向，尊重其決定並 skip 此 workflow。
+
+### Step A4：批次替換與清理
+
+User 確認後執行（順序重要）：
+
+1. **移除 CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 區塊**（含前後空行）
+2. **替換 CLAUDE.md 各 `<Placeholder>`**（用 Step A2 收集的對照）
+3. **批次替換 `.claude/` 下的 `<YourName>` / `your-email@example.com`**：
+
+```bash
+# macOS
+find .claude -type f \( -name "*.md" -o -name "*.sh" \) -exec sed -i '' \
+  -e "s|<YourName>|<實際姓名>|g" \
+  -e "s|your-email@example.com|<實際 email>|g" {} +
+
+# Linux
+find .claude -type f \( -name "*.md" -o -name "*.sh" \) -exec sed -i \
+  -e "s|<YourName>|<實際姓名>|g" \
+  -e "s|your-email@example.com|<實際 email>|g" {} +
+```
+
+### Step A5：Commit
+
+初次客製化通常在尚未有功能分支時執行，直接在當前分支 commit：
+
+```bash
+git add .claude/
+git commit -m "chore(template): initial customization
+
+Replaced template placeholders with project-specific values.
+Removed TEMPLATE NOTICE block.
+
+Authored-By: <實際姓名> <實際 email>"
+```
+
+若 Step A3 選擇升 patch 版本，CLAUDE.md footer 升 `v<current>+0.0.1` 且 CLAUDE-CHANGELOG.md 同步新增一條 `Fixed` 條目（兩檔一起 commit）。
+
+### 完成後
+
+告知 User：「Template 已客製化完畢。後續任何規範 / 架構 / 技術堆疊變更會由本 skill 的 Workflow B 處理。」
+
+---
+
+## Workflow B：更新既有 CLAUDE.md 與 CLAUDE-CHANGELOG.md
 
 ### Step 1：分析需求是否影響 CLAUDE.md
 
