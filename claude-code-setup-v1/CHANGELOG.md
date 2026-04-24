@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.6.1] - 2026-04-24
+
+### Added
+- `.claude/skills/tdd-feature-workflow/SKILL.md` 新增「階段轉場 Gate」章節(4 列表格 + WHY 說明):補回 v1.6.0 精簡時不慎一同移除的階段轉場 gate(原 checklist 中最有價值的部分)。Gate 是比 TDD 更高層的流程紀律——即使測試全綠,SPEC Status 沒更新仍不得開 PR。其他 3 個 skill 不需此章節(maintaining-* 是線性 workflow、maintaining-readme-md 狀態表已是 gate 本身)
+
+---
+
 ## [v1.6.0] - 2026-04-24
 
 ### Added

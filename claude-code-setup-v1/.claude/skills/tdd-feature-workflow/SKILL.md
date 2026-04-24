@@ -196,6 +196,21 @@ Agent({
 
 ---
 
+## 階段轉場 Gate
+
+每階段進入下一階段前必須滿足的前提。任一 gate 未達 → **不得進入下一階段**:
+
+| 轉場 | Gate |
+|------|------|
+| 1 → 2 | SPEC.md 已更新 + User 確認 |
+| 2 → 3 | 全測試綠 + coverage 達標(70%+)+ SPEC Status 已從 In Progress 更新為 Completed |
+| 3 → 4 | verification-before-completion 通過 + PR 已建立 + CI checks 通過 |
+| 4 完成 | 文檔同步(README / CLAUDE 視情況)+ 分支已清理(local + remote) |
+
+這比 TDD 更高層——**即使測試全綠,SPEC Status 沒更新仍不得開 PR**,因為規格漂移會讓下次對話的 Claude 重複踩同樣的坑。
+
+---
+
 ## Gotchas(容易忘記的關鍵點)
 
 - **TDD 不可繞過**:無論採用何種 agent 輔助規劃,實作路徑必須經 `writing-plans → executing-plans`——繞過即埋品質債
