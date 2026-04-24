@@ -23,6 +23,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.7.0] - 2026-04-24
+
+### Added
+- `.claude/CLAUDE.md` 新增「Rules Index」章節(4 列表格):列出 4 個 rules 檔與各自管轄領域(程式碼實作 / 寫測試 / commit-push-PR / 寫 README)。原先 rules 引用散落在 Coding / Testing / Checklist 等章節,`documentation-style.md` 甚至完全沒被 CLAUDE.md 引用(只在 skill 裡)。統一 index 讓 Claude 能建立「哪個領域查哪個 rule」的 mental model
+- `.claude/CLAUDE.md` 新增「Safety & Hooks」章節(3 列表格 + guard 被擋時的處理提示):列出 3 個 PreToolUse hooks 的作用與行為(Advisory `exit 0` vs Guard `exit 1`)。原本 Architecture 樹有 `hooks/` 目錄但 hook 做什麼完全沒寫,Claude 只能在被擋下時才知其存在——補進讓 Claude 做 git / gh 操作前就帶著正確 context
+
+### Changed
+- `.claude/CLAUDE.md` Development Workflow 章節從 18 行壓縮為 10 行:刪除 4 階段 bullets(已在 `tdd-feature-workflow` skill 完整涵蓋),只留「嚴格 TDD 原則 + 指向 skill + 3 個常用 command」。單一真實來源在 skill
+- `.claude/CLAUDE.md` Available Agents & Skills 章節改名為「Available Resources」並從 29 行壓縮為 11 行:原先列出的 4 agents / 10 skills / 4 commands 是 `/agent-cheatsheet` 的過期子集(`agents/` 實際有 8 個;superpowers 還有多個 skill 被漏),結尾又寫「完整清單見 /agent-cheatsheet」—— 徒增維護負擔且誤導 Claude。新版只留 4-5 個核心入口 + 指向 `/agent-cheatsheet`,同時在本地 agents 描述補齊 8 個名稱
+- `.claude/CLAUDE.md` Coding Conventions 章節刪除 Naming 區塊(4 條 PascalCase / snake_case 等):該內容是 `code-style.md` 命名表格(7 列更完整)的退化子集。保留 Modular Design + SOLID(原則性內容,code-style.md 未涵蓋)+ 引用 code-style.md
+- `.claude/CLAUDE.md` 各章節開頭的「**核心原則**」精選保留:只留真正是原則的三處(Project Overview「SPEC 為真實來源」、Development Workflow「嚴格 TDD」、Testing「必須 TDD」)。Tech Stack / Architecture / Coding Conventions 原本的「核心原則」是該章節標題的復述,去除
+- `.claude/CLAUDE.md` Architecture 樹加註 `rules/` 與 `hooks/` 目錄指向對應新章節,幫助 Claude 與 user 從樹狀圖導覽到詳細說明
+- 整體 191 行 → 152 行(-20%),同時修掉 CLAUDE.md 的 8 個結構性問題(workflow/checklist 三重複述、agents 過期子集、Naming 重複 rule、核心原則氾濫、hooks 無提及、rules 無 index、meta-instruction 混淆、testing 單薄)
+
+### Removed
+- `.claude/CLAUDE.md` 整章「Development Checklist」(28 行)移除:內容 95% 與 Development Workflow 重複,且兩處都指向 `tdd-feature-workflow` skill 完整版——形成 CLAUDE.md 內兩份 + skill 一份共 3 份的三重複述。Single source of truth 歸於 skill(該 skill 已有完整 workflow + 階段轉場 gate + Gotchas)。刪除後連帶消滅原先 checklist 開頭的 meta-instruction(「此清單為靜態 reference...不修改本清單本身」),避免語意混淆
+
+---
+
 ## [v1.6.1] - 2026-04-24
 
 ### Added
