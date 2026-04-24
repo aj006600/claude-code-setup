@@ -33,7 +33,8 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。這代�
 | `maintaining-readme-md` skill | 本 skill Step 5 在 CLAUDE.md 變更包含 User-facing 項目時會建議啟用 readme skill |
 | `.claude/rules/git-rules.md` | 本 skill commit 時須遵循 commit message 格式（含 `Authored-By` trailer）、分支命名規範 |
 | `tdd-feature-workflow` skill | 分支策略須與功能分支流程協同，避免破壞功能 PR 的 commit 邏輯完整性 |
-| `.claude/CLAUDE-CHANGELOG.md` | 本 skill 每次更新 CLAUDE.md 時必須同步新增條目，兩檔在同一 commit |
+| `.claude/CLAUDE-CHANGELOG.md` | User 專案的 CLAUDE.md 變更歷史（空種子；首次客製化由 Workflow A 寫入 v1.0.0 baseline）。本 skill 每次更新 CLAUDE.md 時必須同步新增條目，兩檔在同一 commit |
+| `CHANGELOG.md`（template 根目錄） | Template 自身的演進歷史（v1.0.0 → 現在）。**此檔不屬於 user 專案**——不跟隨 `.claude/` 被 user 專案繼承。本 skill 不寫入此檔 |
 
 ### 優先順序原則
 1. **CLAUDE.md 是專案開發規範的真實來源**
@@ -133,9 +134,10 @@ Template 初次客製化計畫
 另將清理：
 - CLAUDE.md 頂端的 <!-- TEMPLATE NOTICE --> 區塊
 
-版本影響：
-- CLAUDE.md 當前版本保持不變（初次客製化為資訊補入，不算規範變動）
-- 或升 patch（+0.0.1，視為 Fixed 類）——由 User 選擇
+版本基線決策：
+- 預設：CLAUDE.md 版本 reset 為 v1.0.0，`Last Updated` 改為今日日期——代表這是 user 專案自己的規範起點，不繼承 template 內部的版本號
+- 同步：CLAUDE-CHANGELOG.md（目前為空種子）寫入 baseline entry `[v1.0.0] - <今日>`，標註 "adopted from claude-code-setup-v1 template v<X.Y.Z>" 與本次客製化內容
+- 若 User 明確要求保留 template 的當前版本號作為基線，則維持不變，但仍需寫入 CHANGELOG baseline entry
 
 是否確認執行？
 ```
@@ -162,7 +164,29 @@ find .claude -type f \( -name "*.md" -o -name "*.sh" \) -exec sed -i \
   -e "s|your-email@example.com|<實際 email>|g" {} +
 ```
 
-### Step A5：Commit
+### Step A5：Reset 版本基線並寫入 CLAUDE-CHANGELOG baseline
+
+1. **Reset CLAUDE.md footer**（預設策略）：
+   - `**Last Updated**` → 今日日期（`date +%Y-%m-%d`）
+   - `**Version**` → `v1.0.0`
+   - 若 User 於 Step A3 明確要求保留 template 版本號，則 skip 此步驟
+
+2. **寫入 CLAUDE-CHANGELOG.md baseline entry**：`.claude/CLAUDE-CHANGELOG.md` 從 template 繼承時為空種子，於 `[Unreleased]` 區塊下方新增：
+
+```markdown
+---
+
+## [v1.0.0] - <今日日期>
+
+### Added
+- Initial development guidelines adopted from claude-code-setup-v1 template (v<template version>) and customized for <Project Name>
+- Project Overview / Tech Stack / Architecture 章節依需求填入（詳見本次 commit）
+- Git 身份（作者名稱、email）批次替換為本專案 Git 設定
+```
+
+Template version 可從 `claude-code-setup-v1/CHANGELOG.md` 最新 entry 讀取；若無法取得則 fallback 使用 CLAUDE.md 原本的 footer 版本號。
+
+### Step A6：Commit
 
 初次客製化通常在尚未有功能分支時執行，直接在當前分支 commit：
 
@@ -172,11 +196,11 @@ git commit -m "chore(template): initial customization
 
 Replaced template placeholders with project-specific values.
 Removed TEMPLATE NOTICE block.
+Reset CLAUDE.md to v1.0.0 as this project's own baseline and wrote
+corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md.
 
 Authored-By: <實際姓名> <實際 email>"
 ```
-
-若 Step A3 選擇升 patch 版本，CLAUDE.md footer 升 `v<current>+0.0.1` 且 CLAUDE-CHANGELOG.md 同步新增一條 `Fixed` 條目（兩檔一起 commit）。
 
 ### 完成後
 
@@ -363,6 +387,10 @@ CLAUDE.md 的版本號遵循 [Semantic Versioning](https://semver.org/)：
 
 ### 與 CLAUDE.md 底部 metadata 的關係
 CLAUDE.md 底部的 `**Last Updated**` 與 `**Version**` 是「當前狀態快照」，提供快速識別；CLAUDE-CHANGELOG.md 是「完整變更歷史」。兩者資訊不得衝突。
+
+### 與 template 自身 CHANGELOG 的區分
+- **`.claude/CLAUDE-CHANGELOG.md`**：user 專案自己的 CLAUDE.md 演進史。本 skill 每次更新 CLAUDE.md 時寫入。
+- **`CHANGELOG.md`（template 根目錄）**：claude-code-setup-v1 template 自身的演進史（v1.0.0 → 現在）。此檔在 user 複製 `.claude/` 時**不會跟著過去**。本 skill **不寫入**此檔——它由 template maintainer 以其他流程維護。
 
 ---
 

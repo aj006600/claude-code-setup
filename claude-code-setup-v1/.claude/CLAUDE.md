@@ -40,7 +40,7 @@
 ├── .claude/                  # Claude Code 配置
 │   ├── CLAUDE.md             # 開發規範 (本文件)
 │   ├── SPEC.md               # 專案規格（由 maintaining-spec-md skill 建立）
-│   ├── CLAUDE-CHANGELOG.md   # CLAUDE.md 變更歷史
+│   ├── CLAUDE-CHANGELOG.md   # 本專案 CLAUDE.md 變更歷史（Keep a Changelog）
 │   ├── rules/                # 開發規範參考
 │   ├── skills/               # 專案專屬 skills
 │   ├── commands/             # Slash commands

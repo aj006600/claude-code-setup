@@ -27,7 +27,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 
 ### 4 Maintenance Skills
 - `maintaining-spec-md` — SPEC.md 建立 / 維護
-- `maintaining-claude-md` — CLAUDE.md 更新 + CLAUDE-CHANGELOG.md 同步
+- `maintaining-claude-md` — CLAUDE.md 更新 + 專案內 CLAUDE-CHANGELOG.md 同步
 - `maintaining-readme-md` — README.md + docs/ 更新（含 3 種文檔 templates）
 - `tdd-feature-workflow` — 4 階段 TDD 開發編排
 
@@ -132,29 +132,32 @@ Claude Code 會自動完成：
 ## Template 結構
 
 ```
-.claude/
-├── CLAUDE.md                 # 開發規範（需客製）
-├── CLAUDE-CHANGELOG.md       # CLAUDE.md 變更歷史
-├── settings.json             # Claude Code 設定（含 hook 註冊）
-├── rules/                    # 開發規範
-│   ├── code-style.md
-│   ├── testing-rules.md
-│   ├── git-rules.md
-│   └── documentation-style.md
-├── skills/                   # 專案專屬 skills
-│   ├── maintaining-spec-md/
-│   ├── maintaining-claude-md/
-│   ├── maintaining-readme-md/
-│   │   └── references/       # 3 份 doc templates
-│   └── tdd-feature-workflow/
-├── commands/                 # Slash commands
-├── agents/                   # Sub-agents
-└── hooks/
-    ├── commit-message-advisory.sh
-    └── secrets-scan-advisory.sh
-.github/
-└── workflows/
-    └── ci.yml                # GitHub Actions CI
+claude-code-setup-v1/
+├── README.md                     # Template 使用說明（本檔）
+├── CHANGELOG.md                  # Template 自身演進史（不複製到 user 專案）
+├── .claude/                      # User 複製此目錄到專案
+│   ├── CLAUDE.md                 # 開發規範（需客製；Workflow A 自動處理）
+│   ├── CLAUDE-CHANGELOG.md       # 空種子——user 專案自己的 CLAUDE.md 變更歷史
+│   ├── settings.json             # Claude Code 設定（含 hook 註冊）
+│   ├── rules/                    # 開發規範
+│   │   ├── code-style.md
+│   │   ├── testing-rules.md
+│   │   ├── git-rules.md
+│   │   └── documentation-style.md
+│   ├── skills/                   # 專案專屬 skills
+│   │   ├── maintaining-spec-md/
+│   │   ├── maintaining-claude-md/
+│   │   ├── maintaining-readme-md/
+│   │   │   └── references/       # 3 份 doc templates
+│   │   └── tdd-feature-workflow/
+│   ├── commands/                 # Slash commands
+│   ├── agents/                   # Sub-agents
+│   └── hooks/
+│       ├── commit-message-advisory.sh
+│       └── secrets-scan-advisory.sh
+└── .github/                      # User 同時複製此目錄
+    └── workflows/
+        └── ci.yml                # GitHub Actions CI
 ```
 
 ---
@@ -192,6 +195,16 @@ A: Skill 的 description 欄位決定何時觸發。若語境不在 description 
 
 ### Q: CLAUDE.md 版本號如何演進？
 A: 採 Semantic Versioning。`maintaining-claude-md` skill 會自動處理版本遞增與 CHANGELOG 條目。
+
+### Q: 為什麼有兩個 CHANGELOG？職責怎麼區分？
+A: 兩者追蹤不同範圍：
+
+| 檔案 | 追蹤範圍 | 讀者 | 跟隨 `.claude/` 複製嗎？ |
+|---|---|---|---|
+| `claude-code-setup-v1/CHANGELOG.md` | **Template 自身**的演進（skill / command / hook / rule / README 等） | Template 評估者、升級者 | 否（只存在於 template repo） |
+| `.claude/CLAUDE-CHANGELOG.md` | **User 專案**自己的 CLAUDE.md 規範演進 | User 專案的 team | 是（空種子，由 Workflow A 寫入首個 v1.0.0） |
+
+Template ship 出來的 `.claude/CLAUDE-CHANGELOG.md` 是空種子（只有 header 與 `[Unreleased]`）。首次執行 `maintaining-claude-md` Workflow A 時會自動寫入 baseline `v1.0.0` entry，標註 "adopted from claude-code-setup-v1 template vX.Y.Z"。之後所有 CLAUDE.md 變更都累積到這個檔案，和 template 自身的 `CHANGELOG.md` 互不干擾。
 
 ---
 
@@ -254,5 +267,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.2.0
+**Template Version**: v1.3.0
 **Last Updated**: 2026-04-24
