@@ -37,11 +37,12 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `/pre-pr-check` — PR 前完整檢查（tests、coverage、code-simplifier、SPEC、README hints）
 - `/agent-cheatsheet` — 可用資源速查
 
-### 2 Advisory Hooks
-- `commit-message-advisory.sh` — PreToolUse hook：檢查 `git commit` message 是否含 `Authored-By` trailer
-- `secrets-scan-advisory.sh` — PreToolUse hook：`git commit` / `git add` 前掃 staged 檔名（`.env`、`*.pem`、`*.key`、`credentials.json` 等）與 staged diff 中的已知 secret pattern（AWS key、GitHub token、OpenAI key、Slack token、私鑰 header）
+### 2 Advisory Hooks + 1 Guard Hook
+- `commit-message-advisory.sh` — PreToolUse hook：檢查 `git commit` message 是否含 `Authored-By` trailer（advisory）
+- `secrets-scan-advisory.sh` — PreToolUse hook：`git commit` / `git add` 前掃 staged 檔名（`.env`、`*.pem`、`*.key`、`credentials.json` 等）與 staged diff 中的已知 secret pattern（AWS key、GitHub token、OpenAI key、Slack token、私鑰 header）（advisory）
+- `external-ref-guard.sh` — PreToolUse hook：`git commit` / `gh pr create|edit|comment` / `gh issue create|edit|comment` 前掃 command text，偵測到指向外部 repo 的裸 reference（`owner/repo#N`、`https://github.com/owner/repo/(issues|pull)/N`）即**直接阻擋**，防止 GitHub cross-repo "mentioned in ..." backlink 外洩內容。反引號包起來的引用視為安全、放行
 
-兩者皆為 advisory only（`exit 0`，不阻擋）。
+兩個 `*-advisory.sh` 為 `exit 0` 不阻擋；`external-ref-guard.sh` 為 `exit 1` 阻擋（leak 不可逆、逃生門只需反引號包即可）。
 
 ### 1 CI Workflow
 - `.github/workflows/ci.yml` — GitHub Actions，PR 與 push 觸發 `ruff check` + `ruff format --check` + `mypy` + `pytest --cov`（與 `/pre-pr-check` 檢查項一致）
@@ -154,7 +155,8 @@ claude-code-setup-v1/
 │   ├── agents/                   # Sub-agents
 │   └── hooks/
 │       ├── commit-message-advisory.sh
-│       └── secrets-scan-advisory.sh
+│       ├── secrets-scan-advisory.sh
+│       └── external-ref-guard.sh
 └── .github/                      # User 同時複製此目錄
     └── workflows/
         └── ci.yml                # GitHub Actions CI
@@ -178,17 +180,24 @@ A: `tdd-feature-workflow` skill 大量引用 superpowers。若不用：
 1. 編輯 `.claude/skills/tdd-feature-workflow/SKILL.md` 各階段委派對象
 2. 將「啟用 `superpowers:xxx` skill」改為具體指令
 
-### Q: Advisory hooks 會擋住我的 commit 嗎？
-A: **不會**。兩個 hook（`commit-message-advisory.sh`、`secrets-scan-advisory.sh`）都是 advisory-only（`exit 0`），只在 stderr 輸出警告。若想升級為阻擋，編輯對應檔案將警告分支的 `exit 0` 改為 `exit 1`。
+### Q: Hooks 會擋住我的 commit 嗎？
+A: 分兩類：
 
-### Q: 如何關閉 hook？
-A: 編輯 `.claude/settings.json`，移除或清空 `hooks` 區塊：
+| 類別 | Hook | 行為 |
+|------|------|------|
+| Advisory | `commit-message-advisory.sh`、`secrets-scan-advisory.sh` | `exit 0`，只在 stderr 輸出警告，不阻擋 |
+| Guard | `external-ref-guard.sh` | `exit 1`，偵測到外部 repo 裸 reference 直接阻擋 |
 
-```json
-{
-  "hooks": {}
-}
-```
+Guard hook 設計為阻擋是因為 GitHub cross-repo backlink 一旦建立即不可逆（watcher 已收到通知），且逃生門極簡——只需把引用用反引號 `` ` `` 包起來即可通過（GitHub 對 code span 不做 reference parsing）。
+
+若想把 advisory 升級為阻擋，編輯對應檔案將警告分支的 `exit 0` 改為 `exit 1`；若想把 guard 降為 advisory 或臨時 bypass，見下題。
+
+### Q: 如何關閉或 bypass hook？
+A: 編輯 `.claude/settings.json`：
+
+- **全部關閉**：清空 `hooks` 區塊 `{ "hooks": {} }`
+- **只關閉某一個**：從 `PreToolUse[].hooks[]` 陣列移除對應 entry
+- **臨時 bypass `external-ref-guard`**：移除該 entry、完成操作、再加回來（或用反引號包引用，無須改 settings）
 
 ### Q: Skill 沒有自動觸發？
 A: Skill 的 description 欄位決定何時觸發。若語境不在 description 涵蓋範圍內，可手動啟用：使用 Claude Code 的 Skill tool，傳入 `skill: "maintaining-spec-md"` 等。
@@ -267,5 +276,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.4.0
+**Template Version**: v1.5.0
 **Last Updated**: 2026-04-24

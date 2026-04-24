@@ -23,6 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.5.0] - 2026-04-24
+
+### Added
+- `.claude/hooks/external-ref-guard.sh`：PreToolUse **guard** hook（`exit 1` 阻擋，不同於既有兩個 advisory hook）。`git commit` / `gh pr create|edit|comment` / `gh issue create|edit|comment` 前掃 command text，偵測 `owner/repo#N` 與 `https://github.com/owner/repo/(issues|pull)/N` 指向**外部 repo** 的裸 reference 即阻擋（本 repo 由 `git remote get-url origin` 推導）。反引號包起來的引用視為安全、放行。防止 GitHub cross-repo "mentioned in ..." backlink 把本專案 commit / PR 內容外洩到不相關 open-source 專案 issue——leak 不可逆（watcher 已收到通知），故採阻擋而非 advisory
+- `.claude/rules/git-rules.md` 新增「Cross-repo 引用安全格式」章節：說明 GitHub 如何自動建立 backlink、提供安全寫法對照表（反引號包、拆斷 `#` 語法）、本 repo 內部引用不受影響、自動防護機制說明
+- `.claude/commands/pre-pr-check.md` Level 2 新增 2.6 步驟：掃 PR body 草稿（含 `--body-file` 內容，補位 hook 無法讀取的情境）與本 branch commit messages 的外部 repo 裸 reference；final report 新增對應欄位
+
+### Changed
+- `.claude/settings.json` PreToolUse hooks 陣列新增 `external-ref-guard.sh` entry
+- `README.md` 「Advisory Hooks」章節改為「2 Advisory Hooks + 1 Guard Hook」，明確區分 advisory（`exit 0`）與 guard（`exit 1`）兩種行為；樹狀圖 `hooks/` 新增對應檔；FAQ「Hooks 會擋住我的 commit 嗎？」與「如何關閉 hook？」重寫，涵蓋新 guard 類別與 bypass 指引；Template Version 升級 v1.5.0
+
+---
+
 ## [v1.4.0] - 2026-04-24
 
 ### Removed

@@ -12,6 +12,10 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/secrets-scan-advisory.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/external-ref-guard.sh"
           }
         ]
       }

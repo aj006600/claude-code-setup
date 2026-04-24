@@ -73,3 +73,28 @@ git commit -m "perf(search): add caching"
 - SPEC.md 變更應**獨立**成一個 commit
 - 提交前使用 `code-simplifier:code-simplifier` agent 審查和優化代碼
   - 若有修改代碼，須遵循 TDD：更新測試 → 修改代碼 → 執行相關測試確認通過 → 執行所有測試確認無 regression
+
+---
+
+## Cross-repo 引用安全格式
+
+避免在 commit message 或 PR / issue body 裡直接寫 `owner/repo#N`、`https://github.com/owner/repo/issues/N`、`https://github.com/owner/repo/pull/N` 指向**其他 repo**：GitHub 會自動在該外部 issue 建立 "mentioned in ..." backlink，通知對方 watcher 並把本專案的內容推播過去——一旦發生即不可逆（即使事後 edit message / body 移除引用，通知已送達）。
+
+### 安全寫法
+
+| 情境 | 不安全 | 安全 |
+|------|--------|------|
+| Commit message | `related to foo/bar#123` | `` related to `foo/bar#123` `` |
+| PR body 引用外部 issue | `see https://github.com/foo/bar/issues/42` | `` see `https://github.com/foo/bar/issues/42` `` |
+| 完全不要可點連結 | `foo/bar#123` | `foo/bar issue 編號 123` |
+
+**原理**：GitHub 對 inline code span（反引號包起來的內容）不做 reference parsing，不會產生 backlink。
+
+### 本 repo 內部引用不受影響
+
+`#123`（無 `owner/repo` 前綴）或 `https://github.com/<本 repo>/issues/123` 屬於內部引用，屬於預期行為，**不需**用反引號包。
+
+### 自動防護
+
+- `.claude/hooks/external-ref-guard.sh`：PreToolUse hook，`git commit` / `gh pr create|edit|comment` / `gh issue create|edit|comment` 前掃 command text，偵測到指向外部 repo 的裸 reference → **直接阻擋**（`exit 1`）。用反引號包或改寫後即可通過。本 repo 由 `git remote get-url origin` 推導。
+- `/pre-pr-check` command 亦會在 PR 建立前執行同樣掃描，補位 `--body-file` 或網頁撰寫情境。

@@ -61,6 +61,18 @@ fi
 ```
 If type errors found → WARNING. Summarize top issues; do not block.
 
+### 2.6 External-repo reference scan
+
+Scan for `owner/repo#N` shortcuts and `https://github.com/owner/repo/(issues|pull)/N` URLs that point to OTHER repos than this one's origin. These would create GitHub "mentioned in ..." backlinks and leak PR content to unrelated projects' issues.
+
+Scope to scan:
+- The PR body draft you are about to pass to `gh pr create` (including `--body-file` contents, which the `external-ref-guard.sh` hook cannot see)
+- Commit messages on this branch since it diverged from the base branch: `git log <base>..HEAD --format=%B`
+
+Derive current repo from `git remote get-url origin`. Skip refs already wrapped in backticks (GitHub suppresses cross-refs inside inline code spans).
+
+If any external refs found → WARNING. Show each finding with its source (PR body / which commit). Suggest wrapping in backticks or rephrasing per `.claude/rules/git-rules.md` Cross-repo 引用安全格式. Do not block at this level — the hook will block at the actual `git commit` / `gh pr create` invocation.
+
 **Note**: Level 2.3-2.5 are tool-conditional — unavailable tools silently skip. Level 1 (tests) remains the only hard gate. This matches `code-style.md`'s "Recommended Tools" positioning.
 
 ## Level 3: Hints (inform only, no gate)
@@ -84,6 +96,7 @@ Pre-PR Check Results
 [Level 2] ruff check: clean | <N> issues | skipped (not installed)
 [Level 2] ruff format: clean | drift detected | skipped (not installed)
 [Level 2] mypy: clean | <N> type errors | skipped (not installed)
+[Level 2] external-ref scan: clean | <N> cross-repo refs found (see above)
 [Level 3] SPEC.md: up to date | Status needs update for feature <Y>
 [Level 3] README: no user-facing change | user-facing changes detected
 
