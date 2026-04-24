@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.8.1] - 2026-04-24
+
+### Fixed
+- `maintaining-claude-md/SKILL.md` Workflow B Step B3:`docs/update-claude-md` 分支已存在時,原設計建議加日期後綴開平行分支。此行為會造成兩個 PR 同時修改同檔案、merge 衝突不可避免。改為停下來回報 User,由 User 決定接續 commit 到既有分支 / 先處理前次 PR / 其他
+- `maintaining-claude-md/SKILL.md` Workflow A Step A5:skill 原本跨邊界讀 template 根的 `CHANGELOG.md` 抓 template version,在 user 只 copy `.claude/` 到專案的常見情境下會 silent fallback 到 CLAUDE.md footer 佔位符,產出垃圾 provenance。版本號收集改併入 Step A3 向 User 一次性確認(若 User 不確定,填 `unknown`),Step A5 使用該確認值寫入 baseline entry
+
+---
+
 ## [v1.8.0] - 2026-04-24
 
 ### Changed
