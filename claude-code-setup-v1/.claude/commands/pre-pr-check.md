@@ -29,7 +29,13 @@ Agent({
   prompt: "Review files changed in this branch compared to the dev base branch. Focus on: duplication, overly complex code, missing abstractions, unclear naming. Report findings WITHOUT modifying any files."
 })
 ```
-If suggestions returned → WARNING. Summarize findings.
+If suggestions returned → 不只 summarize,執行三步:
+
+1. **詳細呈現**每條建議:具體位置、修改前後對比、agent 的理由
+2. **CLAUDE 附上自己的判斷**:每條標 `[強烈建議]` / `[可選]` / `[不同意](理由)`
+3. **等待 User 決定**:明確提問「要採納哪些?」
+
+**重要**:User 決定採納任何條目後,不在此 command 內直接改——交棒給 `tdd-feature-workflow` 階段 3.3 走 TDD 流程(更新測試 → 修改代碼 → 重跑全測試)。
 
 ### 2.3 Lint via `ruff check` (if available)
 ```bash
@@ -77,9 +83,11 @@ If any external refs found → WARNING. Show each finding with its source (PR bo
 
 ## Level 3: Hints (inform only, no gate)
 
-### 3.1 SPEC.md Status
-Read `.claude/SPEC.md`. For the feature being worked on, is Status `In Progress` or `Completed`?
-If outdated → hint: suggest activating `maintaining-spec-md` skill.
+### 3.1 SPEC.md 對應性
+Read `.claude/SPEC.md`. 本次 branch 的變更是否已在 SPEC 中有對應的 Functional Requirement?
+- 有對應且 Acceptance Criteria 準確 → 通過
+- 有對應但實作中產生新 Acceptance / 細節變化未寫回 → hint: 啟用 `maintaining-spec-md` 回寫
+- 無對應 Functional Requirement(新功能未寫入 SPEC) → hint: 啟用 `maintaining-spec-md` 補上
 
 ### 3.2 README / docs sync
 Inspect changed files in this branch. Do they include user-facing changes (new features, API changes, install step changes, new env vars, new dependencies)?
@@ -97,7 +105,7 @@ Pre-PR Check Results
 [Level 2] ruff format: clean | drift detected | skipped (not installed)
 [Level 2] mypy: clean | <N> type errors | skipped (not installed)
 [Level 2] external-ref scan: clean | <N> cross-repo refs found (see above)
-[Level 3] SPEC.md: up to date | Status needs update for feature <Y>
+[Level 3] SPEC.md: up to date | branch changes not yet reflected in SPEC
 [Level 3] README: no user-facing change | user-facing changes detected
 
 Summary:

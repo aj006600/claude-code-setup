@@ -23,6 +23,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.8.0] - 2026-04-24
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 階段 1 流程重排:`superpowers:brainstorming` 從「SPEC 之後的選配」改為「SPEC 之前的判斷分支」(需求明確則直接進 SPEC,模糊則先 brainstorming 釐清再進 SPEC)。原設計箭頭方向讓 skill 先寫草稿、再回頭討論,邏輯顛倒
+- `tdd-feature-workflow/SKILL.md` 階段 3.3 處理 code-simplifier 建議強化為 5 步流程:詳細呈現 → CLAUDE 附判斷(`[強烈建議]` / `[可選]` / `[不同意]`) → 與 User 討論 → 採納的條目走 TDD → 不採納的記錄理由。原本「若採納 → 走 TDD」被動語氣容易被跳過,現強制「先討論再動手」
+- `/pre-pr-check` Level 2.2 同步強化:code-simplifier agent 結果不只 WARNING,要求執行「詳細呈現 + CLAUDE 判斷 + User 決定」三步,並明確交棒給 tdd-feature-workflow 階段 3.3 走 TDD
+- `/pre-pr-check` Level 3.1 從「SPEC.md Status 檢查」改為「SPEC.md 對應性檢查」(branch 變更是否在 SPEC 有對應 Functional Requirement、是否有新 Acceptance 需回寫)
+- `/pre-dev-check` Step 5 SPEC 功能報告從 `(Priority: <P>, Status: <S>)` 改為 `listed with <N> Acceptance Criteria`
+- `/project-status` SPEC progress section 改為 SPEC overview:只展示 `Functional Requirements: <N>`,不再計算 Not Started / In Progress / Completed
+- `tdd-feature-workflow/SKILL.md` 階段 2.10 從「更新 Status」改為「回寫 SPEC.md 的實作發現」:若實作中產生新 Acceptance / 邊界條件 / 細節變化 → 回寫 SPEC;沒變化可跳過
+- `tdd-feature-workflow/SKILL.md` 階段轉場 Gate 2→3 條件從「SPEC Status 已從 In Progress 更新為 Completed」改為「實作中產生的新需求 / 細節變化已回寫 SPEC(若有)」
+- `maintaining-spec-md/SKILL.md` description、觸發表、Workflow A/B 全面清理:移除 Status / Priority / Non-Functional / Open Questions 所有引用
+- `maintaining-spec-md/SKILL.md` 新增說明「SPEC 描述『專案是什麼』的靜態契約;『做到哪了』由 git branch / PR merge 反映」
+
+### Removed
+- `references/spec-template.md` Functional Requirement 的 `Priority` 與 `Status` 欄位:一個 PR 對應一個需求時,Priority 失去意義;Status 與 git branch / PR merge 狀態機重複
+- `references/spec-template.md` `Goals & Success Metrics` 子章節:屬於浮動資訊,不適合放靜態契約
+- `references/spec-template.md` 整個 `Non-Functional Requirements` 章節(效能 / 安全 / 可靠性 / 擴展性 / 可維護性 / 可用性):Non-Functional 需求實際上屬於 Constraints(Technical Context)或各 Functional Requirement 自己的 Acceptance,獨立章節容易成為空殼
+- `references/spec-template.md` 整個 `Open Questions` 章節:未解問題應該在討論中解決或進 Functional Requirements 的 Acceptance,不適合以 TODO 清單形式留在契約文件
+- `maintaining-spec-md/SKILL.md` 「Open Questions 解答」觸發條件、Step A2 優先級收集、Step A3 Priority 與 Open Questions 標記、Step A4 優先級確認問題、Step A5 待解問題數回報、Step A6 按 Priority 實作
+- `maintaining-spec-md/SKILL.md` Pattern 示例中 `**Priority**: Medium / **Status**: Not Started` 行
+
+---
+
 ## [v1.7.0] - 2026-04-24
 
 ### Added

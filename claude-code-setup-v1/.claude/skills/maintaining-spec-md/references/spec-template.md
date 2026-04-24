@@ -4,6 +4,8 @@
 
 使用方式:Skill 在首次建立 SPEC.md 時讀取本檔並依下方結構填寫,將 `[...]`、`<...>` 等佔位符替換為 User 提供的實際資訊。
 
+SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git branch / PR merge 反映,SPEC 不追蹤進度。
+
 ---
 
 ## 完整結構
@@ -23,10 +25,6 @@
 專案**不會**處理的功能或範圍(明確邊界):
 - [排除項目 1]
 - [排除項目 2]
-
-### Goals & Success Metrics
-- **目標 1**: [可衡量的目標,例如:提升效能 50%]
-- **目標 2**: [可衡量的目標]
 
 ---
 
@@ -51,8 +49,6 @@
 ## Functional Requirements
 
 ### [功能名稱,例如:User Authentication]
-**Priority**: `High` / `Medium` / `Low`
-**Status**: `Not Started` / `In Progress` / `Completed`
 
 - **Description**: [功能的詳細描述,說明做什麼]
 - **User Needs**: [使用者為什麼需要這個功能,解決什麼痛點]
@@ -62,35 +58,6 @@
 
 **Technical Notes**:
 - [實作上的技術考量或注意事項]
-
----
-
-## Non-Functional Requirements
-
-### Performance
-- [效能需求,例如:API 回應時間 < 200ms]
-
-### Security
-- [安全需求,例如:所有敏感資料需加密]
-
-### Reliability & Availability
-- [可靠性需求,例如:系統可用性 99.9%]
-
-### Scalability
-- [擴展性需求]
-
-### Maintainability
-- [例如:程式碼覆蓋率 > 70%]
-
-### Usability
-- [使用者體驗需求]
-
----
-
-## Open Questions
-尚未解決或需進一步釐清的事項:
-- [ ] [問題 1]
-- [ ] [問題 2]
 
 ---
 

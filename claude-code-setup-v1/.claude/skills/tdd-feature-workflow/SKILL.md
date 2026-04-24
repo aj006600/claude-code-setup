@@ -51,23 +51,25 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 
 ### 階段 1:需求確認與設計
 
-**目的**:SPEC.md 先行,實作跟著規範走。
+**目的**:SPEC.md 先行,實作跟著規範走。先與 User 討論釐清需求,再固化成 SPEC——避免 SPEC 草稿跑在理解前面。
 
 ```
 User 提需求
     ↓
-[啟用 maintaining-spec-md]
-    ↓
-Skill 產出 SPEC 更新 diff → User 確認
-    ↓
-(選配)需求仍模糊? → 啟用 superpowers:brainstorming 深化設計
-    ↓
-SPEC.md 更新完成 → 進入階段 2
+需求明確? ── 否 → 啟用 superpowers:brainstorming 討論釐清
+    ↓ 是                                          ↓
+    └──────────────┬──────────────────────────────┘
+                   ↓
+          啟用 maintaining-spec-md
+                   ↓
+        Skill 產出 SPEC 更新 diff → User 確認
+                   ↓
+            進入階段 2
 ```
 
-若 SPEC.md 顯示此功能已 `In Progress`:不需重啟 `maintaining-spec-md`,直接繼續。
+若 SPEC.md 已包含此功能:不需重啟 `maintaining-spec-md`,直接繼續。
 
-**何時啟用 `brainstorming`**:需求描述抽象、有多個實作方向但 trade-off 不明、User 想先聊設計再動手。
+**何時啟用 `brainstorming`**:需求描述抽象、有多個實作方向但 trade-off 不明、User 想先聊設計再動手。討論在 SPEC 之前,而非之後——否則會先寫錯的 SPEC 再回頭改。
 
 ---
 
@@ -123,8 +125,8 @@ Agent({
 
 測試 / 覆蓋率指令依 CLAUDE.md Tech Stack 章節決定;`/pre-pr-check` command 會在階段 3 統一驗證。
 
-#### 2.10 更新 SPEC.md Status
-啟用 `maintaining-spec-md` 更新 Status(`In Progress` → `Completed`)、勾選已達成的 Acceptance Criteria。
+#### 2.10 回寫 SPEC.md 的實作發現
+若實作中產生新的 Acceptance、邊界條件、或需求細節變化 → 啟用 `maintaining-spec-md` 回寫 SPEC,並勾選已達成的 Acceptance Criteria checkbox。沒有變化可跳過;SPEC 本身不追蹤進度(進度由 git branch / PR merge 反映)。
 
 ---
 
@@ -139,7 +141,14 @@ Agent({
 - Level 3(SPEC / README 提示)→ 啟用對應 maintaining-* skill
 
 #### 3.3 處理 `code-simplifier:code-simplifier` 建議
-若採納建議修改代碼 → **遵循 TDD**:更新測試 → 重跑相關測試 → 重跑所有測試確認無 regression。
+
+Agent 結果出來後**不是僅 warning**,執行五步:
+
+1. **詳細呈現**給 User 每條建議:具體位置、修改前後對比、agent 的理由
+2. **CLAUDE 附上自己的判斷**:每條標 `[強烈建議]` / `[可選]` / `[不同意](理由)`——不要純 relay agent 輸出
+3. **與 User 討論**決定採納哪些,明確取得決定
+4. 採納的條目 → **遵循 TDD**:更新測試 → 修改代碼 → 重跑相關測試 → 重跑全測試確認無 regression
+5. 不採納的條目 → 記錄理由到 PR description,方便 review 階段討論
 
 #### 3.4 Commit + Push + PR(二選一)
 
@@ -203,11 +212,11 @@ Agent({
 | 轉場 | Gate |
 |------|------|
 | 1 → 2 | SPEC.md 已更新 + User 確認 |
-| 2 → 3 | 全測試綠 + coverage 達標(70%+)+ SPEC Status 已從 In Progress 更新為 Completed |
+| 2 → 3 | 全測試綠 + coverage 達標(70%+)+ 實作中產生的新需求 / 細節變化已回寫 SPEC(若有) |
 | 3 → 4 | verification-before-completion 通過 + PR 已建立 + CI checks 通過 |
 | 4 完成 | 文檔同步(README / CLAUDE 視情況)+ 分支已清理(local + remote) |
 
-這比 TDD 更高層——**即使測試全綠,SPEC Status 沒更新仍不得開 PR**,因為規格漂移會讓下次對話的 Claude 重複踩同樣的坑。
+這比 TDD 更高層——**即使測試全綠,若本次改動產生的新需求 / 細節變化未寫回 SPEC,下次對話的 Claude 會失去 context 重複踩同樣的坑**。
 
 ---
 

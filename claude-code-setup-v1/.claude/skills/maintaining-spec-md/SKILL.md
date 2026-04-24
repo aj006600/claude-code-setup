@@ -1,6 +1,6 @@
 ---
 name: maintaining-spec-md
-description: Use when the user proposes new features, modifies requirements, changes scope or acceptance criteria, discovers technical constraints affecting requirements, updates feature status, or when API / data model / architecture changes affect specs. Also use when bug fixes reveal requirement misunderstandings, or when the project has no SPEC.md yet. Trigger proactively even without explicit mention of "SPEC.md" — any conversation touching requirements, features, scope, priority, acceptance criteria, or project goals should invoke this skill. Keeping SPEC.md synchronized with implementation is load-bearing for this project.
+description: Use when the user proposes new features, modifies requirements, changes scope or acceptance criteria, discovers technical constraints affecting requirements, or when API / data model / architecture changes affect specs. Also use when bug fixes reveal requirement misunderstandings, or when the project has no SPEC.md yet. Trigger proactively even without explicit mention of "SPEC.md" — any conversation touching requirements, features, scope, acceptance criteria, or project goals should invoke this skill. Keeping SPEC.md synchronized with implementation is load-bearing for this project.
 ---
 
 # Maintaining SPEC.md
@@ -14,9 +14,11 @@ description: Use when the user proposes new features, modifies requirements, cha
 實務痛點是「規格 / 實作 / AI 記憶」三者脫節:
 - 新需求 → 直接動手 → 規格沒更新 → 下次對話失去 context
 - 技術限制 → 靜默調整需求 → 規格描述變成謊言
-- 功能完成 → 沒人標 Status → 無法判斷進度
+- 實作中新發現的 Acceptance / 邊界條件沒寫回 SPEC → 規格漂移
 
 **修改實作而不修改 SPEC.md 就是契約違約。** 本 skill 強制在動手前校準規格。
+
+SPEC 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git branch / PR merge 反映,SPEC 不追蹤進度。
 
 ---
 
@@ -24,12 +26,11 @@ description: Use when the user proposes new features, modifies requirements, cha
 
 | 類別 | 何時觸發 |
 |------|---------|
-| 需求變更 | 新功能 / 需求修改 / 優先級或範圍調整 |
-| 實作發現 | 技術限制、需求不明、需新增依賴、Non-functional 需求需明確化 |
+| 需求變更 | 新功能 / 需求修改 / 範圍調整 |
+| 實作發現 | 技術限制、需求不明、需新增依賴 |
 | 程式碼改動 | API / schema / 架構 / 外部依賴改變 |
-| 狀態變化 | 功能完成 → 更新 Status;Acceptance Criteria 達成 → 勾選 |
+| Acceptance 達成 | 功能完成 → 勾選已達成的 Acceptance Criteria checkbox |
 | Bug 揭示 | Bug 揭示原需求錯誤 → 更新 Description / Acceptance |
-| Open Questions 解答 | 從 Open Questions 移除並更新對應章節 |
 | 專案無 SPEC.md | 執行 Workflow A 建立初始版本 |
 
 判斷要點:若只是內部實作細節(例:換內部變數名)**不需**更新 SPEC.md,直接繼續實作。
@@ -44,7 +45,7 @@ Read 或 Glob `.claude/SPEC.md` → 存在則改走 Workflow B。
 ### Step A2:向 User 收集需求
 用自然對話或 AskUserQuestion 收集:
 1. **專案目的與背景**:要解決什麼問題?目標使用者?
-2. **核心功能需求**(至少 2-3 個):功能清單 + 優先級(High / Medium / Low)
+2. **核心功能需求**(至少 2-3 個):功能清單
 3. **技術環境**:語言版本、外部依賴、技術限制
 4. **範圍邊界**:哪些**不在**範圍內?
 
@@ -53,23 +54,21 @@ Read 或 Glob `.claude/SPEC.md` → 存在則改走 Workflow B。
 ### Step A3:草擬初始 SPEC.md
 讀 `references/spec-template.md` 並依結構填寫:
 - 已知資訊填入對應欄位;未知標 `[待確認]`
-- Functional Requirements 至少 2-3 個,各含 Priority 與初步 Acceptance Criteria
-- 未解問題列 Open Questions
+- Functional Requirements 至少 2-3 個,各含初步 Acceptance Criteria
 - Change Log 第一行:`Initial specification`
 - 版本號 `v1.0.0`、Last Updated 為當日
 
 ### Step A4:展示並確認
-**不要**直接 Write 檔案。在對話中展示完整內容 + 摘要(專案目標、功能數、優先級分布、待解問題),請 User 確認:
+**不要**直接 Write 檔案。在對話中展示完整內容 + 摘要(專案目標、功能數),請 User 確認:
 1. 需求理解是否正確?
-2. 功能優先級是否合理?
-3. 驗收標準是否清楚?
-4. 有無遺漏?
+2. 驗收標準是否清楚?
+3. 有無遺漏?
 
 ### Step A5:User 確認後建立檔案
-Write 到 `.claude/SPEC.md`,告知檔案位置、版本、功能數、待解問題數。
+Write 到 `.claude/SPEC.md`,告知檔案位置、版本、功能數。
 
-### Step A6:按 Priority 實作
-Re-read SPEC.md 確認理解,按 High → Medium → Low 進行。實作中發現需求需調整 → 轉 Workflow B。
+### Step A6:依 User 決定順序實作
+Re-read SPEC.md 確認理解,與 User 討論實作順序。實作中發現需求需調整 → 轉 Workflow B。
 
 ---
 
@@ -78,8 +77,8 @@ Re-read SPEC.md 確認理解,按 High → Medium → Low 進行。實作中發�
 ### Step B1:識別變更觸發點
 **暫停實作**,自問:
 - 這是新需求、需求修改、還是實作細節?
-- 影響哪些章節?(Overview / Functional / Technical Context / Non-Functional / Open Questions)
-- 是否調整 Acceptance / Priority / In-Out of Scope?
+- 影響哪些章節?(Overview / Functional / Technical Context)
+- 是否調整 Acceptance / In-Out of Scope?
 
 只是實作細節 → 不更新 SPEC,繼續實作。
 
@@ -142,7 +141,7 @@ User 確認後:
 | 變更類型 | 遞增 | 範例 |
 |---------|------|------|
 | 重大架構變更 / 破壞性改動 / 移除既有功能 / API 重構 | Major | v1.5.2 → v2.0.0 |
-| 新需求(Functional / Non-Functional) | Minor | v1.0.0 → v1.1.0 |
+| 新需求(Functional Requirements) | Minor | v1.0.0 → v1.1.0 |
 | 修改既有需求細節(Acceptance、Description、Constraints) | Minor | v1.1.0 → v1.2.0 |
 | 文字修正、錯字、格式 | Patch | v1.1.0 → v1.1.1 |
 
@@ -177,7 +176,6 @@ User 確認後:
     SPEC.md 更新建議
     ...
     + ### Data Export
-    + **Priority**: Medium / **Status**: Not Started
     + - **Description**: 允許匯出資料為 CSV 格式
     + - **Acceptance Criteria**:
     +   - [ ] 支援匯出所有資料列

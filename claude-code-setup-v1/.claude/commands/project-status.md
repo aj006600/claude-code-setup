@@ -22,11 +22,10 @@ Read the footer of these files to extract `Version` and `Last Updated`:
 - `.claude/CLAUDE.md`
 - `.claude/CLAUDE-CHANGELOG.md` (first version entry)
 
-### SPEC.md progress (if exists)
-Read `.claude/SPEC.md` and count occurrences of:
-- `Status: Not Started` → N_not_started
-- `Status: In Progress` → N_in_progress
-- `Status: Completed` → N_completed
+### SPEC.md overview (if exists)
+Read `.claude/SPEC.md` and count `### ` headings under `## Functional Requirements` → N_features.
+
+SPEC 不追蹤進度(進度由 git branch / PR merge 反映);這裡只展示功能總數作為 baseline。
 
 ## Present as
 
@@ -37,9 +36,7 @@ Branch: <branch-name> (<sync status with remote>)
 Uncommitted: <N> files changed
 
 SPEC.md: <version> (<date>)
-- Not Started: <X> features
-- In Progress: <Y> features
-- Completed: <Z> features
+- Functional Requirements: <N>
 
 CLAUDE.md: <version> (<date>)
 

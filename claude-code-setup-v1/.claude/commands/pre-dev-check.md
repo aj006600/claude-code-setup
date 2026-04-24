@@ -37,7 +37,7 @@ If any test fails → **STOP**. Do not proceed with new feature work on a failin
 Read `.claude/SPEC.md`. Ask User what feature they plan to work on. Verify:
 - Feature listed in Functional Requirements?
 - If not → suggest activating `maintaining-spec-md` skill first
-- If yes → report Priority and Acceptance Criteria
+- If yes → report its Acceptance Criteria
 
 ## Report format
 
@@ -47,7 +47,7 @@ Pre-dev check passed
 
 Branch: dev (up to date with origin)
 Tests: <X> passed / 0 failed
-SPEC.md: <feature Y> listed (Priority: <P>, Status: <S>)
+SPEC.md: <feature Y> listed with <N> Acceptance Criteria
 
 Ready to create feature branch: feat/<feature-name>
 ```
