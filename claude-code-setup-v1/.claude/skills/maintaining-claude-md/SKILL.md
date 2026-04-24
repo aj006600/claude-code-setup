@@ -183,8 +183,6 @@ CLAUDE.md 更新與任何功能分支無關(例:User 單獨提規範調整),建�
 
 ```bash
 git checkout -b docs/update-claude-md
-# 若分支已存在(同日多次更新、前次 PR 未 merge)用日期後綴避免衝突:
-# git checkout -b docs/update-claude-md-$(date +%Y%m%d)
 
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines
@@ -193,6 +191,8 @@ Authored-By: <YourName> <your-email@example.com>"
 git push origin docs/update-claude-md
 # 建立 PR 到 dev
 ```
+
+若 `docs/update-claude-md` 已存在(本地或遠端,通常代表前次 PR 未 merge):停下來回報 User,由 User 決定接續 commit 到既有分支、先處理掉既有 PR(merge / close)再開新 branch,或其他處置。
 
 ### Step B4:必須同步完成的三項
 
