@@ -11,7 +11,12 @@
 
 ## Footer 格式
 
-所有文檔結尾統一使用：
+### 需 footer 的檔案類型
+
+- `.claude/CLAUDE.md`：主規範，與 `CLAUDE-CHANGELOG.md` pair，由 `maintaining-claude-md` skill 維護
+- User 專案的產品文檔：`SPEC.md`、`README.md`、`docs/*.md`
+
+統一格式：
 
 ```markdown
 ---
@@ -21,8 +26,13 @@
 ```
 
 - `**Last Updated**`：必填，ISO 8601 日期格式（YYYY-MM-DD）
-- `**Version**`：強烈建議，採 [Semantic Versioning](https://semver.org/)
-  - 例外：CHANGELOG 類檔案（採 [Keep a Changelog](https://keepachangelog.com/) 格式）不需 Version footer
+- `**Version**`：必填，採 [Semantic Versioning](https://semver.org/)
+
+### 不需 footer 的檔案類型
+
+- `.claude/rules/*.md`：規範類參考文件，版本追蹤由專案 CHANGELOG 代管；per-rule versioning 會造成各 rule 版本號互不相干、user 也不會每次編輯都同步，是反模式
+- `.claude/skills/*/SKILL.md`：由 template 自身 `CHANGELOG.md` 追蹤演進
+- CHANGELOG 類檔案：本身即為歷史紀錄（Keep a Changelog 格式），不需再加 footer
 
 ## 標題層級
 
@@ -109,11 +119,6 @@
 - [ ] 標題層級正確（`#` → `##` → `###`）
 - [ ] 程式碼區塊有正確的語言標記
 - [ ] 架構或流程使用 Mermaid 圖表
-- [ ] Footer 包含 `**Last Updated**` + `**Version**`（CHANGELOG 類例外）
+- [ ] Footer 包含 `**Last Updated**` + `**Version**`（僅 user 產品文檔；rules、SKILL.md、CHANGELOG 不需）
 - [ ] 內文有適當的交叉連結
 - [ ] 章節順序符合對應模板（Service / Reference / Guide）
-
----
-
-**Last Updated**: 2026-04-23
-**Version**: v1.1.0

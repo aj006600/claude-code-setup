@@ -73,8 +73,3 @@ git commit -m "perf(search): add caching"
 - SPEC.md 變更應**獨立**成一個 commit
 - 提交前使用 `code-simplifier:code-simplifier` agent 審查和優化代碼
   - 若有修改代碼，須遵循 TDD：更新測試 → 修改代碼 → 執行相關測試確認通過 → 執行所有測試確認無 regression
-
----
-
-**Last Updated**: 2026-04-23
-**Version**: v1.0.1

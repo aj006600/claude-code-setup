@@ -23,6 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.4.0] - 2026-04-24
+
+### Removed
+- `.claude/rules/` 下 4 個 rule 檔（`code-style.md` / `testing-rules.md` / `git-rules.md` / `documentation-style.md`）移除檔尾 footer（`**Last Updated**` / `**Version**`）。Per-rule versioning 是反模式：user 編輯 rule 時多半不會記得更新 footer，導致版本號永遠停留變成「殭屍版本」；各 rule 版本也彼此不相干，比對或升級時無意義
+
+### Changed
+- `.claude/CLAUDE.md` footer 改為明確佔位符 `<YYYY-MM-DD>` / `<vX.Y.Z>`（含括弧內註解說明 Workflow A 會填入）。Template shipped 狀態下不再帶無意義的 build 期版本號，採用後由 Workflow A reset 成 user 專案的 v1.0.0
+- `.claude/rules/documentation-style.md` 重寫「Footer 格式」章節：明確列出「需 footer 的檔案類型」（CLAUDE.md、user 產品文檔）與「不需 footer 的檔案類型」（rules、SKILL.md、CHANGELOG）；`**Version**` 從「強烈建議」改為該類別「必填」
+- 撰寫檢查清單對應更新 Footer 項的適用範圍
+
+---
+
 ## [v1.3.0] - 2026-04-24
 
 ### Added

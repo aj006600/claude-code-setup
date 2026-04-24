@@ -402,8 +402,3 @@ def sample_api_response():
     with open(FIXTURES_DIR / "api_response.json") as f:
         return json.load(f)
 ```
-
----
-
-**Last Updated**: 2026-04-23
-**Version**: v2.0.0

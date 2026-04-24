@@ -253,8 +253,3 @@ uv run pytest --cov=src --cov-fail-under=70  # 測試 + coverage
 ```
 
 執行 `/pre-pr-check` command 可在本地自動跑這些檢查。
-
----
-
-**Last Updated**: 2026-04-23
-**Version**: v2.0.0

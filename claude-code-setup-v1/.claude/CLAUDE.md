@@ -186,5 +186,5 @@ User 提需求 → 啟用 `maintaining-spec-md` skill → User 確認 SPEC.md �
 
 ---
 
-**Last Updated**: 2026-04-24
-**Version**: v1.2.0
+**Last Updated**: `<YYYY-MM-DD>`（由 maintaining-claude-md Workflow A 首次客製化時填入）
+**Version**: `<vX.Y.Z>`（由 maintaining-claude-md Workflow A 首次客製化時填入；預設 v1.0.0）
