@@ -23,6 +23,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.6.0] - 2026-04-24
+
+### Added
+- `.claude/skills/maintaining-spec-md/references/spec-template.md`:SPEC.md 完整 template(原內嵌於 SKILL.md 第 335-433 行)獨立為 reference 檔。Skill body 只在 Workflow A Step A3 初次建立 SPEC.md 時才讀取——採 skill-creator 業界建議的 **Progressive Disclosure** 三層載入:metadata(description)→ SKILL.md body → bundled references,避免常態載入時把僅 Step A3 用得到的 template 也扛進 context
+
+### Changed
+- 4 個 skill 依 skill-creator 業界最佳實踐精簡(SKILL.md body 目標 < 500 行、削除與 workflow 重複的 checklist、壓縮示範對話、外移大型 template):
+  - `maintaining-spec-md`:433 → 206 行(-52%)
+  - `tdd-feature-workflow`:329 → 205 行(-38%)
+  - `maintaining-claude-md`:492 → 326 行(-34%)
+  - `maintaining-readme-md`:334 → 236 行(-29%)
+  - **合計 1,588 → 973 行(-39%)**
+- 各 skill 的「自我檢查清單」改為「Gotchas」:只列 3-5 個容易違反的關鍵點(如「SPEC 變更必須獨立 commit」、「兩檔必須同一 commit」、「User 未確認前絕不寫檔」),取代原本與 workflow 步驟重複的 checklist——checklist 只是步驟複述,model 跑 workflow 時不會回頭看
+- 各 skill 的「好做法 vs 不好做法」雙段對話範例壓縮為單一「觸發 + 正確反應 + 錯誤反應」Pattern 示例,保留學習訊號但砍掉冗長 dialog
+- `tdd-feature-workflow` 移除「專案專屬指令速查」章節(pytest / ruff / uv 指令):這些指令是 tech-stack-specific,已由 CLAUDE.md 的 Development Checklist 承擔,寫在 skill 裡會造成兩處更新負擔
+- `tdd-feature-workflow` 的「與既有資源的分工」表從 26 項壓縮為 13 項關鍵委派,選配項目改為「完整動態清單見 `/agent-cheatsheet`」
+- 所有 skill 的 description 精簡(各減 30-40%),保留 pushy 觸發語句 + 觸發條件清單,移除 workflow 細節——這些細節應在 body 而非 metadata
+
+---
+
 ## [v1.5.0] - 2026-04-24
 
 ### Added
