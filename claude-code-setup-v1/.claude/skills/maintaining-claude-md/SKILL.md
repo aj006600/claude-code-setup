@@ -32,7 +32,7 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。這代�
 | `maintaining-spec-md` skill | SPEC.md 的 Project Overview / Tech Stack / Architecture 變更時會建議啟用本 skill（連動更新） |
 | `maintaining-readme-md` skill | 本 skill Step 5 在 CLAUDE.md 變更包含 User-facing 項目時會建議啟用 readme skill |
 | `.claude/rules/git-rules.md` | 本 skill commit 時須遵循 commit message 格式（含 `Authored-By` trailer）、分支命名規範 |
-| `.claude/rules/development-workflow-details.md` | 分支策略須與功能分支流程協同，避免破壞功能 PR 的 commit 邏輯完整性 |
+| `tdd-feature-workflow` skill | 分支策略須與功能分支流程協同，避免破壞功能 PR 的 commit 邏輯完整性 |
 | `.claude/CLAUDE-CHANGELOG.md` | 本 skill 每次更新 CLAUDE.md 時必須同步新增條目，兩檔在同一 commit |
 
 ### 優先順序原則
@@ -231,7 +231,7 @@ CLAUDE.md 更新建議
 
 #### 3.1 分支策略判斷
 
-依當前分支決定 commit 策略，避免與 `development-workflow-details.md` 的功能分支流程衝突：
+依當前分支決定 commit 策略，避免與 `tdd-feature-workflow` skill 的功能分支流程衝突：
 
 ```bash
 current_branch=$(git branch --show-current)

@@ -52,12 +52,6 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `git-rules.md` — Git workflow + commit convention
 - `documentation-style.md` — 文檔撰寫風格
 
-### 4 Pointer Rules（已遷移至 skills）
-- `spec-update-rules.md` → `maintaining-spec-md`
-- `claude-update-rules.md` → `maintaining-claude-md`
-- `readme-update-rules.md` → `maintaining-readme-md`
-- `development-workflow-details.md` → `tdd-feature-workflow`
-
 ### 8 Local Agents
 AI / LLM 導向的 sub-agents：
 - `ai-engineer`, `architect-reviewer`, `code-reviewer`, `documentation-engineer`
@@ -146,8 +140,7 @@ Claude Code 會自動完成：
 │   ├── code-style.md
 │   ├── testing-rules.md
 │   ├── git-rules.md
-│   ├── documentation-style.md
-│   └── *-rules.md            # 4 個 skill 指標
+│   └── documentation-style.md
 ├── skills/                   # 專案專屬 skills
 │   ├── maintaining-spec-md/
 │   ├── maintaining-claude-md/
@@ -229,6 +222,29 @@ Hook 類型（依 lifecycle 順序）：
 
 ---
 
+## Design Rationale
+
+本 template 在 v1.2.0 將原「rule 檔案 + Claude 被動讀取」的設計，全面改為「skill 主動觸發」。選擇 skill 而非 markdown rule 的 5 個理由：
+
+**1. 主動觸發 vs 被動等讀取**
+Skill description 是 Claude Code 的觸發關鍵——語意匹配時自動載入，不必仰賴 CLAUDE.md 提示或使用者明確要求。
+
+**2. Workflow 結構比純文字規範更可遵循**
+Skill 可內建多步驟 workflow、分支判斷（如 `maintaining-claude-md` 的 Workflow A/B）、輸入輸出樣板。Markdown rule 只能文字敘述，Claude 在臨場判斷上較易漏步驟。
+
+**3. 跨 skill 協作鏈**
+`maintaining-spec-md` → `maintaining-claude-md` → `maintaining-readme-md` 在關鍵節點互相 hook，形成規範同步鏈；rule 之間沒有這種機制。
+
+**4. 領域知識隨 skill 一併載入**
+Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill body，觸發時自動進入 context。Rule 形式需 Claude 主動 Read 才知道細節。
+
+**5. 智慧延後執行時機**（`maintaining-readme-md` 獨有）
+依實作狀態（實作中 / 完成未 PR / PR 中 / 已 merge）決定執行時機，避免 TDD 中途干擾也避免文檔遺忘補上。原 rule 只有單一「pre-merge」觸發點。
+
+若想對比原始 rule-driven 設計，可參考 repo 內保留的 v0 snapshot。
+
+---
+
 ## 相關資源
 
 - [Claude Code 官方文件](https://docs.claude.com/en/docs/claude-code)
@@ -238,5 +254,5 @@ Hook 類型（依 lifecycle 順序）：
 
 ---
 
-**Template Version**: v1.0.0
-**Last Updated**: 2026-04-23
+**Template Version**: v1.2.0
+**Last Updated**: 2026-04-24

@@ -26,7 +26,7 @@ SPEC.md 是需求的契約。**修改實作而不修改 SPEC.md 就是契約違�
 |------|------------------|
 | `.claude/CLAUDE.md` | 當 SPEC.md 的 Overview / Tech Stack / Architecture 變更時，連動觸發 `maintaining-claude-md` skill（若已建立） |
 | `.claude/rules/git-rules.md` | 本 skill commit SPEC.md 時須遵循 commit message 格式（含 `Authored-By` trailer）；SPEC.md 變更應獨立成一個 commit |
-| `.claude/rules/development-workflow-details.md` | 本 skill 的更新流程對應「需求確認階段」——先更新 SPEC.md，User 確認後才進入 TDD 實作 |
+| `tdd-feature-workflow` skill | 本 skill 對應 TDD 流程的「需求確認階段」——先更新 SPEC.md，User 確認後才進入測試先行實作 |
 
 ### 優先順序原則
 1. **SPEC.md 是需求的 single source of truth**——先讀 SPEC.md，再動手

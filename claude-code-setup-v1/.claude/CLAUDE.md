@@ -186,5 +186,5 @@ User 提需求 → 啟用 `maintaining-spec-md` skill → User 確認 SPEC.md �
 
 ---
 
-**Last Updated**: 2026-04-23
-**Version**: v1.1.0
+**Last Updated**: 2026-04-24
+**Version**: v1.2.0
