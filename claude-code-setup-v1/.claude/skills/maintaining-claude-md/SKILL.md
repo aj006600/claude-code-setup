@@ -65,7 +65,7 @@ grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
 
 ### Step A3:展示完整替換計畫
 
-向 User 展示:偵測到的未客製化項目(placeholder 清單、有殘留的 `.claude/` 檔案數)、替換對照表、版本基線決策、待清理的 NOTICE 區塊。請 User 確認。
+向 User 展示:偵測到的未客製化項目(placeholder 清單、有殘留的 `.claude/` 檔案數)、替換對照表、版本基線決策、待清理的 NOTICE 區塊,並請 User 提供目前使用的 template version(例:`v1.8.0`,作為 baseline entry 的 provenance 標註;若 User 不確定,填 `unknown`)。請 User 確認後執行。
 
 **版本基線預設**:CLAUDE.md 版本 reset 為 `v1.0.0`、`Last Updated` 改為今日——代表 user 專案自己的規範起點,不繼承 template 版本號。CLAUDE-CHANGELOG.md(空種子)寫入 baseline entry `[v1.0.0]`,標註 `adopted from claude-code-setup-v1 template v<X.Y.Z>`。User 明確要求保留 template 版本號則 skip reset,但仍寫 baseline entry。
 
@@ -100,7 +100,7 @@ find .claude -type f \( -name "*.md" -o -name "*.sh" \) -exec sed -i '' \
 - Git 身份批次替換為本專案 Git 設定
 ```
 
-Template version 從 `claude-code-setup-v1/CHANGELOG.md` 最新 entry 讀;無法取得 → fallback 用 CLAUDE.md 原本 footer 版本。
+`<template version>` 填入 Step A3 向 User 確認的值。
 
 ### Step A6:Commit
 
