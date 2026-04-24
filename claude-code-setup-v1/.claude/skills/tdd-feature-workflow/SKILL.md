@@ -33,12 +33,11 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 | 需求設計討論(模糊時) | `superpowers:brainstorming` |
 | 寫 plan(bite-sized TDD tasks) | `superpowers:writing-plans` |
 | 執行 plan(批次 + checkpoint) | `superpowers:executing-plans` |
-| TDD 紀律 | `superpowers:test-driven-development` |
-| 寫測試(具體產出) | `test-automator` agent |
+| TDD 紀律(含寫 failing test) | `superpowers:test-driven-development` |
 | 代碼簡化審查 | `code-simplifier:code-simplifier` agent |
 | 完成前驗證 | `superpowers:verification-before-completion` |
 | PR 前完整檢查 | `/pre-pr-check` command |
-| Code review(輕量 / 深度) | `code-reviewer` agent / `/code-review` command |
+| Code review(輕量 / 深度) | `superpowers:code-reviewer` agent / `/code-review` command |
 | Commit + Push + PR | `/commit-push-pr` command(或手工) |
 | 文檔同步 | `maintaining-readme-md` / `maintaining-claude-md` skills |
 | Branch 收尾 | `superpowers:finishing-a-development-branch` |
@@ -93,16 +92,8 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 
 無論是否使用上述 agent,最終**必須透過 `writing-plans → executing-plans` 走 TDD 流程**。
 
-#### 2.4 撰寫測試(Test-First)
-啟用 `superpowers:test-driven-development` skill 指引紀律;實際產出委派 `test-automator`:
-
-```
-Agent({
-  subagent_type: "test-automator",
-  description: "Write tests for <feature>",
-  prompt: "Write pytest tests for feature X in tests/unit/<module>/test_<feature>.py. Cover: success, error handling, edge cases. Use pytest-asyncio for async."
-})
-```
+#### 2.4 撰寫失敗測試(Test-First)
+啟用 `superpowers:test-driven-development` skill——由**主對話線親自**寫一個 failing test、親自觀察它失敗(Red-Green-Refactor 的「Red」環節)。TDD 紀律的核心是 bite-sized 紅綠節奏與親眼確認「測試真的在測對的行為」,主線親自執行才能保證這份觀察不失真。
 
 **測試檔案位置慣例**:
 - 單元:`tests/unit/<module>/test_<feature>.py`
@@ -170,7 +161,7 @@ SPEC.md 變更須獨立 commit。
 **輕量(單 reviewer)**:
 ```
 Agent({
-  subagent_type: "code-reviewer",
+  subagent_type: "superpowers:code-reviewer",
   description: "PR review for <feature>",
   prompt: "Review PR #<N> on feat/<feature-name>. Check bugs, logic, security, adherence to CLAUDE.md and code-style. Report high-confidence issues only."
 })

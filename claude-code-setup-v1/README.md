@@ -53,10 +53,10 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `git-rules.md` — Git workflow + commit convention
 - `documentation-style.md` — 文檔撰寫風格
 
-### 8 Local Agents
-AI / LLM 導向的 sub-agents：
-- `ai-engineer`, `architect-reviewer`, `code-reviewer`, `documentation-engineer`
-- `llm-architect`, `prompt-engineer`, `qa-expert`, `test-automator`
+### 3 Local Agents
+- `code-reviewer` — 本地版 code review agent
+- `documentation-engineer` — 文件撰寫 / 維護
+- `test-automator` — 大規模 test framework / CI 整合
 
 ---
 
@@ -276,5 +276,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.8.1
+**Template Version**: v1.9.0
 **Last Updated**: 2026-04-24

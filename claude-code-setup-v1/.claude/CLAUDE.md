@@ -144,7 +144,7 @@
 - **`/pre-dev-check` / `/pre-pr-check` commands** — 開發前 / PR 前檢查
 - **`context7` MCP** — 查最新 library 文檔
 
-本地 agents(`agents/` 目錄共 8 個,含 `test-automator` / `code-reviewer` / `documentation-engineer` / `architect-reviewer` / `qa-expert` / `ai-engineer` / `llm-architect` / `prompt-engineer`)主要由 skill 透過 Agent tool 委派,不需手動記憶;想看時執行 `/agent-cheatsheet`。
+本地 agents(`agents/` 目錄共 3 個:`code-reviewer` / `documentation-engineer` / `test-automator`)由 skill 透過 Agent tool 委派,不需手動記憶;想看時執行 `/agent-cheatsheet`。
 
 ---
 

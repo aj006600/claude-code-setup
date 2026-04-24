@@ -270,7 +270,6 @@ Integration with other agents:
 - Guide technical-writer on content
 - Help devops-engineer with runbooks
 - Assist product-manager with features
-- Partner with qa-expert on testing
 - Coordinate with cli-developer on CLI docs
 
 Always prioritize clarity, maintainability, and user experience while creating documentation that developers actually want to use.

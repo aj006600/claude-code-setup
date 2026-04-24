@@ -23,6 +23,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.9.0] - 2026-04-24
+
+### Changed
+- `maintaining-claude-md/SKILL.md` Workflow A baseline 產出簡化:Step A3 不再向 User 額外詢問 template version,baseline CHANGELOG entry 從 `adopted from claude-code-setup-v1 template (v<X.Y.Z>)` 改為 `adopted from claude-code-setup-v1 template`(provenance 實務價值低、多數 user 不會回頭對 diff 升 template;需要時由 git log 可追)。Step A5 移除 `<template version>` 填入說明
+- `tdd-feature-workflow/SKILL.md` 階段 2.4(撰寫 failing test)改為主對話線親自執行,不再委派 `test-automator` agent。理由:`superpowers:test-driven-development` 的核心紀律「NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST」要求親眼確認測試在測對的行為,委派出去會失去 bite-sized 紅綠節奏。委派對照表相應精簡「TDD 紀律(含寫 failing test)」為單一委派對象
+- `tdd-feature-workflow/SKILL.md` 階段 4.2 輕量 code review 的 `subagent_type` 從 local `code-reviewer` 改為 `superpowers:code-reviewer`。superpowers 版本有 plan alignment 環節與 Critical/Important/Suggestions 分級,與本 skill 的 `writing-plans → executing-plans` 產出緊密對接;local 版本是通用百科全書式 checklist 風格,無 workflow 整合
+- `CLAUDE.md` Available Resources 章節的本地 agents 列表同步為保留 3 支(`code-reviewer` / `documentation-engineer` / `test-automator`)
+- `README.md` What's Included 的本地 agents 章節從「8 Local Agents(AI / LLM 導向)」改為「3 Local Agents」,並逐條標註用途
+- `agent-cheatsheet.md` 的 Plugin / global agents 區塊新增 `superpowers:code-reviewer` 條目(標註為 TDD workflow 的 preferred reviewer)
+
+### Removed
+- 5 支本 setup 實際 workflow 未引用的 local agents 檔案:`ai-engineer.md` / `architect-reviewer.md` / `llm-architect.md` / `prompt-engineer.md` / `qa-expert.md`。這批 agent prompt 為通用企業級 agent 集合的複製,與本 setup 的 TDD workflow 無整合,保留只會讓 `/agent-cheatsheet` 輸出變冗
+- 保留的 3 支 local agents(`code-reviewer` / `documentation-engineer` / `test-automator`)的 "Integration with other agents" 清單移除提到已刪 agents 的 bullets(`qa-expert` / `architect-reviewer`),避免指向不存在資源
+
+---
+
 ## [v1.8.1] - 2026-04-24
 
 ### Fixed

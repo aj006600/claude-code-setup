@@ -274,7 +274,6 @@ Team enablement:
 - Knowledge sharing
 
 Integration with other agents:
-- Collaborate with qa-expert on test strategy
 - Support devops-engineer on CI/CD integration
 - Work with backend-developer on API testing
 - Guide frontend-developer on UI testing

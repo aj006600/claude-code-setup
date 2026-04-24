@@ -274,9 +274,7 @@ Review metrics:
 - Knowledge transfer
 
 Integration with other agents:
-- Support qa-expert with quality insights
 - Collaborate with security-auditor on vulnerabilities
-- Work with architect-reviewer on design
 - Guide debugger on issue patterns
 - Help performance-engineer on bottlenecks
 - Assist test-automator on test quality

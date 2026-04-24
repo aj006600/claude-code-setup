@@ -37,6 +37,7 @@ Note: 若以下清單中的 plugin / skill / MCP 未出現在 current session �
 
 [Plugin / global]
 - code-simplifier:code-simplifier — simplify code before PR
+- superpowers:code-reviewer — plan alignment + quality review (preferred for TDD workflow)
 - general-purpose — open-ended research
 - Explore — codebase exploration (read-only)
 - Plan — architectural planning
