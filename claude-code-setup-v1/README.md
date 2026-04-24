@@ -69,7 +69,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 |--------|------|---------|
 | `superpowers` | brainstorming / writing-plans / executing-plans / test-driven-development / verification-before-completion / finishing-a-development-branch 等 skills | `tdd-feature-workflow` skill |
 | `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | CLAUDE.md、git-rules.md、`/pre-pr-check` |
-| `code-review` | PR review workflow | CLAUDE.md |
+| `code-review` | PR review workflow(`/code-review` command 寫回 PR comment) | `tdd-feature-workflow` skill 階段 4.1 |
 
 ### MCP Servers
 | MCP | 用途 |
@@ -276,5 +276,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.10.0
+**Template Version**: v1.11.0
 **Last Updated**: 2026-04-24

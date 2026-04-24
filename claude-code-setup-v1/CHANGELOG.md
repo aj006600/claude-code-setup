@@ -23,6 +23,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.0] - 2026-04-24
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 重整 4 階段邊界以對齊 `superpowers:executing-plans → superpowers:finishing-a-development-branch` 的 skill chain:
+  - 原階段 3「完成前驗證與 PR」改為**階段 3「完成前驗證 + Push + PR」**,吸收 commit+push+PR 動作;階段 3.4 明示由 `superpowers:finishing-a-development-branch`(選 Option 2)或 `/commit-push-pr` / 手工完成,並註記該 skill 預設 base 為 main、本 template 需 retarget 到 dev
+  - 原階段 4「Review 與 Merge」縮減為**階段 4「Code Review 與 Merge」**;4.5 的 merge 後本地清理改為直接 `gh pr merge` + `git checkout dev && pull && branch -d`
+  - 理由:原設計把 `finishing-a-development-branch` 擺在階段 4.6「合併與清理」,但該 skill 的 4 個 options(merge locally / push+PR / keep / discard)對應的是「實作完成後如何整合」,不是 review 通過後的 merge;原擺位與階段 3.4 commit+push+PR 重複,並忽視 `executing-plans` Step 5 為 REQUIRED SUB-SKILL 會自動呼叫此 skill 的事實
+- `tdd-feature-workflow/SKILL.md` 階段 4.1 code review 從「輕量 / 深度二選一」改為「結果回寫 PR comment(`/code-review`)/ 結果返回對話(`superpowers:requesting-code-review` + `code-reviewer` agent)」。原「輕量 / 深度」框架錯標兩者差異——實際差異是「結果去向」(一個 publish 到 PR 頁、一個返回對話),不是深度;且原 4.1 `requesting-code-review` 已 dispatch 同一 subagent,與 4.2「輕量」路徑重複
+- `tdd-feature-workflow/SKILL.md` 階段 4.1(原)`requesting-code-review` 描述從「產出結構化 checklist」修正為該 skill 實際行為(dispatch `superpowers:code-reviewer` subagent 的 protocol,含 SHA 抓取 + template 填充)
+- `tdd-feature-workflow/SKILL.md` 階段 4.2 `receiving-code-review` 描述從「系統化分類 comments」修正為該 skill 實際核心(verify 再實作、禁 performative agreement、不懂就問、對錯誤建議 pushback),並列為具體 bullets
+- `tdd-feature-workflow/SKILL.md` 階段 2.1 語意修正:「失敗先解決再進 2.2」→「若檢查失敗,先修復再進 2.2」
+- `tdd-feature-workflow/SKILL.md` 階段 2.4 加註 `executing-plans` Step 5 會自動觸發 `finishing-a-development-branch` 的行為,說明主對話線如何利用每個 batch 結束的「Ready for feedback」暫停點介入執行階段 3,再讓 finishing 在階段 3.4 被正常呼叫
+- `tdd-feature-workflow/SKILL.md` 關鍵分工表重整:Code review 一列分為「對外寫回 PR / 對內返回對話」、新增「Review 反饋處理」一列指向 `receiving-code-review`、原「Branch 收尾」一列改為「Push + PR 建立」指向 `finishing-a-development-branch` Option 2,並新增「PR Merge + 本地清理」一列
+- `tdd-feature-workflow/SKILL.md` 階段轉場 Gate 更新:2→3 移除 coverage 70% 要求(該項屬階段 3 `/pre-pr-check`)、3→4 明列 `/pre-pr-check` 全通過 + code-simplifier 處理完畢 + verification-before-completion + PR 建立 + CI 通過
+- `tdd-feature-workflow/SKILL.md` Gotchas 更新:3→4 gate 條件擴充、新增「`superpowers:finishing-a-development-branch` 對應階段 3.4 Push+PR」條目釐清 skill 定位
+- `tdd-feature-workflow/SKILL.md` 階段 3.1 `verification-before-completion` 描述強化:明列它強制要求以剛跑過的命令 evidence 為斷言依據、禁未驗證用語,並說明與 3.2 `/pre-pr-check` 的互補關係
+- `README.md` Prerequisites `code-review` plugin 的「引用位置」欄位由「CLAUDE.md」(誤填)修正為「`tdd-feature-workflow` skill 階段 4.1」,並補述 command 行為
+- `README.md` footer Template Version 升至 v1.11.0
+
+---
+
 ## [v1.10.0] - 2026-04-24
 
 ### Changed
