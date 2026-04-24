@@ -23,6 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.10.0] - 2026-04-24
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 階段 1 移除「需求明確?」分支判斷——每次新需求一律先啟用 `superpowers:brainstorming`(skill 本身對明確需求 2-3 輪即結束,不拖時間)。理由:self-judgement「需求明不明確」容易被 Claude 與 User 自判為「這個懂了」合理化繞過,誤判成本(先寫錯 SPEC → 實作偏方向 → 回頭重做)遠高於 brainstorming 的時間成本。移除後門保證 SPEC 在討論後才產出
+- `tdd-feature-workflow/SKILL.md` 階段 2 從 8 個子步驟(2.1-2.10)重組為 5 個(2.1-2.5)。原本 2.3 寫 plan、2.4 獨立寫 failing test、2.5 驗證失敗、2.6 實作、2.7-2.9 跑測試,把 `superpowers:writing-plans` 產出的 plan 裡本就內建的 TDD 循環(`寫 failing test → watch it fail → 最小實作 → watch it pass → commit`)拆到 plan 之外獨立執行,導致 `executing-plans` 批次執行時會與拆出的步驟重疊或遺漏。改為:2.3 `writing-plans` 產出 bite-sized TDD plan → 2.4 `executing-plans` 批次執行(TDD 循環由每個 task 內建)。`superpowers:test-driven-development` skill 定位明確改為紅綠節奏疑義時的紀律參考,不獨立啟用為一個階段
+- `tdd-feature-workflow/SKILL.md` 關鍵分工表同步重整:TDD 紀律欄位標示為「紀律參考(非獨立階段)」,新增「Bug 定位(debug 情境)」一列指向 `superpowers:systematic-debugging`,需求設計與 SPEC 更新拆為兩列以對齊新流程
+- `tdd-feature-workflow/SKILL.md` 特殊情境的「Debug」段從單句(只點名 `systematic-debugging`)擴充為完整流程描述:階段 1 需求討論替換為 `systematic-debugging` 定位 root cause,之後完全走階段 2-4 的 `writing-plans → executing-plans`。明確規範**無論單點還是多模組 bug 都走同一條路徑**,避免「bug 很小直接改」的 judgement 誤判。Hotfix 改為「流程同 Debug,差別只在分支基底與 PR target」
+- `CLAUDE.md` Testing Protocols 章節的「寫測試入口」改寫:正式入口改指向 `tdd-feature-workflow` 階段 2 的 `writing-plans → executing-plans`(plan 內建 TDD 循環);`superpowers:test-driven-development` 定位為紀律參考;移除指向 `test-automator` agent 的舊委派描述(與 v1.9.0 移除主流程委派一致)
+- `README.md` footer Template Version 升至 v1.10.0
+
+---
+
 ## [v1.9.0] - 2026-04-24
 
 ### Changed

@@ -104,7 +104,7 @@
 - **Integration Test**: 視需求添加
 - **Coverage**: 目標 70%+(用 `/pre-pr-check` command 驗證)
 
-寫測試請啟用 `superpowers:test-driven-development` skill 或委派 `test-automator` agent;詳細測試慣例、fixture、mocking、parametrize 範例見 `.claude/rules/testing-rules.md`。
+寫測試的正式入口是 `tdd-feature-workflow` 階段 2 的 `superpowers:writing-plans → superpowers:executing-plans`(plan 每個 task 內建 `寫 failing test → watch it fail → 最小實作 → watch it pass → commit` TDD 循環);`superpowers:test-driven-development` skill 作為紅綠節奏疑義時的紀律參考,不獨立啟用為階段。詳細測試慣例、fixture、mocking、parametrize 範例見 `.claude/rules/testing-rules.md`。
 
 ---
 

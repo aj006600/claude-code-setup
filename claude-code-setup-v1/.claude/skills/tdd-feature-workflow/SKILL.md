@@ -1,6 +1,6 @@
 ---
 name: tdd-feature-workflow
-description: Use when the user starts implementing a new feature, bug fix, refactor, or any multi-step code change. Triggers include "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or "繼續" an in-progress feature. Also use when finalizing work and opening a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to superpowers skills, commit-commands, code-review, project-local agents, and maintaining-* skills at appropriate checkpoints. The main flow strictly enforces TDD:SPEC.md first → (optional) brainstorming → writing-plans → executing-plans with test-first → verification → PR → review → merge with doc sync. Trigger proactively even without explicit mention of "TDD" or "workflow" — any conversation about starting, resuming, or finalizing feature work should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.
+description: Use when the user starts implementing a new feature, bug fix, refactor, or any multi-step code change. Triggers include "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or "繼續" an in-progress feature. Also use when finalizing work and opening a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to superpowers skills, commit-commands, code-review, project-local agents, and maintaining-* skills at appropriate checkpoints. The main flow strictly enforces TDD: brainstorming → SPEC.md update → writing-plans (bite-sized TDD tasks) → executing-plans → verification → PR → review → merge with doc sync. Debug/hotfix flows replace the brainstorming front with superpowers:systematic-debugging, then follow the same path. Trigger proactively even without explicit mention of "TDD" or "workflow" — any conversation about starting, resuming, or finalizing feature work should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.
 ---
 
 # TDD Feature Workflow(本專案開發編排)
@@ -29,11 +29,12 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 
 | 階段關鍵動作 | 委派對象 |
 |------------|---------|
-| 需求確認 / SPEC 更新 | `maintaining-spec-md` skill |
-| 需求設計討論(模糊時) | `superpowers:brainstorming` |
-| 寫 plan(bite-sized TDD tasks) | `superpowers:writing-plans` |
+| 需求設計討論 | `superpowers:brainstorming`(每次新需求都先走) |
+| SPEC 更新 | `maintaining-spec-md` skill |
+| 寫 plan(bite-sized TDD tasks) | `superpowers:writing-plans`(plan 本身內建 TDD 循環) |
 | 執行 plan(批次 + checkpoint) | `superpowers:executing-plans` |
-| TDD 紀律(含寫 failing test) | `superpowers:test-driven-development` |
+| TDD 紀律參考 | `superpowers:test-driven-development`(plan 執行中遇紀律疑義時查閱,非獨立階段) |
+| Bug 定位(debug 情境) | `superpowers:systematic-debugging`(僅 debug 流程前置;之後同階段 2-4) |
 | 代碼簡化審查 | `code-simplifier:code-simplifier` agent |
 | 完成前驗證 | `superpowers:verification-before-completion` |
 | PR 前完整檢查 | `/pre-pr-check` command |
@@ -42,7 +43,7 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 | 文檔同步 | `maintaining-readme-md` / `maintaining-claude-md` skills |
 | Branch 收尾 | `superpowers:finishing-a-development-branch` |
 
-補充資源(選配):`feature-dev:code-explorer` / `code-architect`(深度探索 / 多方案對比)、`superpowers:systematic-debugging`、`superpowers:dispatching-parallel-agents` + `using-git-worktrees`(多任務並行)、`superpowers:subagent-driven-development`。完整動態清單見 `/agent-cheatsheet`。
+補充資源(選配):`feature-dev:code-explorer` / `code-architect`(深度探索 / 多方案對比)、`superpowers:dispatching-parallel-agents` + `using-git-worktrees`(多任務並行)、`superpowers:subagent-driven-development`。完整動態清單見 `/agent-cheatsheet`。
 
 ---
 
@@ -55,20 +56,18 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 ```
 User 提需求
     ↓
-需求明確? ── 否 → 啟用 superpowers:brainstorming 討論釐清
-    ↓ 是                                          ↓
-    └──────────────┬──────────────────────────────┘
-                   ↓
-          啟用 maintaining-spec-md
-                   ↓
-        Skill 產出 SPEC 更新 diff → User 確認
-                   ↓
-            進入階段 2
+啟用 superpowers:brainstorming 討論釐清(需求明確時 skill 自身會快速通過)
+    ↓
+啟用 maintaining-spec-md
+    ↓
+Skill 產出 SPEC 更新 diff → User 確認
+    ↓
+進入階段 2
 ```
 
 若 SPEC.md 已包含此功能:不需重啟 `maintaining-spec-md`,直接繼續。
 
-**何時啟用 `brainstorming`**:需求描述抽象、有多個實作方向但 trade-off 不明、User 想先聊設計再動手。討論在 SPEC 之前,而非之後——否則會先寫錯的 SPEC 再回頭改。
+**為何強制先 brainstorming**:`superpowers:brainstorming` skill 本身已自適應——需求明確時 2-3 輪對話就結束,不會拖時間;但允許跳過會讓 Claude 與 User 自判「這個懂了」,誤判成本(先寫錯 SPEC → 實作偏方向 → 回頭重做)遠高於 brainstorming 的時間成本。討論必須在 SPEC 之前。
 
 ---
 
@@ -83,40 +82,31 @@ git checkout dev && git pull origin dev
 git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rules.md
 ```
 
-#### 2.3 寫 plan
-啟用 `superpowers:writing-plans` skill。
+#### 2.3 寫 plan(bite-sized TDD tasks)
+啟用 `superpowers:writing-plans` skill。產出的 plan 中每個 task 本身已含完整 TDD 循環:`寫 failing test → 跑它失敗 → 最小實作 → 跑它通過 → commit`(見 writing-plans skill 的 Bite-Sized Task Granularity 章節)。因此階段 2 不需要在 plan 之外另外獨立「寫 failing test」步驟——該動作已是 plan 第一個 task 的第一個 step。
 
 **選配加強**(複雜功能):
 - 深度探索 codebase → 委派 `feature-dev:code-explorer` agent
 - 想對比多個架構方案 → 並行委派 2-3 個 `feature-dev:code-architect` agent(分別聚焦最小改動 / 清潔架構 / 實用平衡)
 
-無論是否使用上述 agent,最終**必須透過 `writing-plans → executing-plans` 走 TDD 流程**。
-
-#### 2.4 撰寫失敗測試(Test-First)
-啟用 `superpowers:test-driven-development` skill——由**主對話線親自**寫一個 failing test、親自觀察它失敗(Red-Green-Refactor 的「Red」環節)。TDD 紀律的核心是 bite-sized 紅綠節奏與親眼確認「測試真的在測對的行為」,主線親自執行才能保證這份觀察不失真。
-
-**測試檔案位置慣例**:
+**測試檔案位置慣例**(寫入 plan 的 `Files` 欄位):
 - 單元:`tests/unit/<module>/test_<feature>.py`
 - 整合:`tests/integration/test_<feature>_integration.py`
 - E2E:`tests/e2e/test_<feature>_e2e.py`
 
-#### 2.5 執行測試(應失敗,因尚未實作)
+#### 2.4 執行 plan(TDD 循環 × N)
+啟用 `superpowers:executing-plans` 批次執行 plan(含 checkpoint review)。每個 task 的 Step 1「寫 failing test」與 Step 2「watch it fail」由**主對話線親自**執行——TDD 紀律的核心是 bite-sized 紅綠節奏與親眼確認「測試真的在測對的行為」,主線親自執行才能保證這份觀察不失真,不委派給 sub-agent。
 
-#### 2.6 實作功能
-啟用 `superpowers:executing-plans` 批次執行 plan(含 checkpoint review)。
+遇到 TDD 細節疑義(例如「這個 test 該怎麼寫才對」、「watch it fail 時失敗訊息不對」)→ 查閱 `superpowers:test-driven-development` skill 的 Red-Green-Refactor 原則作為紀律參考,**不將其獨立啟用為一個階段**(它的內容已被 plan tasks 內建)。
 
 **專案專屬提醒**:
 - 依 CLAUDE.md Architecture 章節將代碼放到對應模組
 - 新增模組時考慮是否連動更新 SPEC.md / CLAUDE.md Architecture
-- 遵循 `.claude/rules/code-style.md`(命名、type hints、docstring)
+- 遵循 `.claude/rules/code-style.md`(命名、type hints、docstring)與 `.claude/rules/testing-rules.md`(pytest 慣例、fixture、mocking、parametrize)
+- 測試 / 覆蓋率指令依 CLAUDE.md Tech Stack 章節決定;coverage 目標 70%+ 由階段 3 的 `/pre-pr-check` 統一驗證
 - 技術疑問 → 使用 `context7` MCP 查最新 library 文檔
 
-#### 2.7 ~ 2.9 執行測試
-依序:相關測試通過 → 全測試無 regression → 檢查覆蓋率(目標 70%+)。
-
-測試 / 覆蓋率指令依 CLAUDE.md Tech Stack 章節決定;`/pre-pr-check` command 會在階段 3 統一驗證。
-
-#### 2.10 回寫 SPEC.md 的實作發現
+#### 2.5 回寫 SPEC.md 的實作發現
 若實作中產生新的 Acceptance、邊界條件、或需求細節變化 → 啟用 `maintaining-spec-md` 回寫 SPEC,並勾選已達成的 Acceptance Criteria checkbox。沒有變化可跳過;SPEC 本身不追蹤進度(進度由 git branch / PR merge 反映)。
 
 ---
@@ -127,7 +117,7 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 啟用 `superpowers:verification-before-completion`——強制回答「真的完成了嗎?」,防止誤報。
 
 #### 3.2 執行 `/pre-pr-check` command
-- Level 1(tests hard gate)失敗 → 回 2.7 修復
+- Level 1(tests hard gate)失敗 → 回 2.4 修復
 - Level 2(coverage / code-simplifier / lint / format / type-check / external-ref scan)→ 視情況處理
 - Level 3(SPEC / README 提示)→ 啟用對應 maintaining-* skill
 
@@ -187,10 +177,10 @@ Agent({
 
 ## 特殊情境
 
-- **Hotfix**:從 `main` 建 `hotfix/<bug-name>`,最小修改 + 測試覆蓋該 bug(仍 TDD),PR 到 `main` 與 `dev` 雙分支,事後補 `maintaining-readme-md` 檢查
-- **Refactor 不增新功能**:仍 TDD(既有測試通過 → 重構 → 測試仍通過);SPEC 通常不需更新;CLAUDE.md 若涉架構改變則更新
+- **Debug(bug 修復的完整流程)**:階段 1 的需求討論替換為 `superpowers:systematic-debugging`(hypothesis → test → refine 循環)定位 root cause;產出「可重現的 bug 描述 + reproducing 條件」後,之後完全走階段 2-4——`writing-plans` 產出 bite-sized plan(reproducing test 就是 plan 的第一個 task)→ `executing-plans` 執行 → 驗證 → PR → review → merge。**無論單點還是多模組 bug,都走同一條路徑**;避免「這個 bug 很小直接改」的 judgement 誤判(判斷錯了會跳過 plan → 修完才發現其實涉及多處)
+- **Hotfix**:流程同 Debug,差別只在分支基底與 PR target——從 `main` 建 `hotfix/<bug-name>`,PR 到 `main` 與 `dev` 雙分支,事後補 `maintaining-readme-md` 檢查
+- **Refactor 不增新功能**:仍走 `writing-plans → executing-plans`(既有測試通過 → 重構 → 測試仍通過);SPEC 通常不需更新;CLAUDE.md 若涉架構改變則更新
 - **Spike / Prototype**:建 `spike/<name>` 分支,期間不強制 TDD;**採納必須重寫走正式階段 1-4**,不直接 merge spike 代碼
-- **Debug 深入**:啟用 `superpowers:systematic-debugging`(hypothesis → test → refine 循環;Heisenbug / race condition)
 - **多任務並行**:`superpowers:using-git-worktrees` + `superpowers:dispatching-parallel-agents`;每個子任務仍各自走 TDD
 - **子任務外包(spec-driven)**:`superpowers:subagent-driven-development`
 
