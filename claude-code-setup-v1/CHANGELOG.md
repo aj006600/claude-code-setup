@@ -23,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.6] - 2026-04-26
+
+### Changed
+- `maintaining-claude-md/SKILL.md` Workflow A 一輪改寫:Step A1 標題從「偵測未客製化狀態」改為「列出 placeholder 範圍」(Workflow A 入口已由 Entry 分流邏輯判定,A1 真正職責是產出後續 dry-run 用的清單);Step A2 「資訊嚴重不足」escape hatch 從 22 行壓到 3 行(常態走 happy path,長解釋喧賓奪主);Step A3 不再重複跑 grep,直接引用 A1 結果;「reset 為 v1.0.0」「不繼承 template 版本號」措辭改為「填為 v1.0.0,獨立於 template 自身演進」(CLAUDE.md template 的 footer 是 placeholder,本來就無版本可 reset / 繼承,原措辭誤導)
+- `maintaining-claude-md/SKILL.md` CLAUDE-CHANGELOG.md 維護規則章節瘦身:移除「兩檔同 commit」「版本號日期一致」兩條已在 Step B4 + Gotchas 三處重複的原則,只保留章節獨有資訊(分類用法、條目視角、與 template 自身 CHANGELOG 區分)
+- `maintaining-claude-md/SKILL.md` 「條目以 User 視角撰寫」措辭改寫為「描述規範變了什麼(行為差異),而非改了哪一行(實作細節)」。原措辭中「User 視角」對 CLAUDE.md 場景不精確——CLAUDE.md 主要消費者是 future Claude 與 dev,真正想表達的是「行為差異 vs 實作 diff」
+- `maintaining-claude-md/SKILL.md` commit message 範例的 `Authored-By: <YourName> <your-email@example.com>` 改為 inline `$(git config user.name) <$(git config user.email)>`。範例夾在實際指令中,placeholder 容易被誤讀為「殘留沒清乾淨」,inline 形式可直接複製貼上
+- `git-rules.md` Commit Convention 章節新增「常用 scope 約定」表(`(template)` / `(claude)` / `(spec)` / `(<module>)`),對齊 maintaining-* skill 的 commit message 風格,避免 git log 出現 `chore(template)` 與 `chore(setup)` 混用
+
+### Removed
+- `maintaining-claude-md/SKILL.md` 「特殊情況」章節的「緊急 hotfix」「實驗性規則」兩條。內容本質都是「視情況決定」,缺乏 actionable rule;只保留「多個小變更累積」這條真正特殊且可執行的規則
+
+---
+
 ## [v1.11.5] - 2026-04-26
 
 ### Changed

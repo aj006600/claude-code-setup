@@ -46,6 +46,17 @@ Authored-By: <YourName> <your-email@example.com>
 | `chore` | 雜項 | `chore: update deps` |
 | `spec` | SPEC.md 變更 | `spec: add new requirements` |
 
+### 常用 scope 約定
+
+| Scope | 用途 | 由誰約定 |
+|-------|------|---------|
+| `(template)` | 採用 template 後的初次客製化、template 本體層級的調整 | `maintaining-claude-md` Workflow A |
+| `(claude)` | `.claude/CLAUDE.md` 與 `.claude/CLAUDE-CHANGELOG.md` 同步更新 | `maintaining-claude-md` Workflow B |
+| `(spec)` | `.claude/SPEC.md` 變更(亦可直接用 `spec` type) | `maintaining-spec-md` |
+| `(<module>)` | 一般功能 / 修復 / 重構針對特定模組 | 開發者依模組命名 |
+
+scope 只是輔助分類,Conventional Commits 允許自定 scope;以上是本 setup 跨 skill 對齊的命名,避免 git log 出現 `chore(template)` 與 `chore(setup)` 混用。
+
 ### 範例
 ```bash
 # 功能開發

@@ -50,26 +50,19 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。規範�
 
 適用於採用 template 後首次進入本 skill、對話已提供足夠資訊做替換。
 
-### Step A1:偵測未客製化狀態
+### Step A1:列出 placeholder 範圍
+
+跑一次 grep 列出所有 placeholder 匹配位置(後續 dry-run 與 Edit 都用這份清單):
 
 ```bash
-grep -l '<Placeholder>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md 2>/dev/null
-grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
+grep -rn '<Placeholder>\|<!-- TEMPLATE NOTICE\|<YourName>\|your-email@example.com' .claude/
 ```
 
-任一條件成立 → Workflow A 適用。
+### Step A2:從對話推導 placeholder 對應值
 
-### Step A2:從對話推導資訊
+若對話尚未揭示專案目的、核心功能(至少 2-3 項)、技術選型方向 → 暫停 Workflow A,告知 user 先用 `superpowers:brainstorming` skill 釐清專案方向,placeholder 暫保留待 brainstorming 完成後一次處理(本 skill 職責是落實規範,不是引導 user 做架構決策)。
 
-先判斷對話是否已具備基本決策(專案目的、核心功能至少 2-3 項、技術選型方向)。
-
-**若資訊嚴重不足**(user 只說「我採納了 template」、沒提任何專案方向)→ 暫停 Workflow A,告知:
-
-> 客製化 CLAUDE.md 需要先確定專案方向(目的、核心功能、技術選型)。建議先用 `superpowers:brainstorming` skill 釐清核心需求,確定後再回來執行客製化。本次先 skip,placeholder 會保留待 brainstorming 完成後一次處理。
-
-避免在資訊不足時把 user 推去做架構與技術決策——那不是本 skill 的職責,會產出膚淺草稿。
-
-**若資訊基本充足**(以下對照表多數欄位可填)→ 繼續以下推導:
+資訊基本充足 → 依下表填入:
 
 | Placeholder | 來源 |
 |-------------|------|
@@ -80,27 +73,18 @@ grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
 | Architecture 樹的 `<project-name>` / `<your-modules>` | 從需求推導的模組切分 |
 | `<YourName>` / `<your-email@example.com>` | 從 `git config user.name` / `user.email` 讀取 |
 
-部分欄位資訊不完整(例如 framework 已選但詳細模組切分未定)→ 保留範例結構並標註,告知「待後續決策明確時由 Workflow B 補上」。整體基本資訊缺失再回到上方「資訊嚴重不足」分支。
+部分欄位資訊不完整(例如 framework 已選但詳細模組切分未定)→ 保留範例結構並標註,告知「待後續決策明確時由 Workflow B 補上」。
 
-### Step A3:展示完整替換計畫(含 dry-run)
+### Step A3:展示替換計畫
 
-先跑 grep 列出**所有匹配位置**(檔案 + 行號),作為 dry-run preview:
+以 Step A1 的 grep 結果作為 dry-run preview。向 User 展示:
 
-```bash
-grep -rn '<Placeholder>\|<!-- TEMPLATE NOTICE\|<YourName>\|your-email@example.com' .claude/
-```
-
-向 User 展示:
 - **dry-run 結果**:每個匹配的 `<檔案>:<行號>:<片段>`,讓 user 確認替換範圍正確
 - **替換對照表**:placeholder → 實際值(用 Step A2 收集)
-- **版本基線決策**(見下)
 - **NOTICE 區塊清理計畫**:CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 連同前後空行刪除
+- **版本基線**:Workflow A 把 CLAUDE.md footer 填為 `Version: v1.0.0` / `Last Updated: 今日`,代表 user 專案規範的起點(獨立於 template 自身演進)。CLAUDE-CHANGELOG.md(空種子)寫入第一個 baseline entry `[v1.0.0]`
 
-請 User 確認後再進 Step A4 執行。
-
-**版本基線預設**:CLAUDE.md 版本 reset 為 `v1.0.0`、`Last Updated` 改為今日——代表 user 專案自己的規範起點,不繼承 template 版本號。CLAUDE-CHANGELOG.md(空種子)寫入 baseline entry `[v1.0.0]`,標註 `adopted from claude-code-setup-v1 template v<X.Y.Z>`。User 明確要求保留 template 版本號則 skip reset,但仍寫 baseline entry。
-
-User 若只想試跑 template、尚未決定方向 → 尊重並 skip 本 workflow。
+請 User 確認後再進 Step A4 執行。User 若只想試跑 template、尚未決定方向 → 尊重並 skip 本 workflow。
 
 ### Step A4:逐檔替換與清理(順序重要)
 
@@ -112,9 +96,9 @@ User 若只想試跑 template、尚未決定方向 → 尊重並 skip 本 workfl
 
 placeholder 數量通常少(< 10 處),Edit tool 逐處改可控且每步都能 review;若 dry-run 結果意外大量,先回 User 確認是否仍照計畫進行。
 
-### Step A5:Reset 版本並寫 CHANGELOG baseline
+### Step A5:填入版本基線並寫 CHANGELOG baseline
 
-1. Reset CLAUDE.md footer(預設):`Last Updated` → 今日;`Version` → `v1.0.0`
+1. 填 CLAUDE.md footer:`Last Updated` → 今日;`Version` → `v1.0.0`
 2. 在 `.claude/CLAUDE-CHANGELOG.md` 的 `[Unreleased]` 下方新增:
 
 ```markdown
@@ -135,10 +119,10 @@ git commit -m "chore(template): initial customization
 
 Replaced template placeholders with project-specific values.
 Removed TEMPLATE NOTICE block.
-Reset CLAUDE.md to v1.0.0 as this project's own baseline and wrote
+Set CLAUDE.md to v1.0.0 as this project's own baseline and wrote
 corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md.
 
-Authored-By: <實際姓名> <實際 email>"
+Authored-By: $(git config user.name) <$(git config user.email)>"
 ```
 
 告知 User:「Template 客製化完畢。後續任何規範 / 架構 / 技術堆疊變更由本 skill 的 Workflow B 處理。」
@@ -199,7 +183,7 @@ current_branch=$(git branch --show-current)
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines for <feature>
 
-Authored-By: <YourName> <your-email@example.com>"
+Authored-By: $(git config user.name) <$(git config user.email)>"
 ```
 
 **情況 B:`dev` / `qas` / `main` 分支**
@@ -214,7 +198,7 @@ git checkout -b docs/claude-md-pre-commit-hook
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines
 
-Authored-By: <YourName> <your-email@example.com>"
+Authored-By: $(git config user.name) <$(git config user.email)>"
 git push origin <branch-name>
 # 建立 PR 到 dev
 ```
@@ -271,10 +255,9 @@ git push origin <branch-name>
 
 撰寫原則:
 - 版本反序排列(最新在最上)
-- 每次 CLAUDE.md 更新必須同步新增一個版本條目
-- 版本號、日期與 CLAUDE.md footer metadata 一致
-- 兩檔必須在同一個 commit
-- 條目以 **User 視角**撰寫(「變了什麼」,不是「改了哪一行」)
+- 條目描述**規範變了什麼**(行為差異),而非**改了哪一行**(實作細節),以利後續讀規範的 Claude 與 dev 理解
+
+(commit 同步、版本號一致由 Step B4 + Gotchas 統一處理,此處不重述。)
 
 條目範例:
 
@@ -300,8 +283,6 @@ git push origin <branch-name>
 ## 特殊情況
 
 - **多個小變更累積**:一次展示所有 diff,版本號僅遞增一次,CHANGELOG 條目可整合多個分類
-- **緊急 hotfix**:若不影響規範描述 → 先 hotfix,事後若發現該情境應納入規範再補
-- **實驗性規則**:試行確認有效後才納入;期間觀察記於 commit message 或 PR 描述
 
 ---
 
