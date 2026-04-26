@@ -23,6 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.4] - 2026-04-26
+
+### Fixed
+- `maintaining-claude-md/SKILL.md` 觸發情境表原將「Template 未客製化」(`<Placeholder>` / `<YourName>` 殘留)列為觸發條件,但這實為 Workflow A 的 entry condition——對話進來後由 Step A1 grep 偵測,不靠 user 顯式提及。混入觸發表會誤導 Claude 把「檔案狀態」當成「對話訊號」。已從表格移除,並新增獨立的「Entry 分流邏輯」區塊覆蓋三種狀態(全殘留 → A / 全無殘留 → B / 部分殘留 + 規範變更 → 先告知 user 決定順序),補齊原本二分邏輯漏掉的「並存」情境
+- `maintaining-claude-md/SKILL.md` Workflow A Step A2 原 entry assumption 寫「對話已提供足夠資訊做替換」,但內部處理又允許「資訊不完整 → 一次問清」,前後矛盾。實務痛點是 user 剛 clone template、什麼都還沒想時,Step A2 會把 user 推去做專案目的 / 核心功能 / 技術選型這類 brainstorming 級的決策——超出本 skill 職責、產出膚淺草稿。已加 escape hatch:資訊嚴重不足 → 暫停 Workflow A 並建議先用 `superpowers:brainstorming` 釐清,定型後再回來客製化
+
+### Changed
+- `maintaining-claude-md/SKILL.md` Workflow B Step B3 情況 B 的固定分支名 `docs/update-claude-md` 改為主題式 `docs/claude-md-<topic>`(例:`docs/claude-md-pre-commit-hook`、`docs/claude-md-google-docstring`)。原固定命名第二次更新就會撞 branch、原 fallback「停下來回報 user」需人工介入,主題式命名既避撞、也讓 PR title 一眼分辨變更主題。Gotchas 對應條目同步更新
+- `maintaining-claude-md/SKILL.md` Workflow B Step B3 情況 A 補強「CLAUDE.md / CHANGELOG 改動獨立成一個 commit,不混入 feature commit」的明示要求並引用 git-rules.md「每個 commit 是一個邏輯完整的改動」原則。原寫法只說「直接在當前分支 commit」,user 可能誤解為與 feature 改動混 commit,導致 git log 分不清功能變動 vs 規範變動
+
+---
+
 ## [v1.11.3] - 2026-04-26
 
 ### Changed

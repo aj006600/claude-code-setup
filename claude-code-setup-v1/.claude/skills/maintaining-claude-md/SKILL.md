@@ -31,9 +31,18 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。規範�
 | 工作流程 | Git workflow、CI/CD、文檔更新流程變更 |
 | 專案需求 | User 特殊習慣、效能 / 安全 / 合規限制 |
 | SPEC.md 連動 | Project Overview / Functional 新模組 / Dependencies / Constraints / 架構重構 |
-| Template 未客製化 | CLAUDE.md 仍有 `<Placeholder>` / `<!-- TEMPLATE NOTICE -->`;`.claude/` 下仍有 `<YourName>` / `your-email@example.com` |
 
-對話揭示決策時觸發:**未客製化 → Workflow A**;**更新既有規範 → Workflow B**。
+(觸發條件以「對話揭示的決策」為主;檔案是否含 placeholder 由下方 entry 邏輯處理,不算觸發條件。)
+
+### Entry 分流邏輯
+
+對話觸發本 skill 後,先執行 Step A1 偵測檔案狀態,再依下表分流:
+
+| 檔案狀態 | 對話內容 | 走向 |
+|---------|---------|------|
+| 完全有 placeholder 殘留 | (任何內容) | Workflow A(初次客製化) |
+| 完全無殘留(已客製化) | 提到規範變更 | Workflow B(更新既有) |
+| 部分殘留 + 同時提規範變更 | (兩者並存) | 先告知 user 並讓 user 決定先做哪個——通常先 A 把 placeholder 清掉、再 B 處理規範變更,避免在未定型的 baseline 上累積 diff |
 
 ---
 
@@ -52,6 +61,16 @@ grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
 
 ### Step A2:從對話推導資訊
 
+先判斷對話是否已具備基本決策(專案目的、核心功能至少 2-3 項、技術選型方向)。
+
+**若資訊嚴重不足**(user 只說「我採納了 template」、沒提任何專案方向)→ 暫停 Workflow A,告知:
+
+> 客製化 CLAUDE.md 需要先確定專案方向(目的、核心功能、技術選型)。建議先用 `superpowers:brainstorming` skill 釐清核心需求,確定後再回來執行客製化。本次先 skip,placeholder 會保留待 brainstorming 完成後一次處理。
+
+避免在資訊不足時把 user 推去做架構與技術決策——那不是本 skill 的職責,會產出膚淺草稿。
+
+**若資訊基本充足**(以下對照表多數欄位可填)→ 繼續以下推導:
+
 | Placeholder | 來源 |
 |-------------|------|
 | `<Project Name>` | User 提到的專案名 |
@@ -61,7 +80,7 @@ grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
 | Architecture 樹的 `<project-name>` / `<your-modules>` | 從需求推導的模組切分 |
 | `<YourName>` / `<your-email@example.com>` | 從 `git config user.name` / `user.email` 讀取 |
 
-資訊不完整 → **一次問清**所有缺失項。尚不能決定(例如詳細模組切分)→ 保留範例結構,告知「待後續決策明確時由 Workflow B 補上」。
+部分欄位資訊不完整(例如 framework 已選但詳細模組切分未定)→ 保留範例結構並標註,告知「待後續決策明確時由 Workflow B 補上」。整體基本資訊缺失再回到上方「資訊嚴重不足」分支。
 
 ### Step A3:展示完整替換計畫
 
@@ -166,31 +185,37 @@ current_branch=$(git branch --show-current)
 
 **情況 A:功能分支**(`feat/*`、`fix/*`、`refactor/*`、`hotfix/*`、`docs/*`)
 
-該功能本身觸發了 CLAUDE.md 更新(例:新增功能模組導致 Architecture 調整),直接在當前分支 commit,保持邏輯完整性:
+該功能本身觸發了 CLAUDE.md 更新(例:新增功能模組導致 Architecture 調整),在當前分支 commit。
+
+**重要**:CLAUDE.md / CHANGELOG 改動**獨立成一個 commit**,不混入 feature commit。保持「功能 commit 只動 src/tests、規範 commit 只動 .claude/」的界線——混在一起會讓 git log 分不清「這個 commit 改了功能 + 規範」還是「只改了功能」,違反 git-rules.md「每個 commit 是一個邏輯完整的改動」。
 
 ```bash
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
-git commit -m "docs(claude): update development guidelines
+git commit -m "docs(claude): update development guidelines for <feature>
 
 Authored-By: <YourName> <your-email@example.com>"
 ```
 
 **情況 B:`dev` / `qas` / `main` 分支**
 
-CLAUDE.md 更新與任何功能分支無關(例:User 單獨提規範調整),建立獨立 docs 分支:
+CLAUDE.md 更新與任何功能分支無關(例:User 單獨提規範調整),建立獨立 docs 分支。**分支名以變更主題命名**(`docs/claude-md-<topic>`),避免每次更新都撞同一個 branch:
 
 ```bash
-git checkout -b docs/update-claude-md
+# 主題式命名範例
+git checkout -b docs/claude-md-pre-commit-hook
+# 或:docs/claude-md-google-docstring、docs/claude-md-rabbitmq-deps 等
 
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
 git commit -m "docs(claude): update development guidelines
 
 Authored-By: <YourName> <your-email@example.com>"
-git push origin docs/update-claude-md
+git push origin <branch-name>
 # 建立 PR 到 dev
 ```
 
-若 `docs/update-claude-md` 已存在(本地或遠端,通常代表前次 PR 未 merge):停下來回報 User,由 User 決定接續 commit 到既有分支、先處理掉既有 PR(merge / close)再開新 branch,或其他處置。
+選 topic 字眼:抓本次 CHANGELOG entry 的核心動詞 / 名詞(例如新增 pre-commit hook 規定 → `pre-commit-hook`;改 docstring 風格 → `google-docstring`)。topic 不需精準,能讓 PR title 一眼分辨即可。
+
+若主題式命名仍意外撞到既有分支(本地或遠端):停下來回報 User,由 User 決定接續 commit 到既有分支、先處理掉既有 PR(merge / close)、或換另一個 topic 命名。
 
 ### Step B4:必須同步完成的三項
 
@@ -319,6 +344,6 @@ git push origin docs/update-claude-md
 
 - **CLAUDE.md 與 CHANGELOG 必須同一個 commit**:兩檔分開提交會讓版本歷史對不上
 - **footer 三處版本必須一致**:`Last Updated`、`Version`、CHANGELOG 最新條目
-- **分支策略依 current branch**:功能分支直接 commit / 主幹分支開 `docs/update-claude-md`
+- **分支策略依 current branch**:功能分支獨立 commit(不混 feature 變更) / 主幹分支開 `docs/claude-md-<topic>`
 - **Workflow A 的 baseline reset**:新專案第一次客製化時要把版本 reset 回 `v1.0.0`,不能繼承 template 版本號
 - **User 未確認前絕不直接改檔**:load-bearing 原則,違反會破壞信任
