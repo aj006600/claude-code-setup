@@ -44,7 +44,12 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 | 文檔同步 | `maintaining-readme-md` / `maintaining-claude-md` skills |
 | PR Merge + 本地清理 | 手工 `gh pr merge` + `git checkout dev && pull && branch -d <feature-branch>` |
 
-補充資源(選配):`feature-dev:code-explorer` / `code-architect`(深度探索 / 多方案對比)、`superpowers:dispatching-parallel-agents` + `using-git-worktrees`(多任務並行)、`superpowers:subagent-driven-development`。完整動態清單見 `/agent-cheatsheet`。
+**補充資源(選配)**——以下為流程不變、可額外搭配的工具,Claude 應在符合情境時主動採用:
+
+- `feature-dev:code-explorer` / `code-architect` — 需深度探索 codebase 或對比多個架構方案時
+- `superpowers:dispatching-parallel-agents` + `superpowers:using-git-worktrees` — 識別到多個彼此獨立、無依賴的 sub-task / sub-feature 時並行,**每個子任務仍各自走完階段 1-4 的 TDD 流程**
+
+完整動態清單見 `/agent-cheatsheet`。
 
 ---
 
@@ -199,8 +204,6 @@ git branch -d feat/<feature-name>
 - **Hotfix**:流程同 Debug,差別只在分支基底與 PR target——從 `main` 建 `hotfix/<bug-name>`,PR 到 `main` 與 `dev` 雙分支,事後補 `maintaining-readme-md` 檢查
 - **Refactor 不增新功能**:仍走 `writing-plans → executing-plans`(既有測試通過 → 重構 → 測試仍通過);SPEC 通常不需更新;CLAUDE.md 若涉架構改變則更新
 - **Spike / Prototype**:建 `spike/<name>` 分支,期間不強制 TDD;**採納必須重寫走正式階段 1-4**,不直接 merge spike 代碼
-- **多任務並行**:`superpowers:using-git-worktrees` + `superpowers:dispatching-parallel-agents`;每個子任務仍各自走 TDD
-- **子任務外包(spec-driven)**:`superpowers:subagent-driven-development`
 
 ---
 

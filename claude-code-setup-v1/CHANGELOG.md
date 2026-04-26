@@ -23,6 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.2] - 2026-04-26
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 關鍵分工表後的「補充資源(選配)」由單行密集列表改為 bullet 列表,每條補上明確的 when-to 觸發信號(深度探索 / 多方案對比、多任務並行的識別條件)。原寫法把工具與情境塞進括號內,Claude 在流程內 mode-lock 時不易自主觸發;改寫後 Claude 可在符合情境時更可靠地主動採用
+- `tdd-feature-workflow/SKILL.md` 「特殊情境」段移除「多任務並行」與「子任務外包」兩條 bullet——前者與 L47 補充資源重複(已在強化版條目涵蓋),後者(`superpowers:subagent-driven-development`)經評估不適配本 template 的工作模型(直接衝突 phase 2.4「主對話線親自看紅綠」核心紀律、解決的問題對 solo dev 不痛、review chain 與 phase 4 PR-level review 重複、token 成本高)。「特殊情境」段現在只剩真正改變 4 階段流程結構的 4 條(Debug / Hotfix / Refactor / Spike),語意純化
+
+### Removed
+- `tdd-feature-workflow/SKILL.md` 完全不再提及 `superpowers:subagent-driven-development`(原列於 L47 補充資源 + L197 特殊情境)。理由:把它放進 SKILL.md 必須在 phase 2.4 鐵律後加「此規則在 subagent-driven path 不適用」的條件式 disclaimer,等於把 TDD 紀律從鐵律降格為條件建議,削弱核心紀律的警示力。對需要的 user 仍可透過 `/agent-cheatsheet` 動態清單發現並直接 invoke
+
+---
+
 ## [v1.11.1] - 2026-04-26
 
 ### Fixed
