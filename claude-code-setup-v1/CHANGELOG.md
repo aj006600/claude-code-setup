@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.3] - 2026-04-26
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 階段 2.4「關於 executing-plans 的收尾行為」段從密集單段改為 4 點 numbered list。內容不變;numbered list 顯著提升 scan-ability——phase 2/3 邊界的 4 個關鍵編排節點(Step 5 自動觸發 finishing-a-development-branch / 階段 3 必須先完成 /「Ready for feedback」暫停作為介入點 / Option 2 push+PR 對應階段 3.4)現在每點獨立分行,降低 Claude 漏看任一節點導致 phase 順序錯位的風險
+
+---
+
 ## [v1.11.2] - 2026-04-26
 
 ### Changed

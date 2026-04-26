@@ -118,7 +118,12 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 - 測試 / 覆蓋率指令依 CLAUDE.md Tech Stack 章節決定;coverage 目標 70%+ 由階段 3 的 `/pre-pr-check` 統一驗證
 - 技術疑問 → 使用 `context7` MCP 查最新 library 文檔
 
-**關於 executing-plans 的收尾行為**:`superpowers:executing-plans` skill 的 Step 5 會在所有 batch 完成後自動呼叫 `superpowers:finishing-a-development-branch`(彈出 4 個選項:merge locally / push+PR / keep as-is / discard)。本 skill 的階段 3(完成前驗證)必須在 Step 5 之前執行——executing-plans 在每個 batch 完成時會「Ready for feedback」暫停等 User,主對話線利用此暫停點介入執行階段 3.1-3.3;階段 3 驗證通過後再讓 `finishing-a-development-branch` 被呼叫並選 **Option 2 (Push and create a Pull Request)** 完成 push + PR,對應階段 3.4。
+**關於 executing-plans 的收尾行為**:
+
+1. `superpowers:executing-plans` Step 5 在所有 batch 完成後**自動**呼叫 `superpowers:finishing-a-development-branch`(彈出 4 個選項:merge locally / push+PR / keep as-is / discard)
+2. 本 skill 的階段 3(完成前驗證)**必須在 Step 5 之前**執行
+3. **介入點**:executing-plans 每個 batch 完成時會「Ready for feedback」暫停等 User——主對話線利用此暫停點切入階段 3.1-3.3
+4. 階段 3 驗證通過後再讓 `finishing-a-development-branch` 被呼叫,選 **Option 2 (Push and create a Pull Request)**,對應階段 3.4
 
 #### 2.5 回寫 SPEC.md 的實作發現
 若實作中產生新的 Acceptance、邊界條件、或需求細節變化 → 啟用 `maintaining-spec-md` 回寫 SPEC,並勾選已達成的 Acceptance Criteria checkbox。沒有變化可跳過;SPEC 本身不追蹤進度(進度由 git branch / PR merge 反映)。
