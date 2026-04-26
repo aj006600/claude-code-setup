@@ -23,6 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.1] - 2026-04-26
+
+### Fixed
+- `tdd-feature-workflow/SKILL.md` 階段 1 的 SPEC.md 啟動條件原為二分(包含 → 跳過 / 沒包含 → 啟動),漏掉「已包含但需修訂」的中間情境(範圍調整、允收標準變更、邊界條件補充、接口變動)會被誤導跳過 `maintaining-spec-md`。改為三分判斷,並補充「有任何新增 / 修訂一律先過 maintaining-spec-md」的判斷原則
+- `tdd-feature-workflow/SKILL.md` 階段 3.3 step 4 原寫「採納的條目 → 遵循 TDD:更新測試 → 修改代碼 → 重跑相關測試 → 重跑全測試」,inline 一條繞過 `writing-plans → executing-plans` 的 mini TDD 循環,與本 skill 核心原則(實作路徑必須走 plan)矛盾,且缺 watch-fail / watch-pass 紅綠節奏。改為「回階段 2 走 TDD」——每條採納建議當新 plan task 處理,改完回階段 3 重跑 `/pre-pr-check`
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 關鍵分工表 `superpowers:test-driven-development` 條目簡化為「查閱用,非獨立階段——詳見 2.4」,將完整解釋集中在階段 2.4 內,去除與 L101 的重複描述
+- `tdd-feature-workflow/SKILL.md` Gotchas 從 6 條精簡到 3 條,移除與正文重複的條目(TDD 不可繞過、SPEC.md 先行、3→4 gate 細項),保留 3 條真正反直覺易踩雷的提醒(code-simplifier 建議 → 回階段 2、文檔同步 merge 前、`finishing-a-development-branch` 對應階段 3.4 而非 phase 4)。Gotchas 退化成「目錄重複」會失去警示功能,精簡後恢復警示力
+
+---
+
 ## [v1.11.0] - 2026-04-24
 
 ### Changed

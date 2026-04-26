@@ -33,7 +33,7 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 | SPEC 更新 | `maintaining-spec-md` skill |
 | 寫 plan(bite-sized TDD tasks) | `superpowers:writing-plans`(plan 本身內建 TDD 循環) |
 | 執行 plan(批次 + checkpoint) | `superpowers:executing-plans` |
-| TDD 紀律參考 | `superpowers:test-driven-development`(plan 執行中遇紀律疑義時查閱,非獨立階段) |
+| TDD 紀律參考 | `superpowers:test-driven-development`(查閱用,非獨立階段——詳見 2.4) |
 | Bug 定位(debug 情境) | `superpowers:systematic-debugging`(僅 debug 流程前置;之後同階段 2-4) |
 | 代碼簡化審查 | `code-simplifier:code-simplifier` agent |
 | 完成前驗證 | `superpowers:verification-before-completion` |
@@ -66,7 +66,13 @@ Skill 產出 SPEC 更新 diff → User 確認
 進入階段 2
 ```
 
-若 SPEC.md 已包含此功能:不需重啟 `maintaining-spec-md`,直接繼續。
+**SPEC.md 啟動條件**:
+
+- SPEC 完全沒此功能 → 啟動 `maintaining-spec-md` 新增章節
+- SPEC 已包含但需修訂(範圍調整、允收標準變更、邊界條件補充、接口變動)→ 仍啟動 `maintaining-spec-md` 處理 diff
+- SPEC 已完整覆蓋且無調整需求 → 可跳過 `maintaining-spec-md` 直接進階段 2
+
+判斷原則:**有任何新增 / 修訂 → 一律先過 maintaining-spec-md**;只有「完全照舊」才跳過。
 
 **為何強制先 brainstorming**:`superpowers:brainstorming` skill 本身已自適應——需求明確時 2-3 輪對話就結束,不會拖時間;但允許跳過會讓 Claude 與 User 自判「這個懂了」,誤判成本(先寫錯 SPEC → 實作偏方向 → 回頭重做)遠高於 brainstorming 的時間成本。討論必須在 SPEC 之前。
 
@@ -131,7 +137,7 @@ Agent 結果出來後**不是僅 warning**,執行五步:
 1. **詳細呈現**給 User 每條建議:具體位置、修改前後對比、agent 的理由
 2. **CLAUDE 附上自己的判斷**:每條標 `[強烈建議]` / `[可選]` / `[不同意](理由)`——不要純 relay agent 輸出
 3. **與 User 討論**決定採納哪些,明確取得決定
-4. 採納的條目 → **遵循 TDD**:更新測試 → 修改代碼 → 重跑相關測試 → 重跑全測試確認無 regression
+4. 採納的條目 → **回階段 2 走 TDD**:把採納的簡化建議當成新的 plan task(必要時擴充原 plan 或建小型 plan),經 `writing-plans → executing-plans` 處理。即使是「只動兩三行」的小簡化,仍走紅綠循環——red-green-refactor 紀律不因「簡化」二字就豁免。改完回階段 3 重跑 `/pre-pr-check`
 5. 不採納的條目 → 記錄理由到 PR description,方便 review 階段討論
 
 #### 3.4 Push + PR 建立(二選一)
@@ -215,9 +221,6 @@ git branch -d feat/<feature-name>
 
 ## Gotchas(容易忘記的關鍵點)
 
-- **TDD 不可繞過**:無論採用何種 agent 輔助規劃,實作路徑必須經 `writing-plans → executing-plans`——繞過即埋品質債
-- **SPEC.md 先行**:階段 1 未完成前不進階段 2;SPEC 變更獨立 commit
-- **`code-simplifier` 建議引發修改 → 重跑 TDD**:改代碼後必須重跑相關測試 + 全測試,不能只跑被改的檔案
-- **階段 3 → 4 的 gate 是 `/pre-pr-check` 全通過 + code-simplifier 處理完畢 + `verification-before-completion`**:不是「plan 跑完」就算完,要先跑 pre-pr-check、處理 code-simplifier 建議、強制回答「真的完成了嗎?」再建 PR
+- **`code-simplifier` 建議 → 回階段 2 走 TDD,不就地 inline 改**:每條採納建議當新 plan task 處理(寫/更新 failing test → watch fail → 改 → watch pass → 重跑全測試),不在驗證階段直接動代碼;原因見 3.3 step 4
 - **文檔同步在 merge 前**(階段 4.3 / 4.4):一旦 merge 回 dev,需改走 `maintaining-readme-md` 狀態 D 補救流程,多一步工
-- **`superpowers:finishing-a-development-branch` 對應階段 3.4「Push + PR 建立」**:該 skill 的 4 個 options 是「merge locally / push+PR / keep / discard」,語意對應「實作完成後如何整合」,不是 review 通過後的 merge 清理;`executing-plans` Step 5 會自動觸發它,本 skill 利用此時點完成階段 3.4 的 push+PR。階段 4.5 的 PR merge + 本地清理直接用 `gh pr merge` + git 命令
+- **`superpowers:finishing-a-development-branch` 對應階段 3.4「Push + PR 建立」,不是 phase 4 的 merge 清理**:該 skill 的 4 個 options(merge locally / push+PR / keep / discard)語意對應「實作完成後如何整合」;`executing-plans` Step 5 為 REQUIRED SUB-SKILL 會自動觸發它,本 skill 利用此時點選 Option 2 完成 push+PR。Phase 4.5 的 PR merge + 本地清理直接用 `gh pr merge` + git 命令(注意 base 預設為 main,本 template 需 `--base dev`)
