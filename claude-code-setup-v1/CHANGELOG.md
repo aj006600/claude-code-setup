@@ -23,6 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.5] - 2026-04-26
+
+### Changed
+- `maintaining-claude-md/SKILL.md` Workflow A Step A3 / A4 從「sed 批次直接改檔」改為「先 grep dry-run preview → user 確認 → Edit tool 逐處改」。原 sed 設計不可逆、無 preview、macOS / Linux 寫法分歧;改用 grep + Edit 後每處替換有可見 diff、可回滾、跨平台一致,且 placeholder 數量本就少(< 10),不需要 sed 的批次能力。Step A3 標題改為「展示完整替換計畫(含 dry-run)」、Step A4 標題改為「逐檔替換與清理」反映新流程
+- `maintaining-claude-md/SKILL.md` Gotchas 從 5 條精簡到 3 條。移除「分支策略依 current branch」(Step B3 全段就是這個)與「Workflow A 的 baseline reset」(Step A5 就是這個)兩條與 body 高度重複的條目。剩 3 條都是 LLM 真正容易違反的鐵律(雙檔同 commit / 三處版本一致 / user 未確認絕不改檔),Gotchas 退化成「目錄重複」會失去警示功能,精簡後恢復警示力(對齊 maintaining-spec-md / tdd-feature-workflow 的 Gotchas 設計慣例)
+
+### Fixed
+- `maintaining-claude-md/SKILL.md` Step A5 baseline CHANGELOG entry 範例移除「Git 身份批次替換為本專案 Git 設定」一條。此條為實作細節(template 怎麼客製化),不是「user 會關心的變動」——user 自己就是設定 Git 身份的人,違反同檔 L246「條目以 User 視角撰寫」原則。範例若不修正會誘導 user 寫出同樣脫離 user 視角的 entry,污染專案 CHANGELOG 品質
+
+---
+
 ## [v1.11.4] - 2026-04-26
 
 ### Fixed

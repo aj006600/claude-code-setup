@@ -82,28 +82,35 @@ grep -rln '<YourName>\|your-email@example.com' .claude/ 2>/dev/null
 
 部分欄位資訊不完整(例如 framework 已選但詳細模組切分未定)→ 保留範例結構並標註,告知「待後續決策明確時由 Workflow B 補上」。整體基本資訊缺失再回到上方「資訊嚴重不足」分支。
 
-### Step A3:展示完整替換計畫
+### Step A3:展示完整替換計畫(含 dry-run)
 
-向 User 展示:偵測到的未客製化項目(placeholder 清單、有殘留的 `.claude/` 檔案數)、替換對照表、版本基線決策、待清理的 NOTICE 區塊,請 User 確認後執行。
+先跑 grep 列出**所有匹配位置**(檔案 + 行號),作為 dry-run preview:
+
+```bash
+grep -rn '<Placeholder>\|<!-- TEMPLATE NOTICE\|<YourName>\|your-email@example.com' .claude/
+```
+
+向 User 展示:
+- **dry-run 結果**:每個匹配的 `<檔案>:<行號>:<片段>`,讓 user 確認替換範圍正確
+- **替換對照表**:placeholder → 實際值(用 Step A2 收集)
+- **版本基線決策**(見下)
+- **NOTICE 區塊清理計畫**:CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 連同前後空行刪除
+
+請 User 確認後再進 Step A4 執行。
 
 **版本基線預設**:CLAUDE.md 版本 reset 為 `v1.0.0`、`Last Updated` 改為今日——代表 user 專案自己的規範起點,不繼承 template 版本號。CLAUDE-CHANGELOG.md(空種子)寫入 baseline entry `[v1.0.0]`,標註 `adopted from claude-code-setup-v1 template v<X.Y.Z>`。User 明確要求保留 template 版本號則 skip reset,但仍寫 baseline entry。
 
 User 若只想試跑 template、尚未決定方向 → 尊重並 skip 本 workflow。
 
-### Step A4:批次替換與清理(順序重要)
+### Step A4:逐檔替換與清理(順序重要)
+
+依 Step A3 dry-run 結果,**用 Edit tool 逐檔處理**(每處替換有可見 diff、可回滾,優於 sed 直接改檔):
 
 1. 移除 CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 區塊(含前後空行)
 2. 替換 CLAUDE.md 各 `<Placeholder>`(用 Step A2 收集的對照)
-3. 批次替換 `.claude/` 下的 `<YourName>` / `your-email@example.com`:
+3. 對 dry-run 列出的每個 `<YourName>` / `your-email@example.com` 匹配位置,Edit tool 改為實際姓名 / email
 
-```bash
-# macOS
-find .claude -type f \( -name "*.md" -o -name "*.sh" \) -exec sed -i '' \
-  -e "s|<YourName>|<實際姓名>|g" \
-  -e "s|your-email@example.com|<實際 email>|g" {} +
-
-# Linux:去掉 sed 的 '' 參數
-```
+placeholder 數量通常少(< 10 處),Edit tool 逐處改可控且每步都能 review;若 dry-run 結果意外大量,先回 User 確認是否仍照計畫進行。
 
 ### Step A5:Reset 版本並寫 CHANGELOG baseline
 
@@ -116,7 +123,6 @@ find .claude -type f \( -name "*.md" -o -name "*.sh" \) -exec sed -i '' \
 ### Added
 - Initial development guidelines adopted from claude-code-setup-v1 template and customized for <Project Name>
 - Project Overview / Tech Stack / Architecture 章節依需求填入
-- Git 身份批次替換為本專案 Git 設定
 ```
 
 ### Step A6:Commit
@@ -342,8 +348,6 @@ git push origin <branch-name>
 
 ## Gotchas(容易忘記的關鍵點)
 
-- **CLAUDE.md 與 CHANGELOG 必須同一個 commit**:兩檔分開提交會讓版本歷史對不上
-- **footer 三處版本必須一致**:`Last Updated`、`Version`、CHANGELOG 最新條目
-- **分支策略依 current branch**:功能分支獨立 commit(不混 feature 變更) / 主幹分支開 `docs/claude-md-<topic>`
-- **Workflow A 的 baseline reset**:新專案第一次客製化時要把版本 reset 回 `v1.0.0`,不能繼承 template 版本號
-- **User 未確認前絕不直接改檔**:load-bearing 原則,違反會破壞信任
+- **CLAUDE.md 與 CHANGELOG 必須同一個 commit**:分開 commit 會讓版本歷史對不上,日後 git blame 找不到對應 entry
+- **footer 三處版本必須完全一致**:`Last Updated`、`Version`、CHANGELOG 最新條目——任一不一致即等於對 user 撒謊
+- **User 未確認前絕不直接改檔**:展示 diff → 等確認 → 才動手;這是 load-bearing 信任原則,違反一次 user 就不再相信本 skill 的 diff preview
