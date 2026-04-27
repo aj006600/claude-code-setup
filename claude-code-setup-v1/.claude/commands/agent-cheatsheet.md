@@ -25,7 +25,7 @@ ls .claude/commands/ 2>/dev/null
 
 ### 3. 標註原則
 
-- **Scope tag**:每個 entry 加 `[project-local]` / `[plugin:<name>]` / `[built-in]` / `[global]`,避免同名衝突(例:本地 `code-reviewer` agent vs `feature-dev:code-reviewer` plugin agent;global skills vs project skills)
+- **Scope tag**:每個 entry 加 `[project-local]` / `[plugin:<name>]` / `[global]`,避免同名衝突(例:`feature-dev:code-reviewer` plugin agent vs 任何同名 entry;global skills vs project skills)
 - **描述對齊 cross-ref**:不要對單一 entry 編造定位,以 `tdd-feature-workflow/SKILL.md`「關鍵分工」表與 `CLAUDE.md`「Available Resources」既有描述為準。例如 `superpowers:code-reviewer` 應寫「dispatch by `superpowers:requesting-code-review`、結果返回對話」,不寫「preferred for X」這類沒有 cross-ref 支持的定位
 
 ## Output 骨架
@@ -42,7 +42,6 @@ Agents & Skills Cheatsheet (<Project Name>)
 
 [Plugin / global] — 視已安裝 plugin 而定
 - <plugin>:<agent> [plugin:<plugin>] — <一行用途>
-- <built-in agent name> [built-in] — <一行用途>
 
 ━━ Skills (via Skill tool) ━━
 

@@ -18,6 +18,8 @@
 # ---------------------------------------------------------------------------
 # Ruff — Formatter + Linter
 # ---------------------------------------------------------------------------
+# NOTE: target-version (here) and python_version (in [tool.mypy] below) must
+# match your project's actual Python version. Update both if you change it.
 
 [tool.ruff]
 line-length = 88

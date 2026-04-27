@@ -52,11 +52,6 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `git-rules.md` — Git workflow + commit convention
 - `documentation-style.md` — 文檔撰寫風格
 
-### 3 Local Agents
-- `code-reviewer` — 本地版 code review agent
-- `documentation-engineer` — 文件撰寫 / 維護
-- `test-automator` — 大規模 test framework / CI 整合
-
 ---
 
 ## Prerequisites
@@ -167,7 +162,6 @@ claude-code-setup-v1/
 │   │   │   └── references/       # 3 份 doc templates
 │   │   └── tdd-feature-workflow/
 │   ├── commands/                 # Slash commands
-│   ├── agents/                   # Sub-agents
 │   └── hooks/
 │       ├── secrets-scan-advisory.sh
 │       └── external-ref-guard.sh
@@ -266,9 +260,6 @@ Hook 類型（依 lifecycle 順序）：
 - `Stop` — Claude 回覆完成後
 - `SessionEnd` — session 結束時
 
-### 修改 agent
-`.claude/agents/*.md` 為 local agents。修改 description 可改變觸發語境，修改 body 可改變行為。
-
 ---
 
 ## Design Rationale
@@ -303,5 +294,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.17.1
+**Template Version**: v1.18.0
 **Last Updated**: 2026-04-27

@@ -1,6 +1,6 @@
 ---
 name: tdd-feature-workflow
-description: 'Use when the user starts implementing a new feature, bug fix, refactor, or any multi-step code change. Triggers include "實作 X"、"開發 Y"、"新增 Z 功能"、"修 bug A"、"refactor B"、handing over a spec or plan, or "繼續" an in-progress feature. Also use when finalizing work and opening a PR. The skill orchestrates the full 4-phase TDD lifecycle — requirement → plan & implement → pre-PR verification → review & merge — by delegating to superpowers skills, commit-commands, code-review, project-local agents, and maintaining-* skills at appropriate checkpoints. The main flow strictly enforces TDD: brainstorming → SPEC.md update → writing-plans (bite-sized TDD tasks) → executing-plans → verification → PR → review → merge with doc sync. Debug/hotfix flows replace the brainstorming front with superpowers:systematic-debugging, then follow the same path. Trigger proactively even without explicit mention of "TDD" or "workflow" — any conversation about starting, resuming, or finalizing feature work should invoke this skill, because stand-alone code changes without the discipline wrapper are exactly how projects accumulate technical debt.'
+description: 'Use when starting, resuming, or finalizing any feature / bug fix / refactor / multi-step code change. Triggers include "實作 X"、"開發 Y"、"修 bug"、"refactor"、handing over a spec or plan, "繼續" an in-progress feature, or opening a PR. Orchestrates the full 4-phase TDD lifecycle (requirement → plan & implement → pre-PR verification → review & merge) by delegating to superpowers skills, code-review, and maintaining-* skills at the right checkpoints. Trigger proactively even without explicit mention of "TDD" — stand-alone code changes without the discipline wrapper are how projects accumulate technical debt.'
 ---
 
 # TDD Feature Workflow(本專案開發編排)
@@ -38,7 +38,7 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 | 代碼簡化審查 | `code-simplifier:code-simplifier` agent |
 | 完成前驗證 | `superpowers:verification-before-completion` |
 | PR 前完整檢查 | `/pre-pr-check` command |
-| Code review(對外寫回 PR / 對內返回對話) | `/code-review` command(5 agents 平行 + 過濾 + `gh pr comment` 寫回 PR)/ `superpowers:requesting-code-review`(dispatch `code-reviewer` subagent、結果返回對話) |
+| Code review(對外寫回 PR / 對內返回對話) | `/code-review` command(5 agents 平行 + 過濾 + `gh pr comment` 寫回 PR)/ `superpowers:requesting-code-review`(dispatch `superpowers:code-reviewer` subagent、結果返回對話) |
 | Review 反饋處理 | `superpowers:receiving-code-review`(verify 再實作、禁 performative agreement) |
 | Push + PR 建立 | `superpowers:finishing-a-development-branch`(選 Option 2)或 `/commit-push-pr` command(或手工) |
 | 文檔同步 | `maintaining-readme-md` / `maintaining-claude-md` skills |

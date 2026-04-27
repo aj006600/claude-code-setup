@@ -73,40 +73,21 @@ Description 觸發後,**不要立刻動手**——先判斷實作狀態,避免�
 | 架構重構、破壞性變更 | README + docs/architecture + docs/migration |
 | 僅內部重構(User 無感) | **不觸發本 skill**(疑慮時問 User 確認) |
 
-### Step 3:委派 `documentation-engineer` agent 產出內容
+### Step 3:準備內容素材並產出草稿
 
-使用 Agent tool,傳遞明確 context:
+由主對話線直接撰寫(README/docs 屬純內容寫作,sub-agent 隔離 context 沒有實質收益)。產出前**必讀**:
 
-```
-Agent({
-  subagent_type: "documentation-engineer",
-  description: "Update README for <feature>",
-  prompt: `
-    更新 README.md 與 docs/ 以反映新功能:[名稱]
+1. `.claude/rules/documentation-style.md`(章節英文 / 內文繁中 / 技術術語英文等通用規範)
+2. 依文檔類型讀對應模板:
+   - Service → `.claude/skills/maintaining-readme-md/references/service-template.md`
+   - Reference(CLI / config / API)→ `.claude/skills/maintaining-readme-md/references/reference-template.md`
+   - Guide(troubleshooting / how-to)→ `.claude/skills/maintaining-readme-md/references/guide-template.md`
 
-    **變更摘要**:[內容]
-    **受影響章節**:
-    - README.md: [清單]
-    - docs/: [檔案清單]
-
-    **務必先讀**:
-    1. \`.claude/rules/documentation-style.md\`(通用規範)
-    2. 依類型讀對應模板:
-       - Service → \`.claude/skills/maintaining-readme-md/references/service-template.md\`
-       - Reference(CLI / config / API)→ \`.claude/skills/maintaining-readme-md/references/reference-template.md\`
-       - Guide(troubleshooting / how-to)→ \`.claude/skills/maintaining-readme-md/references/guide-template.md\`
-
-    **語言規範**:依 `.claude/rules/documentation-style.md` 的「語言規範」章節(章節英文 / 內文繁中 / 技術術語英文)。
-    **不要直接改檔**,先輸出完整 diff / 新增內容草稿。
-  `
-})
-```
-
-**為何委派而非自行產出**:`documentation-engineer` agent 專精 API doc、教學設計、info architecture。Skill 是 orchestrator(決定何時、更新什麼),agent 是 specialist(決定怎麼寫得好)。
+依規範與 template 產出**完整 diff / 新增內容草稿**;**不要直接改檔**——由 Step 4 取得 User 確認後才落筆。
 
 ### Step 4:展示 diff 取得 User 確認
 
-組織 agent 產出:
+組織草稿:
 
     README / docs 更新建議
 
@@ -194,8 +175,8 @@ git push origin docs/update-readme-<feature>
 |------|------|
 | `maintaining-claude-md` | User-facing 變更時連動觸發本 skill |
 | `maintaining-spec-md` | SPEC Overview 變更通常同時需更新 README 專案描述 |
-| `documentation-engineer` agent | 本 skill 委派內容產出(skill orchestrate / agent write) |
-| `.claude/rules/documentation-style.md` | 委派時須傳達:Service / Reference / Guide 模板、章節命名、Footer 格式 |
+| `.claude/rules/documentation-style.md` | Step 3 撰寫前必讀:章節命名、Footer 格式、語言規範等 |
+| `.claude/skills/maintaining-readme-md/references/{service,reference,guide}-template.md` | Step 3 撰寫前依文檔類型擇一讀作為結構骨架 |
 | `.claude/rules/git-rules.md` | Commit 格式;文檔更新屬功能 PR 的一部分 |
 
 ---
@@ -204,7 +185,7 @@ git push origin docs/update-readme-<feature>
 
 **觸發**:`User: "CSV 匯出功能實作完成,測試都過了"`
 
-**正確反應**(判斷狀態 B → 立即執行 + 委派):
+**正確反應**(判斷狀態 B → 立即執行):
 
     偵測到新功能實作完成(狀態 B),啟用 maintaining-readme-md skill。
 
@@ -212,7 +193,7 @@ git push origin docs/update-readme-<feature>
     1. README.md — Features + Usage 章節
     2. docs/export-guide.md(新增)— CSV 格式、選項、錯誤處理
 
-    委派 documentation-engineer agent 產出草稿中...
+    依 documentation-style.md + service-template.md 產出草稿中...
 
     [展示 diff] 是否確認?
 
@@ -228,5 +209,5 @@ git push origin docs/update-readme-<feature>
 
 - **狀態判斷優先於動手**:description 觸發不等於立刻執行;狀態 A 要延後,否則產出過期文檔
 - **文檔屬於功能 PR 的一部分**:狀態 B / C 不另開分支,加入當前 branch;只有狀態 D(已 merge)才補救式開 docs 分支
-- **委派 agent 時要傳風格規範**:傳遞 `.claude/rules/documentation-style.md` 引用(含章節英文 / 內文繁中 / 技術術語英文等慣例)——不傳會導致 agent 產出不一致的文體
-- **先出草稿再改檔**:指示 agent 用 diff / 草稿形式呈現,Skill 取得 User 確認後才落檔
+- **寫文檔前必讀規範與模板**:依 `.claude/rules/documentation-style.md`(章節英文 / 內文繁中 / 技術術語英文等慣例)與對應 template(service / reference / guide)產出,不仰賴記憶——略過會導致文體不一致
+- **先出草稿再改檔**:Step 3 產出 diff / 草稿,Step 4 取得 User 確認後才落檔

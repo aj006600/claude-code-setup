@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.18.0] - 2026-04-27
+
+### Removed
+- `.claude/agents/` 整個目錄(`code-reviewer.md` / `documentation-engineer.md` / `test-automator.md` 三檔):這些 local agents 是泛用 boilerplate(疑似從某 generic agent collection 複製),問題密集——(a) 與 setup 完全脫鉤:寫死 `coverage > 80%` 與本 setup 70% target 衝突、`test-automator` 整檔圍繞 UI/Mobile/Selenium 但本 setup 是 pytest backend、`documentation-engineer` 是「文件網站工程師」級別(Sphinx/MkDocs 風格,談 `Page load time < 2s` / `WCAG AA` / `Search functionality`)但本 setup 只寫 markdown;(b) 引用一堆不存在的 agent(`security-auditor` / `performance-engineer` / `frontend-developer` / `mobile-developer` / `devops-engineer` / `technical-writer` / `api-designer` / `cli-developer` / `product-manager` 等);(c) 用了不在 Claude Code 框架內的 JSON RPC 風格 communication protocol 範本;(d) 寫死假指標假成果報告(如 `Automated 842 test cases achieving 83% coverage with 27-minute execution time and 98.5% success rate`)會被當作真實 status 抄回對話;(e) cross-ref 上 `code-reviewer` 與 `test-automator` 沒有任何 skill / command 引用屬孤兒,`documentation-engineer` 雖被 `maintaining-readme-md` Step 3 引用但 agent 內容與 skill 用途嚴重 mismatch
+- `agent-cheatsheet.md` 中 `[built-in]` scope tag(L28 標註原則 + L45 output skeleton 對應行):Claude Code 沒有「built-in agent」概念(agents 都來自 plugin 或 local),此 tag 永遠不會匹配對象,屬空殼設計
+- `CLAUDE.md` Available Resources 章節「本地 agents...由 skill 透過 Agent tool 委派」整段(原 L146):agents 已全部刪除,描述失效
+- `README.md` `### 3 Local Agents` 章節整段、結構樹中 `agents/` 目錄行、Advanced Customization「修改 agent」段:對應 agents/ 目錄已移除
+
+### Changed
+- `maintaining-readme-md/SKILL.md` Step 3 從「委派 `documentation-engineer` agent 產出內容」改為「主對話線直接撰寫」。理由:README/docs 屬純內容寫作,sub-agent 隔離 context 沒有實質收益;原本委派的 agent 內容根本不是寫 README/docs 而是設計文件網站,委派路徑壞掉。改為主對話線讀 `documentation-style.md` + 對應 template 後直接產出 diff,移除無效中間層。連動更新該 skill「與其他 skill / rule 的互動」表(移除 `documentation-engineer` 條目、新增三份 template references 條目)、Step 4 措辭「組織 agent 產出」→「組織草稿」、Gotchas 第 3 條從「委派 agent 時要傳風格規範」改為「寫文檔前必讀規範與模板」
+- `CLAUDE.md` L107 Testing Protocols 章節超長 bullet(原本一行塞 4 個資訊:測試入口、plan 內建 TDD 循環、`superpowers:test-driven-development` 不獨立啟用、testing-rules.md 位置)精簡為兩句。CLAUDE.md 每次對話都載入,前 3 點屬 `tdd-feature-workflow/SKILL.md` 已詳述細節,CLAUDE.md 不該重述;省下的字符是純 context budget
+- `tdd-feature-workflow/SKILL.md` description 從 ~700 字符精簡為 ~470 字符。原 description 過長稀釋觸發精度,核心觸發場景(實作 / 開發 / 修 bug / refactor / 繼續 / 開 PR)與 4 階段編排機制已涵蓋;細節由 skill body 承擔。同時連動移除 description 內「project-local agents」字樣(已隨 agents/ 移除)
+- `tdd-feature-workflow/SKILL.md` L41 互動表中 `superpowers:requesting-code-review` dispatch 的 subagent 從無前綴 `code-reviewer` 改為明示 `superpowers:code-reviewer`,避免在 local agent 已移除後 reader 仍可能誤讀為本地 agent
+- `pyproject-tooling.example.toml` 在 `[tool.ruff]` section 上方加 inline 註解,提醒 user 改 Python 版本時 `target-version`(ruff)與 `python_version`([tool.mypy])兩處要同步——原本兩個版本字串散落兩 section 沒有互相提示
+- `/pre-pr-check` Level 2.2 (external-ref body file scan) 預設掃描範圍從固定 2 路徑(`pr-body.md` / `.github/PULL_REQUEST_TEMPLATE.md` / 「其他常見路徑」這個語焉不詳的 placeholder)精準化為三條明列(專案根 / `.github/` 下的 `pr-body.md`、`.github/PULL_REQUEST_TEMPLATE.md`、對話中 user 明示作為 `--body-file` 的任何路徑),反映實務上 PR body file 路徑常依專案慣例變動
+
+---
+
 ## [v1.17.1] - 2026-04-27
 
 ### Removed

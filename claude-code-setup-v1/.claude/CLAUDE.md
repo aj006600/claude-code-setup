@@ -104,7 +104,7 @@
 - **Integration Test**: 視需求添加
 - **Coverage**: 目標 70%+(用 `/pre-pr-check` command 驗證)
 
-寫測試的正式入口是 `tdd-feature-workflow` 階段 2 的 `superpowers:writing-plans → superpowers:executing-plans`(plan 每個 task 內建 `寫 failing test → watch it fail → 最小實作 → watch it pass → commit` TDD 循環);`superpowers:test-driven-development` skill 作為紅綠節奏疑義時的紀律參考,不獨立啟用為階段。詳細測試慣例、fixture、mocking、parametrize 範例見 `.claude/rules/testing-rules.md`。
+寫測試的正式入口是 `tdd-feature-workflow` 階段 2(plan 每個 task 內建 TDD 循環,詳見該 skill)。詳細測試慣例、fixture、mocking、parametrize 範例見 `.claude/rules/testing-rules.md`。
 
 ---
 
@@ -142,8 +142,6 @@
 - **`maintaining-spec-md` / `maintaining-claude-md` / `maintaining-readme-md` skills** — 專案文檔維護,依情境自動觸發
 - **`/pre-dev-check` / `/pre-pr-check` commands** — 開發前 / PR 前檢查
 - **`context7` MCP** — 查最新 library 文檔
-
-本地 agents(`agents/` 目錄共 3 個:`code-reviewer` / `documentation-engineer` / `test-automator`)由 skill 透過 Agent tool 委派,不需手動記憶;想看時執行 `/agent-cheatsheet`。
 
 ---
 

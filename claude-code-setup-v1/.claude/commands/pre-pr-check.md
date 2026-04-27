@@ -36,7 +36,12 @@ Findings 的處理流程(詳細呈現 → CLAUDE 標 [強烈建議] / [可選] /
 
 `external-ref-guard.sh` PreToolUse hook 已擋 `git commit` / `gh pr|issue create|edit|comment` 命令文本含外部 repo ref(`owner/repo#N` 或 `https://github.com/owner/repo/(issues|pull)/N`)。但 hook 看不到 `--body-file <path>` 的檔案內容;此處補位:
 
-若 branch 內存在 PR body draft file(`pr-body.md` / `.github/PULL_REQUEST_TEMPLATE.md` / 其他常見路徑) → 掃描檔案內容,偵測指向**其他 repo**(非 `git remote get-url origin`)的 refs。Backticks 內的 ref 視為安全(GitHub code span 不做 reference parsing,跳過)。
+掃 branch 內可能作為 PR body 的檔案——**預設掃**:
+- `pr-body.md`(專案根 / `.github/`)
+- `.github/PULL_REQUEST_TEMPLATE.md`
+- 對話中 user 明示作為 `--body-file` 的任何路徑
+
+掃描內容偵測指向**其他 repo**(非 `git remote get-url origin`)的 refs。Backticks 內的 ref 視為安全(GitHub code span 不做 reference parsing,跳過)。
 
 若有外部 ref → WARNING,列出 finding 與所在檔;建議用 backticks 包或改寫(見 `git-rules.md` Cross-repo 引用安全格式)。不 block——hook 會在實際 `gh pr create --body-file` 時以命令文本層級擋下(若 body-file 路徑出現在 command,hook 至少能看到引用本身;但內容仍須此處掃描)。
 
