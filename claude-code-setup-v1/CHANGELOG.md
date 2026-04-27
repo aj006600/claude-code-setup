@@ -23,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.17.1] - 2026-04-27
+
+### Removed
+- `/project-status` 中 `git branch --show-current`:`git status -sb` 首行 `## branch-name...origin/...` 已含 branch name,獨立跑屬冗餘
+- `/project-status` 中 `git status --short`:`-sb` 等同 `--short --branch`,porcelain status 已在 `-sb` 輸出中,獨立跑同樣資訊兩次
+- `/project-status` 對 `.claude/CLAUDE-CHANGELOG.md` 的 read 指示。Output 模板從未顯示 CHANGELOG 條目,屬 dead instruction——指示 Claude 讀檔卻不告訴它要顯示什麼
+
+### Changed
+- `/project-status` L7「use `/pre-pr-check` if test status is needed」改為「直接 `uv run pytest` 或看 CI checks (`.github/workflows/ci.yml`)」。v1.17.0 將 `/pre-pr-check` 收斂為 workflow-aware(PR 補位),不再是 general 測試 runner;指向它查 test status 屬 misuse
+- `/project-status` 新增 placeholder / 缺檔 edge case 處理:CLAUDE.md footer Version 仍是字面 `<vX.Y.Z>` → 顯示「not yet initialized,執行 `maintaining-claude-md` Workflow A」;SPEC.md 不存在 → 顯示「not yet created,描述專案需求觸發 `maintaining-spec-md`」。對 template 新 adopter 客製化過程更友善
+- `/project-status` 新增 `git status -sb` 首行 sync state parsing 規則(ahead / behind / diverged / up to date / no upstream),原本「sync status with remote」placeholder 沒明示 Claude 該怎麼從 `-sb` 抽資訊
+
+---
+
 ## [v1.17.0] - 2026-04-27
 
 ### Removed
