@@ -27,8 +27,8 @@ SPEC 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git br
 | 類別 | 何時觸發 |
 |------|---------|
 | 需求變更 | 新功能 / 需求修改 / 範圍調整 |
-| 實作發現 | 技術限制、需求不明、需新增依賴 |
-| 程式碼改動 | API / schema / 架構 / 外部依賴改變 |
+| 實作發現 | 需求不明、Acceptance 需修訂、邊界條件需補充 |
+| 程式碼改動 | user-facing API / schema 改變(影響 FR / Acceptance) |
 | Acceptance 達成 | 功能完成 → 勾選已達成的 Acceptance Criteria checkbox |
 | Bug 揭示 | Bug 揭示原需求錯誤 → 更新 Description / Acceptance |
 | 專案無 SPEC.md | 執行 Workflow A 建立初始版本 |
@@ -43,11 +43,12 @@ Read 或 Glob `.claude/SPEC.md` → 存在則改走 Workflow B。
 ### Step A2:向 User 收集需求
 用自然對話或 AskUserQuestion 收集:
 1. **專案目的與背景**:要解決什麼問題?目標使用者?
-2. **核心功能需求**(至少 2-3 個):功能清單
-3. **技術環境**:語言版本、外部依賴、技術限制
-4. **範圍邊界**:哪些**不在**範圍內?
+2. **核心功能需求**(至少 2-3 個):功能清單,各含 User Needs 與初步 Acceptance Criteria
+3. **範圍邊界**:哪些**不在**範圍內?
 
-具體提問避免空白頁困境。可舉例引導:「例如 Python 3.11+、OpenAI API、回應時間 < 200ms」。
+具體提問避免空白頁困境。可舉例引導:「例如:不處理批次匯入、不支援多語系」。
+
+> **不在本 workflow 收集的事項**:技術選型(語言版本、外部依賴、技術限制、架構)屬 CLAUDE.md 的 Tech Stack / Architecture 章節範疇——SPEC 建立後若需記錄,啟用 `maintaining-claude-md` skill 接手處理。職責切分清楚,規範鏈才不會重疊漂移。
 
 ### Step A3:草擬初始 SPEC.md
 讀 `references/spec-template.md` 並依結構填寫:
@@ -85,10 +86,12 @@ Authored-By: $(git config user.name) <$(git config user.email)>"
 ### Step B1:識別變更觸發點
 **暫停實作**,自問:
 - 這是新需求、需求修改、還是實作細節?
-- 影響哪些章節?(Overview / Functional / Technical Context)
-- 是否調整 Acceptance / In-Out of Scope?
+- 影響哪些章節?(Overview / Out of Scope / Functional Requirements)
+- 是否調整 Acceptance Criteria / Out of Scope?
 
 只是實作細節 → 不更新 SPEC,繼續實作。
+
+> 若變更涉及技術選型或架構(新依賴、tech stack 換)→ **這不是 SPEC 觸發點**,改啟用 `maintaining-claude-md` 更新 CLAUDE.md。
 
 ### Step B2:展示更新建議並等待確認
 
@@ -204,7 +207,7 @@ SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User
 
 | 對象 | 關係 |
 |------|------|
-| `maintaining-claude-md` | SPEC.md 的 Overview / Tech Stack / Architecture 變更時 Step B5 連動 hint |
+| `maintaining-claude-md` | SPEC.md 的 Overview / Functional Requirements 變更帶來新依賴或架構需求時 Step B5 連動 hint |
 | `maintaining-readme-md` | SPEC.md 的 user-facing 變更(新功能 / API / 安裝步驟)時 Step B5 連動 hint |
 | `.claude/rules/git-rules.md` | Commit 格式(`spec:` type + `Authored-By` trailer);SPEC 獨立 commit |
 | `tdd-feature-workflow` | 本 skill 是 TDD 流程的「需求確認階段」——先更新 SPEC,User 確認後才進入測試先行 |

@@ -23,6 +23,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.12.0] - 2026-04-27
+
+### Changed
+- `maintaining-spec-md/references/spec-template.md` 結構從 7 sub-section 簡化為 3 sub-section:`Project Overview` / `Out of Scope` / `Functional Requirements`(含 `Description` / `User Needs` / `Acceptance Criteria` / 選配 `Technical Notes`)。移除 `In Scope`(與 FR 角色重疊)、移除 `Technical Context`(`Constraints` / `Dependencies` / `Assumptions`,屬 CLAUDE.md Tech Stack / Architecture 範疇,規範鏈職責切分後不應留在 SPEC)。Template 末加 hint 提示技術選型由 `maintaining-claude-md` 處理
+- `maintaining-spec-md/SKILL.md` Step A2 收集需求清單從 4 項縮為 3 項(移除「技術環境」),並加 hint 引導 user 後續啟用 `maintaining-claude-md` 處理技術上下文。同時 Step B1 自問清單中「Overview / Functional / Technical Context」改為「Overview / Out of Scope / Functional Requirements」、「Acceptance / In-Out of Scope」改為「Acceptance Criteria / Out of Scope」,對齊 template 新結構
+- `maintaining-spec-md/SKILL.md` 觸發情境表第 2-3 行重寫:「實作發現」從「技術限制 / 需新增依賴」改為「需求不明 / Acceptance 需修訂 / 邊界條件需補充」(技術面已歸 CLAUDE.md);「程式碼改動」從「API / schema / 架構 / 外部依賴改變」收斂為「user-facing API / schema 改變(影響 FR / Acceptance)」
+- `maintaining-claude-md/SKILL.md` description 中「SPEC.md's Project Overview / Tech Stack / Architecture changed」修正為「SPEC.md's Project Overview or Functional Requirements change in ways that imply new tech stack, dependencies, or architecture」。SPEC 沒有 Tech Stack / Architecture 章節後,觸發鏈應表達為「SPEC FR 變動 → 暗示需要改 CLAUDE.md tech stack/architecture」的因果關係
+- `maintaining-claude-md/SKILL.md` 觸發情境表第 5 行「SPEC.md 連動 | Project Overview / Functional 新模組 / Dependencies / Constraints / 架構重構」改為「Project Overview 變更 / Functional Requirements 新增或修改帶來新依賴或架構需求」(SPEC 沒有 Dependencies / Constraints 章節)
+- `tdd-feature-workflow/SKILL.md` 階段 2.4 專案專屬提醒「新增模組時考慮是否連動更新 SPEC.md / CLAUDE.md Architecture」改為「新增模組通常意味新 FR → 啟用 maintaining-spec-md;同時連動 CLAUDE.md Architecture → 啟用 maintaining-claude-md」。SPEC 沒有 Architecture 章節後,需精確表達 SPEC 與 CLAUDE.md 各自的觸發切面
+
+### Removed
+- `spec-template.md` 的 `### In Scope` 段落:資訊已由 `Functional Requirements` 列具體功能涵蓋,抽象層級的 In Scope 反而造成 user 第一次建 SPEC 時困惑「FR 寫了還要再寫一次抽象版?」
+- `spec-template.md` 的 `## Technical Context` 段落(含 `Constraints` / `Dependencies` / `Assumptions` 三個 sub-section):三類邊界在實務上常重疊(如「需 Python 3.11+」三類皆可歸),強迫分類造成內耗。技術上下文的正確家是 CLAUDE.md(Tech Stack + Architecture),SPEC 應只負責「需求 + 範圍」,不重複承擔技術選型記錄職責
+
+---
+
 ## [v1.11.8] - 2026-04-27
 
 ### Added

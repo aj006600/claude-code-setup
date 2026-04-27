@@ -1,6 +1,6 @@
 ---
 name: maintaining-claude-md
-description: Use when the user proposes new coding conventions, project structure changes, workflow adjustments (git flow, CI/CD), testing strategy changes, docstring / naming updates, new technical dependencies, development checklist changes, or new project-specific constraints. Also use when SPEC.md's Project Overview / Tech Stack / Architecture changed, or when CLAUDE.md still has template placeholders (`<Placeholder>`, `<!-- TEMPLATE NOTICE -->`, `<YourName>`, `your-email@example.com`) and conversation has revealed the corresponding decisions. Trigger proactively even without explicit mention of "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md in sync with practice is load-bearing for every subsequent Claude Code session.
+description: Use when the user proposes new coding conventions, project structure changes, workflow adjustments (git flow, CI/CD), testing strategy changes, docstring / naming updates, new technical dependencies, development checklist changes, or new project-specific constraints. Also use when SPEC.md's Project Overview or Functional Requirements change in ways that imply new tech stack, dependencies, or architecture; or when CLAUDE.md still has template placeholders (`<Placeholder>`, `<!-- TEMPLATE NOTICE -->`, `<YourName>`, `your-email@example.com`) and conversation has revealed the corresponding decisions. Trigger proactively even without explicit mention of "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md in sync with practice is load-bearing for every subsequent Claude Code session.
 ---
 
 # Maintaining CLAUDE.md
@@ -30,7 +30,7 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。規範�
 | 專案結構 | 新增 / 移除目錄、模組重組、新技術堆疊 |
 | 工作流程 | Git workflow、CI/CD、文檔更新流程變更 |
 | 專案需求 | User 特殊習慣、效能 / 安全 / 合規限制 |
-| SPEC.md 連動 | Project Overview / Functional 新模組 / Dependencies / Constraints / 架構重構 |
+| SPEC.md 連動 | Project Overview 變更 / Functional Requirements 新增或修改帶來新依賴或架構需求 |
 
 (觸發條件以「對話揭示的決策」為主;檔案是否含 placeholder 由下方 entry 邏輯處理,不算觸發條件。)
 
@@ -290,7 +290,7 @@ git push origin <branch-name>
 
 | 對象 | 關係 |
 |------|------|
-| `maintaining-spec-md` | SPEC.md 的 Overview / Tech Stack / Architecture 變更時連動觸發本 skill |
+| `maintaining-spec-md` | SPEC.md 的 Overview / Functional Requirements 變更帶來新依賴或架構需求時連動觸發本 skill |
 | `maintaining-readme-md` | Step B6 在 User-facing 變更時建議啟用 readme skill |
 | `.claude/rules/git-rules.md` | Commit message 格式(`docs(claude):` 或 `chore(template):` + `Authored-By` trailer)、分支命名 |
 | `tdd-feature-workflow` | 分支策略須協同,避免破壞功能 PR 的 commit 邏輯完整性 |
@@ -299,11 +299,11 @@ git push origin <branch-name>
 
 ## Pattern 示例
 
-**觸發**:`User: "我更新了 SPEC.md,把 OrderService 拆成 OrderAPI / OrderWorker / OrderNotifier 三個服務"`
+**觸發**:`User: "我更新了 SPEC.md,把 OrderService 的功能拆成 OrderAPI / OrderWorker / OrderNotifier 三組 FR"`
 
 **正確反應**(同步更新 + 展示 diff):
 
-    SPEC.md 的架構變更影響 CLAUDE.md 的 Project Overview、Tech Stack、Architecture 三個章節,先同步更新:
+    SPEC.md 的 FR 拆分暗示需要新依賴(訊息佇列)與架構調整,影響 CLAUDE.md 的 Tech Stack 與 Architecture 章節,先同步更新:
 
     **建議的更新內容**:
     ```diff

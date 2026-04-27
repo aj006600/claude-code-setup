@@ -113,7 +113,7 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 
 **專案專屬提醒**:
 - 依 CLAUDE.md Architecture 章節將代碼放到對應模組
-- 新增模組時考慮是否連動更新 SPEC.md / CLAUDE.md Architecture
+- 新增模組通常意味新 FR → 啟用 `maintaining-spec-md` 處理需求面;同時連動 CLAUDE.md Architecture → 啟用 `maintaining-claude-md` 處理架構面
 - 遵循 `.claude/rules/code-style.md`(命名、type hints、docstring)與 `.claude/rules/testing-rules.md`(pytest 慣例、fixture、mocking、parametrize)
 - 測試 / 覆蓋率指令依 CLAUDE.md Tech Stack 章節決定;coverage 目標 70%+ 由階段 3 的 `/pre-pr-check` 統一驗證
 - 技術疑問 → 使用 `context7` MCP 查最新 library 文檔

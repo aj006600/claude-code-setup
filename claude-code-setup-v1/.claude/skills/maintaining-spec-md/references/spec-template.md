@@ -16,33 +16,10 @@ SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git
 ## Project Overview
 [1-2 段話說明專案目的、背景和要解決的問題]
 
-### In Scope
-專案**會**處理的問題領域和核心範圍:
-- [問題領域 1]
-- [問題領域 2]
-
 ### Out of Scope
 專案**不會**處理的功能或範圍(明確邊界):
 - [排除項目 1]
 - [排除項目 2]
-
----
-
-## Technical Context
-
-### Constraints
-技術限制、平台限制、效能要求:
-- [例如:必須支援 Python 3.11+]
-- [例如:回應時間需在 200ms 內]
-
-### Dependencies
-外部系統、API、服務依賴:
-- [例如:OpenAI API]
-- [例如:PostgreSQL 14+]
-
-### Assumptions
-專案假設條件:
-- [例如:使用者已有基本認證系統]
 
 ---
 
@@ -56,7 +33,7 @@ SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git
   - [ ] [驗收標準 1 - 具體可測試的標準]
   - [ ] [驗收標準 2]
 
-**Technical Notes**:
+**Technical Notes**(選配):
 - [實作上的技術考量或注意事項]
 
 ---
@@ -71,3 +48,5 @@ SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git
 **Last Updated**: YYYY-MM-DD
 **Version**: v1.0.0
 ```
+
+> 技術選型(語言版本、外部依賴、技術限制、架構)屬 CLAUDE.md 的 Tech Stack / Architecture 章節範疇,**不寫在 SPEC.md**——避免規範鏈職責重疊。SPEC 建立後若需記錄技術上下文,啟用 `maintaining-claude-md` skill 處理。
