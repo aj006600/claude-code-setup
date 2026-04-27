@@ -127,7 +127,7 @@ uv sync
 Claude Code 會自動完成：
 
 1. **建立 SPEC.md**：`maintaining-spec-md` skill 偵測到無 SPEC.md → Workflow A 起草
-2. **客製 CLAUDE.md**：`maintaining-claude-md` skill 偵測到 `<Placeholder>` 與 `<!-- TEMPLATE NOTICE -->` → Workflow A 填入 Project Name / framework / Architecture 等 placeholder、批次替換 `<YourName>` / `your-email@example.com`、移除 NOTICE 區塊
+2. **客製 CLAUDE.md**：`maintaining-claude-md` skill 偵測到 `<!-- TEMPLATE NOTICE -->` 區塊 → Workflow A 依對話填入 Project Name / framework / Architecture 等 `<...>` placeholder、移除 NOTICE 區塊
 3. 展示 diff → 你確認 → 一次 commit
 
 若需求尚不明確，skill 會主動詢問；若對話尚未提供足夠資訊（例如 framework 尚未選定），對應 placeholder 暫不替換，由後續對話中的 Workflow B 補上。
@@ -294,5 +294,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.18.0
+**Template Version**: v1.19.0
 **Last Updated**: 2026-04-27

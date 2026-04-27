@@ -1,6 +1,6 @@
 ---
 name: maintaining-claude-md
-description: Use when the user proposes new coding conventions, project structure changes, workflow adjustments (git flow, CI/CD), testing strategy changes, docstring / naming updates, new technical dependencies, development checklist changes, or new project-specific constraints. Also use when SPEC.md's Project Overview or Functional Requirements change in ways that imply new tech stack, dependencies, or architecture; or when CLAUDE.md still has template placeholders (`<Placeholder>`, `<!-- TEMPLATE NOTICE -->`, `<YourName>`, `your-email@example.com`) and conversation has revealed the corresponding decisions. Trigger proactively even without explicit mention of "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md in sync with practice is load-bearing for every subsequent Claude Code session.
+description: Use when the user proposes new coding conventions, project structure changes, workflow adjustments (git flow, CI/CD), testing strategy changes, docstring / naming updates, new technical dependencies, development checklist changes, or new project-specific constraints. Also use when SPEC.md's Project Overview or Functional Requirements change in ways that imply new tech stack, dependencies, or architecture; or when CLAUDE.md still has the `<!-- TEMPLATE NOTICE -->` block at the top and conversation has revealed the corresponding decisions for filling in the inline `<...>` placeholders. Trigger proactively even without explicit mention of "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md in sync with practice is load-bearing for every subsequent Claude Code session.
 ---
 
 # Maintaining CLAUDE.md
@@ -50,12 +50,20 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。規範�
 
 適用於採用 template 後首次進入本 skill、對話已提供足夠資訊做替換。
 
-### Step A1:列出 placeholder 範圍
+### Step A1:確認 entry condition + 列出 placeholder 範圍
 
-跑一次 grep 列出所有 placeholder 匹配位置(後續 dry-run 與 Edit 都用這份清單):
+先確認檔案處於 template 未客製化狀態——`<!-- TEMPLATE NOTICE` 區塊仍在頂端是唯一可靠訊號:
 
 ```bash
-grep -rn '<Placeholder>\|<!-- TEMPLATE NOTICE\|<YourName>\|your-email@example.com' .claude/
+grep -n '<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
+```
+
+未命中 → 已客製化,改走 Workflow B。
+
+命中 → 接著列出 CLAUDE.md 中所有 `<...>` placeholder 作為後續 dry-run preview 與 Edit 對象:
+
+```bash
+grep -n '<[a-zA-Z][^>]*>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
 ```
 
 ### Step A2:從對話推導 placeholder 對應值
@@ -71,7 +79,6 @@ grep -rn '<Placeholder>\|<!-- TEMPLATE NOTICE\|<YourName>\|your-email@example.co
 | `<your framework, ...>` | User 選擇的 framework(若提及) |
 | `<list project-specific dependencies...>` | 明確提到的 SDK / DB / 第三方依賴 |
 | Architecture 樹的 `<project-name>` / `<your-modules>` | 從需求推導的模組切分 |
-| `<YourName>` / `<your-email@example.com>` | 從 `git config user.name` / `user.email` 讀取 |
 
 部分欄位資訊不完整(例如 framework 已選但詳細模組切分未定)→ 保留範例結構並標註,告知「待後續決策明確時由 Workflow B 補上」。
 
@@ -91,8 +98,7 @@ grep -rn '<Placeholder>\|<!-- TEMPLATE NOTICE\|<YourName>\|your-email@example.co
 依 Step A3 dry-run 結果,**用 Edit tool 逐檔處理**(每處替換有可見 diff、可回滾,優於 sed 直接改檔):
 
 1. 移除 CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 區塊(含前後空行)
-2. 替換 CLAUDE.md 各 `<Placeholder>`(用 Step A2 收集的對照)
-3. 對 dry-run 列出的每個 `<YourName>` / `your-email@example.com` 匹配位置,Edit tool 改為實際姓名 / email
+2. 替換 CLAUDE.md 各 `<...>` placeholder(用 Step A2 收集的對照,涵蓋 `<Project Name>`、`<your framework, ...>`、Architecture 樹的 `<project-name>` / `<your-modules>` 等)
 
 placeholder 數量通常少(< 10 處),Edit tool 逐處改可控且每步都能 review;若 dry-run 結果意外大量,先回 User 確認是否仍照計畫進行。
 

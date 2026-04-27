@@ -42,7 +42,6 @@
 │   ├── rules/                # 開發規範參考(見 Rules Index 章節)
 │   ├── skills/               # 專案專屬 skills
 │   ├── commands/             # Slash commands
-│   ├── agents/               # Sub-agents
 │   ├── hooks/                # PreToolUse hooks(見 Safety & Hooks 章節)
 │   └── settings.json         # Claude Code 設定
 ├── src/                      # 主要程式碼

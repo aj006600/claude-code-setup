@@ -40,7 +40,7 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 | PR 前完整檢查 | `/pre-pr-check` command |
 | Code review(對外寫回 PR / 對內返回對話) | `/code-review` command(5 agents 平行 + 過濾 + `gh pr comment` 寫回 PR)/ `superpowers:requesting-code-review`(dispatch `superpowers:code-reviewer` subagent、結果返回對話) |
 | Review 反饋處理 | `superpowers:receiving-code-review`(verify 再實作、禁 performative agreement) |
-| Push + PR 建立 | `superpowers:finishing-a-development-branch`(選 Option 2)或 `/commit-push-pr` command(或手工) |
+| Push + PR 建立 | `superpowers:finishing-a-development-branch`(選 Option 2)或手工 |
 | 文檔同步 | `maintaining-readme-md` / `maintaining-claude-md` skills |
 | PR Merge + 本地清理 | 手工 `gh pr merge` + `git checkout dev && pull && branch -d <feature-branch>` |
 
@@ -156,7 +156,7 @@ Agent 結果出來後**不是僅 warning**,執行五步:
 
 **`superpowers:finishing-a-development-branch`**:階段 2.4 結束時 `executing-plans` 已準備呼叫此 skill——3.1-3.3 驗證通過後讓它呼叫,選 **Option 2 (Push and create a Pull Request)**。skill 會自動跑 `git push -u` + `gh pr create`。**注意**:該 skill 預設 PR base 為 `main`;本 template 分支策略為 `feat/* → dev`,故 PR 建立時需覆寫 `--base dev`(或建立後以 `gh pr edit --base dev` retarget)。
 
-**手工 / `/commit-push-pr`**:依 `.claude/rules/git-rules.md` 格式 commit → `git push -u origin <branch>` → `gh pr create --base dev`。`commit-commands` plugin 的 `/commit-push-pr` 可自動編排三步。
+**手工**:依 `.claude/rules/git-rules.md` 格式 commit → `git push -u origin <branch>` → `gh pr create --base dev`。
 
 SPEC.md 變更須獨立 commit。
 

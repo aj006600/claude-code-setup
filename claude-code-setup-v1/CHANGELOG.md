@@ -23,6 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.19.0] - 2026-04-27
+
+### Fixed
+- `.claude/CLAUDE.md` L45 架構樹遺漏的 `agents/` 目錄行:v1.18.0 已從 template 移除整個 `.claude/agents/` 目錄,但 CLAUDE.md 範例架構樹仍保留 `agents/  # Sub-agents` 條目。CLAUDE.md 每次對話載入,這條過期描述會誤導 Claude 推理「應該有本地 agents」並影響後續委派決策
+- `maintaining-claude-md/SKILL.md` Workflow A 的 placeholder 偵測邏輯壞掉:Step A1 的 grep 字面查 `<Placeholder>`(13 個字)、`<YourName>`、`your-email@example.com`,但 template CLAUDE.md 實際使用 `<Project Name>` / `<your framework, ...>` / `<your-modules>` 等語意化命名,且 `<YourName>` / `your-email@example.com` 已在更早版本(見 v1.15.0 CHANGELOG)從 template 移除——整個 grep 唯一會命中的是 `<!-- TEMPLATE NOTICE`,placeholder 偵測實質失效。改為:Step A1 先以 `<!-- TEMPLATE NOTICE` 為唯一可靠的「未客製化」訊號,確認後再用 `<[a-zA-Z][^>]*>` 通用 pattern 列出所有實際 `<...>` placeholder 作為 dry-run 與 Edit 對象。連動清理:skill description、Step A2 placeholder 對照表、Step A4 替換步驟全部移除已不存在的 `<YourName>` / `<your-email@example.com>` 條目
+- `README.md` Quick Start L130 描述同步:從「批次替換 `<YourName>` / `your-email@example.com`」改為「依對話填入 `<...>` placeholder」,反映 skill 修正後的真實行為
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` L43 與 L159 移除 `/commit-push-pr` command 引用:該 command 來自 `commit-commands` plugin 但 README Prerequisites 從未列入此依賴,user 照 README 安裝後跑到 SKILL 才發現缺。SKILL 同段已並列 `superpowers:finishing-a-development-branch`(選 Option 2)與「手工」兩條完整路徑,中間多列一個需額外裝 plugin 的便利包裝屬冗。移除後 push+PR 路徑收斂為兩條,Prerequisites 表保持只列真正必需的依賴
+- `agent-cheatsheet.md` L29 scope tag 範例更新:原寫「例:`feature-dev:code-reviewer` plugin agent vs 任何同名 entry」假設本地 agents 與 plugin agents 可能同名衝突,但 v1.18.0 已移除所有本地 agents 此情境消失。改為「例:plugin agents 與 global skills 同名時」反映實際剩下的衝突情境
+
+---
+
 ## [v1.18.0] - 2026-04-27
 
 ### Removed
