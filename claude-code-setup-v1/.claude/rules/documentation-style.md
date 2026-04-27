@@ -81,6 +81,22 @@
 
 ---
 
+## 語言規範
+
+本專案文檔採以下語言慣例：
+
+| 元素 | 語言 | 範例 |
+|------|------|------|
+| 章節標題（`#`、`##`、`###`） | 英文 | `## Quick Start` / `## Architecture` |
+| 內文敘述 | 繁體中文 | 「本服務負責接收外部數據...」 |
+| 技術術語 | 英文 | `API`、`endpoint`、`fixture`、`hook` |
+| 程式碼註解 | 英文 | `# Initialize cache pool` |
+| Commit message | 英文 | `feat(user): add registration` |
+
+**為何這樣切分**：章節英文便於跨團隊 / 國際資源 reference；內文繁中降低 user 認知負擔；技術術語保留英文避免翻譯失真（例：「fixture」翻成「測試夾具」反而模糊原意）。
+
+---
+
 ## 章節命名標準（常用）
 
 | 概念 | 統一命名 |
@@ -88,13 +104,12 @@
 | 概述 | `Overview` |
 | 快速開始 | `Quick Start` |
 | 架構 | `Architecture` |
-| API 說明 | `API Endpoints` |
 | 配置 | `Configuration` |
 | 使用方式 | `Usage` |
 | 測試 | `Testing` |
 | 問題排解 | `Troubleshooting` |
-| 範例 | `Examples` |
-| 貢獻 | `Contributing` |
+
+依文檔性質選用，非全部必寫。專案專屬的章節（例：`API Endpoints` / `Migration` / `Contributing` / `Examples`）以英文命名即可，不強制統一格式。
 
 ---
 
@@ -109,16 +124,3 @@
 | Guide | Troubleshooting、How-to、概念說明 | `.claude/skills/maintaining-readme-md/references/guide-template.md` |
 
 當 `maintaining-readme-md` skill 啟用時，會自動依文檔性質選用對應模板。
-
----
-
-## 撰寫檢查清單
-
-撰寫或更新 `docs/` 文檔時確認：
-
-- [ ] 標題層級正確（`#` → `##` → `###`）
-- [ ] 程式碼區塊有正確的語言標記
-- [ ] 架構或流程使用 Mermaid 圖表
-- [ ] Footer 包含 `**Last Updated**` + `**Version**`（僅 user 產品文檔；rules、SKILL.md、CHANGELOG 不需）
-- [ ] 內文有適當的交叉連結
-- [ ] 章節順序符合對應模板（Service / Reference / Guide）

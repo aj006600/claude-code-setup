@@ -23,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.14.0] - 2026-04-27
+
+### Added
+- `documentation-style.md` 新增「語言規範」章節,正式記錄本專案文檔採用的「章節標題英文、內文繁中、技術術語英文、程式碼註解英文、commit message 英文」慣例,含 5 個元素的範例表與 why 說明。原先此規範僅以 inline 文字散落於 `maintaining-readme-md/SKILL.md` 委派 documentation-engineer agent 的 prompt 中(Step 3 與 Gotchas 各一處),屬「孤兒規定」——規範改了無正式追溯點。提升為 rule 級規範後,語言慣例有 single source of truth
+
+### Changed
+- `documentation-style.md` 章節命名標準表從 10 條瘦身為 7 條,移除 `API Endpoints`(對 non-web 專案無意義)、`Examples`(與 Usage 重疊)、`Contributing`(對個人專案造成「需寫」道德壓力)。同時新增註記「依文檔性質選用,非全部必寫」,並提示「專案專屬章節以英文命名即可,不強制統一格式」(把 `API Endpoints` / `Migration` / `Contributing` 改列為 case-by-case 範例),避免 user 誤以為 7 條都是強制章節
+- `maintaining-readme-md/SKILL.md` Step 3 委派 documentation-engineer agent 的 prompt 中「**語言規範**:章節標題英文、內文繁中、技術術語英文。」改為指向 `.claude/rules/documentation-style.md` 「語言規範」章節,避免兩處同步維護;Gotchas 第 3 條「委派 agent 時要傳風格規範」同步調整為傳遞 documentation-style.md 引用
+
+### Removed
+- `documentation-style.md` 末段「撰寫檢查清單」整段(6 條 checklist:標題層級、程式碼區塊標記、Mermaid、Footer、交叉連結、章節順序)。每一條都是前文規範的重抄——對 Claude 沒新訊號(讀完規範就有 mental checklist),對人類只是「規範 + 規範摘要」雙寫,且規範改 checklist 也要同步改,屬漂移風險而非價值
+
+---
+
 ## [v1.13.0] - 2026-04-27
 
 ### Added

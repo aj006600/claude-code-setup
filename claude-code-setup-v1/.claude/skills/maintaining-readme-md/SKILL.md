@@ -96,7 +96,7 @@ Agent({
        - Reference(CLI / config / API)→ \`.claude/skills/maintaining-readme-md/references/reference-template.md\`
        - Guide(troubleshooting / how-to)→ \`.claude/skills/maintaining-readme-md/references/guide-template.md\`
 
-    **語言規範**:章節標題英文、內文繁中、技術術語英文。
+    **語言規範**:依 `.claude/rules/documentation-style.md` 的「語言規範」章節(章節英文 / 內文繁中 / 技術術語英文)。
     **不要直接改檔**,先輸出完整 diff / 新增內容草稿。
   `
 })
@@ -232,5 +232,5 @@ git push origin docs/update-readme-<feature>
 
 - **狀態判斷優先於動手**:description 觸發不等於立刻執行;狀態 A 要延後,否則產出過期文檔
 - **文檔屬於功能 PR 的一部分**:狀態 B / C 不另開分支,加入當前 branch;只有狀態 D(已 merge)才補救式開 docs 分支
-- **委派 agent 時要傳風格規範**:章節英文、內文繁中、技術術語英文——不傳會導致 agent 產出不一致的文體
+- **委派 agent 時要傳風格規範**:傳遞 `.claude/rules/documentation-style.md` 引用(含章節英文 / 內文繁中 / 技術術語英文等慣例)——不傳會導致 agent 產出不一致的文體
 - **先出草稿再改檔**:指示 agent 用 diff / 草稿形式呈現,Skill 取得 User 確認後才落檔
