@@ -131,9 +131,7 @@ Agent({
 
 ```bash
 git add README.md docs/
-git commit -m "docs(readme): update README and docs for <feature-name>
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "docs(readme): update README and docs for <feature-name>"
 ```
 
 **狀態 D**(已 merge 補救):
@@ -142,9 +140,7 @@ Authored-By: $(git config user.name) <$(git config user.email)>"
 git checkout dev && git pull
 git checkout -b docs/update-readme-<feature>
 git add README.md docs/
-git commit -m "docs(readme): retroactively update README for <feature>
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "docs(readme): retroactively update README for <feature>"
 git push origin docs/update-readme-<feature>
 # 建立 PR 到 dev
 ```

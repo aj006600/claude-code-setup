@@ -23,6 +23,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.15.0] - 2026-04-27
+
+### Removed
+- `Authored-By: <YourName> <your-email@example.com>` trailer 規範。理由:GitHub / GitLab / `git log --format` / `git shortlog` / semantic-release / commitlint 均不識別此 trailer,純文字註記不被當作 metadata、不建立 co-author 關聯、不出現在貢獻者統計;且與 git 內建 `Author:` / `Committer:` 欄位語意重複(由 `user.name` / `user.email` 自動填入)。功能 = 0。曾因 `<<'EOF'` heredoc 字面化導致 6 個 commit 寫入字串而非展開值,純粹引入 bash 構造陷阱卻無對應價值。本 setup 不採 `Co-Authored-By:`(GitHub 標準)的折衷,因為個人 / 內部 template 沒有對外標記 AI 協作的 compliance 需求——「沒功能就不寫」優於「寫一個沒功能的欄位」
+- `.claude/hooks/commit-message-advisory.sh` PreToolUse hook 整檔。該 hook 唯一職能是檢查 `git commit` 命令含 `Authored-By` trailer,trailer 規範移除後失去檢查對象;同步從 `.claude/settings.json` `PreToolUse[].hooks[]` 陣列移除註冊
+- `git-rules.md`「最佳實踐」第 2 條(Message 清楚描述「做了什麼」,與 Format 章節重複)、第 3 條(避免 commit 包含多個不相關改動,與第 1 條 100% 同義)、第 5 條(提交前用 `code-simplifier:code-simplifier` agent + TDD 兩行)。前者屬內部冗餘;後者跨檔案抵觸:`tdd-feature-workflow/SKILL.md` 階段 3.3 與 `pre-pr-check.md` Level 2.2 已是 code-simplifier 用法的 single source of truth(規定 PR 前跑一次、含「呈現建議 → CLAUDE 標 [強烈建議/可選/不同意] → User 決定 → 採納項回階段 2 走 TDD」5 步流程),git-rules 簡化為 2 行寫「提交前」會破壞 bite-sized TDD commit 節奏(每個 commit 都跑 agent)且抹掉關鍵紀律,違反單一責任原則(git-rules 規定 git 格式,不規定 agent 用法)
+
+### Changed
+- `git-rules.md` Commit Convention「格式」段更新為符合 [Conventional Commits 1.0.0](https://www.conventionalcommits.org/) 標準格式（含 optional body / footer 占位符與標準連結引用），並去除 `Authored-By:` trailer 行
+- `git-rules.md`「最佳實踐」精簡為 2 條:「每個 commit 為邏輯完整的單一改動」+「SPEC.md / CLAUDE.md / 文檔規範變更獨立 commit」,後者擴充自原「SPEC.md 變更應獨立成一個 commit」並對齊 `maintaining-claude-md/SKILL.md` L180「規範 commit 只動 .claude/」
+- `maintaining-claude-md` / `maintaining-spec-md` / `maintaining-readme-md` SKILL.md 共 8 處 commit 範例移除 `Authored-By: $(git config user.name) <$(git config user.email)>` 行(maintaining-claude-md L125 / L186 / L201;maintaining-spec-md L77 / L144 / L158;maintaining-readme-md L136 / L147),同時移除 maintaining-spec-md L206 與 maintaining-claude-md L289 互動表中對「`Authored-By` trailer」的引用
+- CLAUDE.md「Safety & Hooks」表從 3 hooks 縮為 2 hooks(secrets-scan-advisory + external-ref-guard);文字「三個 PreToolUse hooks」改「兩個 PreToolUse hooks」
+- README.md「2 Advisory Hooks + 1 Guard Hook」改為「1 Advisory Hook + 1 Guard Hook」+ 對應描述、結構樹、FAQ「Hooks 會擋住我的 commit 嗎?」表格、Prerequisites 表中 `code-simplifier` 的「引用位置」欄位(從 `CLAUDE.md、git-rules.md、/pre-pr-check` 改為 `tdd-feature-workflow skill 階段 3.3、/pre-pr-check Level 2.2`,反映 git-rules.md 不再規定 agent 用法的事實)
+
+---
+
 ## [v1.14.0] - 2026-04-27
 
 ### Added

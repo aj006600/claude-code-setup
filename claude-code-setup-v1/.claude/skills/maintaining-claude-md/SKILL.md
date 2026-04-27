@@ -120,9 +120,7 @@ git commit -m "chore(template): initial customization
 Replaced template placeholders with project-specific values.
 Removed TEMPLATE NOTICE block.
 Set CLAUDE.md to v1.0.0 as this project's own baseline and wrote
-corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md.
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md."
 ```
 
 告知 User:「Template 客製化完畢。後續任何規範 / 架構 / 技術堆疊變更由本 skill 的 Workflow B 處理。」
@@ -181,9 +179,7 @@ current_branch=$(git branch --show-current)
 
 ```bash
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
-git commit -m "docs(claude): update development guidelines for <feature>
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "docs(claude): update development guidelines for <feature>"
 ```
 
 **情況 B:`dev` / `qas` / `main` 分支**
@@ -196,9 +192,7 @@ git checkout -b docs/claude-md-pre-commit-hook
 # 或:docs/claude-md-google-docstring、docs/claude-md-rabbitmq-deps 等
 
 git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
-git commit -m "docs(claude): update development guidelines
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "docs(claude): update development guidelines"
 git push origin <branch-name>
 # 建立 PR 到 dev
 ```
@@ -292,7 +286,7 @@ git push origin <branch-name>
 |------|------|
 | `maintaining-spec-md` | SPEC.md 的 Overview / Functional Requirements 變更帶來新依賴或架構需求時連動觸發本 skill |
 | `maintaining-readme-md` | Step B6 在 User-facing 變更時建議啟用 readme skill |
-| `.claude/rules/git-rules.md` | Commit message 格式(`docs(claude):` 或 `chore(template):` + `Authored-By` trailer)、分支命名 |
+| `.claude/rules/git-rules.md` | Commit message 格式(`docs(claude):` 或 `chore(template):`)、分支命名 |
 | `tdd-feature-workflow` | 分支策略須協同,避免破壞功能 PR 的 commit 邏輯完整性 |
 
 ---

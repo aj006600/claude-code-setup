@@ -30,8 +30,12 @@ dev (development) ← feat/<feature-name>
 ```
 <type>(<scope>): <description>
 
-Authored-By: <YourName> <your-email@example.com>
+[optional body]
+
+[optional footer(s)]
 ```
+
+遵循 [Conventional Commits 1.0.0](https://www.conventionalcommits.org/)。
 
 ### Type 類型
 
@@ -79,12 +83,8 @@ git commit -m "perf(search): add caching"
 
 ## 最佳實踐
 
-- 每個 commit 是一個**邏輯完整**的改動
-- Message 清楚描述「做了什麼」
-- 避免一個 commit 包含多個不相關的改動
-- SPEC.md 變更應**獨立**成一個 commit
-- 提交前使用 `code-simplifier:code-simplifier` agent 審查和優化代碼
-  - 若有修改代碼，須遵循 TDD：更新測試 → 修改代碼 → 執行相關測試確認通過 → 執行所有測試確認無 regression
+- 每個 commit 為**邏輯完整**的單一改動，不混入多個不相關變更
+- SPEC.md / CLAUDE.md / 文檔規範變更**獨立成一個 commit**，與功能 commit 分離（避免 git log 分不清「動了功能 + 規範」還是「只動功能」）
 
 ---
 

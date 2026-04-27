@@ -72,9 +72,7 @@ Write 到 `.claude/SPEC.md`,告知檔案位置、版本、功能數。
 
 ```bash
 git add .claude/SPEC.md
-git commit -m "spec: initial specification
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "spec: initial specification"
 ```
 
 告知 User:「SPEC.md 已建立(v1.0.0)。後續實作建議啟用 `tdd-feature-workflow` skill 進入階段 2(`writing-plans` → `executing-plans`)。實作中若發現需求需調整,轉 Workflow B 處理。」
@@ -139,9 +137,7 @@ current_branch=$(git branch --show-current)
 
 ```bash
 git add .claude/SPEC.md
-git commit -m "spec: <描述變更內容>
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "spec: <描述變更內容>"
 ```
 
 **情況 B:`dev` / `qas` / `main` 分支**
@@ -153,9 +149,7 @@ git checkout -b spec/<topic>
 # 例:spec/refine-export-acceptance、spec/add-rate-limit-requirement
 
 git add .claude/SPEC.md
-git commit -m "spec: <描述變更內容>
-
-Authored-By: $(git config user.name) <$(git config user.email)>"
+git commit -m "spec: <描述變更內容>"
 git push origin spec/<topic>
 # 建立 PR 到 dev
 ```
@@ -209,7 +203,7 @@ SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User
 |------|------|
 | `maintaining-claude-md` | SPEC.md 的 Overview / Functional Requirements 變更帶來新依賴或架構需求時 Step B5 連動 hint |
 | `maintaining-readme-md` | SPEC.md 的 user-facing 變更(新功能 / API / 安裝步驟)時 Step B5 連動 hint |
-| `.claude/rules/git-rules.md` | Commit 格式(`spec:` type + `Authored-By` trailer);SPEC 獨立 commit |
+| `.claude/rules/git-rules.md` | Commit 格式(`spec:` type);SPEC 獨立 commit |
 | `tdd-feature-workflow` | 本 skill 是 TDD 流程的「需求確認階段」——先更新 SPEC,User 確認後才進入測試先行 |
 
 ---

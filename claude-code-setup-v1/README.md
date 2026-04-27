@@ -37,12 +37,11 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 - `/pre-pr-check` — PR 前完整檢查（tests、coverage、code-simplifier、SPEC、README hints）
 - `/agent-cheatsheet` — 可用資源速查
 
-### 2 Advisory Hooks + 1 Guard Hook
-- `commit-message-advisory.sh` — PreToolUse hook：檢查 `git commit` message 是否含 `Authored-By` trailer（advisory）
+### 1 Advisory Hook + 1 Guard Hook
 - `secrets-scan-advisory.sh` — PreToolUse hook：`git commit` / `git add` 前掃 staged 檔名（`.env`、`*.pem`、`*.key`、`credentials.json` 等）與 staged diff 中的已知 secret pattern（AWS key、GitHub token、OpenAI key、Slack token、私鑰 header）（advisory）
 - `external-ref-guard.sh` — PreToolUse hook：`git commit` / `gh pr create|edit|comment` / `gh issue create|edit|comment` 前掃 command text，偵測到指向外部 repo 的裸 reference（`owner/repo#N`、`https://github.com/owner/repo/(issues|pull)/N`）即**直接阻擋**，防止 GitHub cross-repo "mentioned in ..." backlink 外洩內容。反引號包起來的引用視為安全、放行
 
-兩個 `*-advisory.sh` 為 `exit 0` 不阻擋；`external-ref-guard.sh` 為 `exit 1` 阻擋（leak 不可逆、逃生門只需反引號包即可）。
+`secrets-scan-advisory.sh` 為 `exit 0` 不阻擋；`external-ref-guard.sh` 為 `exit 1` 阻擋（leak 不可逆、逃生門只需反引號包即可）。
 
 ### 1 CI Workflow
 - `.github/workflows/ci.yml` — GitHub Actions，PR 與 push 觸發 `ruff check` + `ruff format --check` + `mypy` + `pytest --cov`（與 `/pre-pr-check` 檢查項一致）
@@ -68,7 +67,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 | Plugin | 用途 | 引用位置 |
 |--------|------|---------|
 | `superpowers` | brainstorming / writing-plans / executing-plans / test-driven-development / verification-before-completion / finishing-a-development-branch 等 skills | `tdd-feature-workflow` skill |
-| `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | CLAUDE.md、git-rules.md、`/pre-pr-check` |
+| `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | `tdd-feature-workflow` skill 階段 3.3、`/pre-pr-check` Level 2.2 |
 | `code-review` | PR review workflow(`/code-review` command 寫回 PR comment) | `tdd-feature-workflow` skill 階段 4.1 |
 
 ### MCP Servers
@@ -170,7 +169,6 @@ claude-code-setup-v1/
 │   ├── commands/                 # Slash commands
 │   ├── agents/                   # Sub-agents
 │   └── hooks/
-│       ├── commit-message-advisory.sh
 │       ├── secrets-scan-advisory.sh
 │       └── external-ref-guard.sh
 └── .github/                      # User 同時複製此目錄
@@ -201,7 +199,7 @@ A: 分兩類：
 
 | 類別 | Hook | 行為 |
 |------|------|------|
-| Advisory | `commit-message-advisory.sh`、`secrets-scan-advisory.sh` | `exit 0`，只在 stderr 輸出警告，不阻擋 |
+| Advisory | `secrets-scan-advisory.sh` | `exit 0`，只在 stderr 輸出警告，不阻擋 |
 | Guard | `external-ref-guard.sh` | `exit 1`，偵測到外部 repo 裸 reference 直接阻擋 |
 
 Guard hook 設計為阻擋是因為 GitHub cross-repo backlink 一旦建立即不可逆（watcher 已收到通知），且逃生門極簡——只需把引用用反引號 `` ` `` 包起來即可通過（GitHub 對 code span 不做 reference parsing）。
@@ -305,5 +303,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.14.0
+**Template Version**: v1.15.0
 **Last Updated**: 2026-04-27

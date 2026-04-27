@@ -123,12 +123,11 @@
 
 ## Safety & Hooks (安全防護)
 
-三個 PreToolUse hooks 在 `Bash` 工具調用前執行。Claude 做 git / gh 操作時應意識其存在:
+兩個 PreToolUse hooks 在 `Bash` 工具調用前執行。Claude 做 git / gh 操作時應意識其存在:
 
 | Hook | 作用 | 行為 |
 |------|------|------|
-| `commit-message-advisory.sh` | commit message 格式檢查 | Advisory(`exit 0`,警告不阻擋) |
-| `secrets-scan-advisory.sh` | 掃 staged 檔名與 diff 中的 secret pattern(AWS key / GitHub PAT / 私鑰等) | Advisory |
+| `secrets-scan-advisory.sh` | 掃 staged 檔名與 diff 中的 secret pattern(AWS key / GitHub PAT / 私鑰等) | Advisory(`exit 0`,警告不阻擋) |
 | `external-ref-guard.sh` | `git commit` / `gh pr/issue create\|edit\|comment` 前掃 `owner/repo#N` 與 GitHub URL,偵測外部 repo 裸 reference | **Guard(`exit 1`,阻擋)**——防止 cross-repo backlink leak |
 
 被 guard 擋下時:用反引號包 ref(例 `` `foo/bar#123` ``)或改寫後重試;詳見 `git-rules.md` 的「Cross-repo 引用安全格式」。
