@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.12.1] - 2026-04-27
+
+### Fixed
+- `maintaining-claude-md/SKILL.md` Pattern 示例觸發句從「User: 我更新了 SPEC.md...」改為 User 原始需求對話(「引入 RabbitMQ + OrderService 拆三服務」)。原措辭暗示一個不存在的工作流——SPEC.md / CLAUDE.md 永遠由 Claude 透過 maintaining-* skill 編排更新,User 不會自行編輯;原 Pattern 會誤導未來 Claude 以為「等 User 報告 SPEC 已改」才處理 CLAUDE 連動,而非主動編排兩條規範鏈。修正後正確反應段落明示「先 maintaining-spec-md 後 maintaining-claude-md」鏈條順序,錯誤反應段落同步精簡對齊。同時整段 Pattern 從 22 行縮為 12 行,減少冗詞保留教學重點(觸發句、雙鏈順序、diff、錯誤對比)
+
+---
+
 ## [v1.12.0] - 2026-04-27
 
 ### Changed

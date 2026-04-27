@@ -299,31 +299,26 @@ git push origin <branch-name>
 
 ## Pattern 示例
 
-**觸發**:`User: "我更新了 SPEC.md,把 OrderService 的功能拆成 OrderAPI / OrderWorker / OrderNotifier 三組 FR"`
+**觸發**:`User: "引入 RabbitMQ,把 OrderService 拆成 OrderAPI / OrderWorker / OrderNotifier 三個服務"`
 
-**正確反應**(同步更新 + 展示 diff):
+**正確反應**(編排上下游連動):
 
-    SPEC.md 的 FR 拆分暗示需要新依賴(訊息佇列)與架構調整,影響 CLAUDE.md 的 Tech Stack 與 Architecture 章節,先同步更新:
+    這變更影響 SPEC.md(FR 拆三組)+ CLAUDE.md(Tech Stack + Architecture)。先啟用 `maintaining-spec-md` 處理 SPEC,commit 後本 skill 接力:
 
-    **建議的更新內容**:
     ```diff
     ## Tech Stack
     + Message Queue: RabbitMQ
 
     ## Architecture
       src/
-    +   order_api/              # REST API 服務
-    +   order_worker/           # 背景工作執行
-    +   order_notifier/         # 事件通知服務
+    +   order_api/
+    +   order_worker/
+    +   order_notifier/
     ```
 
-    版本號:v1.1.0 → v1.2.0;CHANGELOG 新增 Added + Changed 條目。是否確認?
+    版本 v1.1.0 → v1.2.0。是否確認?
 
-**錯誤反應**(規範漂移):
-
-    Claude: 好的,我知道了,繼續下一個任務。
-
-→ SPEC 變了但 CLAUDE.md 沒動,下次對話 AI 仍以為是單體架構。
+**錯誤反應**:跳過 SPEC 直接改 CLAUDE → 規範鏈斷裂,下次對話讀 SPEC 仍以為是單體。
 
 ---
 
