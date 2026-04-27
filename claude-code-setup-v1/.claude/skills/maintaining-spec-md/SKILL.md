@@ -122,7 +122,7 @@ User 確認後:
     ```
     spec: <描述變更內容>
 
-    Authored-By: <YourName> <your-email@example.com>
+    Authored-By: $(git config user.name) <$(git config user.email)>
     ```
 
 ### Step B5:向 User 確認結果

@@ -23,6 +23,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.7] - 2026-04-27
+
+### Added
+- `maintaining-readme-md/SKILL.md` 新增「README 版本對齊規則」章節:預設 README 跟 SPEC.md 同步共用版號(README 是 SPEC 的 user-facing 投影);純文字修正可獨立 patch bump,避免拉動 SPEC 版號失去語意。原本 skill 沒指引 README 怎麼升版,user 採用 documentation-style 規定的 footer `Version` 後無據可循
+- `git-rules.md` 「常用 scope 約定」表新增 `(readme)` 條目,對應 `maintaining-readme-md` 維護的 `README.md` / `docs/` 變更,完成 maintaining-* 三 skill 的 scope 對齊(`(claude)` / `(spec)` / `(readme)`)
+
+### Changed
+- `maintaining-readme-md/SKILL.md` description 精簡:移除原本夾帶的「smart delay 行為描述」「委派 agent 細節」「same PR as the feature」「語言規範」等實作層細節。description 應只回答「何時用」,實作細節屬 body 範疇——原描述約 150 words 過長,讀者尚未進 body 就先被 body 細節塞滿
+- `maintaining-readme-md/SKILL.md` Step 3 委派 agent 的 prompt 模板路徑統一為完整路徑 `.claude/skills/maintaining-readme-md/references/<name>-template.md`。原本 Service 用全路徑、Reference / Guide 用相對路徑(`references/...`),agent 是子進程沒有相對基準,後兩個 template 可能讀不到
+- `maintaining-readme-md/SKILL.md` 狀態 A 延後話術從「測試尚未全通過」改為「功能仍在實作中(尚未到穩定狀態)」。狀態 A 涵蓋的「實作中」不只測試未過,還包含程式碼未定稿、user 仍在迭代等情境,原 phrasing 過窄
+- `maintaining-readme-md/SKILL.md` Step 5 兩處 commit 範例:type 補 scope 改為 `docs(readme):`(對齊 `maintaining-claude-md` 的 `docs(claude):` 風格);Authored-By 改用 inline `$(git config user.name) <$(git config user.email)>`(對齊 v1.11.6 maintaining-claude-md 改動,避免 placeholder 被誤讀為殘留)
+- `maintaining-spec-md/SKILL.md` Step B4 commit 範例 Authored-By 改為 inline `$(git config user.name) <$(git config user.email)>`,完成 maintaining-* 三 skill 的 commit message 範例對齊
+
+### Removed
+- `maintaining-readme-md/SKILL.md` 「廣觸發、謹慎執行」開場一句移除。下一節「智慧延後邏輯(核心設計)」整節就是這句話的展開,重複
+- `maintaining-readme-md/SKILL.md` 「特殊情況」章節「僅內部重構不觸發」一條移除。Step 2「決定更新範圍」表格已寫過,改在原表格項補「疑慮時問 User 確認」一句,避免兩處規則打架
+- `maintaining-readme-md/SKILL.md` 「與 documentation-engineer agent 的分工」整節移除。Step 3 結尾「為何委派而非自行產出」一句已交代 skill orchestrate / agent specialist 的分工;傳遞給 agent 的必要資訊也已在 Step 3 prompt 模板呈現,獨立一節純屬重複
+
+---
+
 ## [v1.11.6] - 2026-04-26
 
 ### Changed

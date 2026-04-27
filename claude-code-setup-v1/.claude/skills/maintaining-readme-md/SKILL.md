@@ -1,6 +1,6 @@
 ---
 name: maintaining-readme-md
-description: Use when the user introduces new features, changes API or CLI interfaces, modifies installation / setup steps, adds dependencies, changes user-visible architecture, updates configuration options, renames public modules, or when SPEC.md / CLAUDE.md upstream changes affect user-facing content. The skill triggers broadly but applies smart delay — implementation still in progress is noted and deferred;implementation complete or PR in review executes immediately. It delegates content writing to `documentation-engineer` agent (English section titles, Traditional Chinese body, English technical terms) and updates README.md and docs/ in the same PR as the feature. Trigger proactively even without explicit mention of "README" or "documentation" — any conversation about user-facing changes, new features, install / setup, or how-to-use aspects should invoke this skill, because user-facing docs drifting from implementation is how developers judge whether a project is alive or abandoned.
+description: Use when the user introduces new features, changes API or CLI interfaces, modifies installation / setup steps, adds dependencies, changes user-visible architecture, updates configuration options, renames public modules, or when SPEC.md / CLAUDE.md upstream changes affect user-facing content. Trigger proactively even without explicit mention of "README" or "documentation" — any conversation about user-facing changes, new features, install / setup, or how-to-use aspects should invoke this skill, because user-facing docs drifting from implementation is how developers judge whether a project is alive or abandoned.
 ---
 
 # Maintaining README.md and docs/
@@ -28,8 +28,6 @@ README 是接觸專案的**第一印象**:
 | 上游連動 | SPEC.md Overview 改動 → README Overview;CLAUDE.md Tech Stack 新依賴 → Installation;Architecture 改動 → docs/ |
 | docs/ 專屬 | 新功能需詳細 Service 文檔、API 文檔、新範例 / tutorials / troubleshooting |
 
-**廣觸發、謹慎執行**:description 觸發範圍大,body 會判斷當前是否適合執行(見下方狀態表)。
-
 ---
 
 ## 智慧延後邏輯(核心設計)
@@ -49,7 +47,7 @@ Description 觸發後,**不要立刻動手**——先判斷實作狀態,避免�
 
     影響文檔:[README 章節] + [可能的 docs/ 檔案]
 
-    目前判斷:功能實作中(測試尚未全通過),暫不更新文檔。
+    目前判斷:功能仍在實作中(尚未到穩定狀態),暫不更新文檔以免產出過期內容。
     已記錄此項待辦,實作完成後會主動提醒您。
 
 ---
@@ -73,7 +71,7 @@ Description 觸發後,**不要立刻動手**——先判斷實作狀態,避免�
 | 小幅功能變更、範例更新 | 僅 README |
 | 需詳細說明的新功能 | README(簡述 + 連結) + docs/(詳細) |
 | 架構重構、破壞性變更 | README + docs/architecture + docs/migration |
-| 僅內部重構(User 無感) | **不觸發本 skill** |
+| 僅內部重構(User 無感) | **不觸發本 skill**(疑慮時問 User 確認) |
 
 ### Step 3:委派 `documentation-engineer` agent 產出內容
 
@@ -95,8 +93,8 @@ Agent({
     1. \`.claude/rules/documentation-style.md\`(通用規範)
     2. 依類型讀對應模板:
        - Service → \`.claude/skills/maintaining-readme-md/references/service-template.md\`
-       - Reference(CLI / config / API)→ \`references/reference-template.md\`
-       - Guide(troubleshooting / how-to)→ \`references/guide-template.md\`
+       - Reference(CLI / config / API)→ \`.claude/skills/maintaining-readme-md/references/reference-template.md\`
+       - Guide(troubleshooting / how-to)→ \`.claude/skills/maintaining-readme-md/references/guide-template.md\`
 
     **語言規範**:章節標題英文、內文繁中、技術術語英文。
     **不要直接改檔**,先輸出完整 diff / 新增內容草稿。
@@ -133,9 +131,9 @@ Agent({
 
 ```bash
 git add README.md docs/
-git commit -m "docs: update README and docs for <feature-name>
+git commit -m "docs(readme): update README and docs for <feature-name>
 
-Authored-By: <YourName> <your-email@example.com>"
+Authored-By: $(git config user.name) <$(git config user.email)>"
 ```
 
 **狀態 D**(已 merge 補救):
@@ -144,9 +142,9 @@ Authored-By: <YourName> <your-email@example.com>"
 git checkout dev && git pull
 git checkout -b docs/update-readme-<feature>
 git add README.md docs/
-git commit -m "docs: retroactively update README for <feature>
+git commit -m "docs(readme): retroactively update README for <feature>
 
-Authored-By: <YourName> <your-email@example.com>"
+Authored-By: $(git config user.name) <$(git config user.email)>"
 git push origin docs/update-readme-<feature>
 # 建立 PR 到 dev
 ```
@@ -156,17 +154,6 @@ git push origin docs/update-readme-<feature>
 執行中若發現變更源頭其實來自 SPEC.md 或 CLAUDE.md 但那些檔案尚未同步更新,提醒 User:
 
 > 本次 README 變更對應的功能 / 架構,在 SPEC.md 或 CLAUDE.md 尚未反映。建議先啟用 `maintaining-spec-md` / `maintaining-claude-md` 更新上游,避免規範鏈斷裂。
-
----
-
-## 與 `documentation-engineer` agent 的分工
-
-| 職責 | 歸屬 |
-|------|------|
-| 偵測觸發、判斷執行時機、與 User 互動、組織 workflow | **Skill** |
-| 實際產出內容、遵循 documentation-style、info architecture | **Agent** |
-
-傳遞給 agent 的必要資訊:變更摘要、受影響章節、風格要求(英文標題 / 繁中內文 / 英文術語)、先出草稿勿直接改檔、模板類型(Service / Reference / Guide)。
 
 ---
 
@@ -183,10 +170,23 @@ git push origin docs/update-readme-<feature>
 
 ---
 
+## README 版本對齊規則
+
+`documentation-style.md` 規定 README footer 必含 `**Version**`。版本如何升,依下表:
+
+| 變更性質 | 版本策略 | 範例 |
+|---------|---------|------|
+| README 反映 SPEC.md 的需求變更(新功能、API、架構) | **與 SPEC.md 同步**,共用同一版號 | SPEC v1.5.0 → README v1.5.0 |
+| 純 README / docs 文字修正(錯字、格式、範例補強)不對應 SPEC 變更 | **獨立 patch bump** | README v1.5.0 → v1.5.1 |
+| 破壞性變更(API 重命名 / 移除) | 跟 SPEC 同步 major bump | SPEC v1.5.0 → v2.0.0 → README v2.0.0 |
+
+**原則**:README 是 SPEC 對 user 的投影。SPEC 升版時 README 跟著升;但純文字修正不需要拉動 SPEC 版號(否則 SPEC 版號失去語意)。footer 的 `Last Updated` 一律更新為當日。
+
+---
+
 ## 特殊情況
 
-- **小型修正(錯字、格式)**:累積多個後一次委派 agent;commit:`docs: fix typos and formatting in README`
-- **僅內部重構**(不影響 User 介面)→ **不觸發**;疑慮時問 User 確認
+- **小型修正(錯字、格式)**:累積多個後一次委派 agent;commit:`docs(readme): fix typos and formatting`
 - **功能延後或取消**:已寫入 README 的 → 移除 + deprecation notice;草稿 → 標 `[Coming Soon]` 或暫移除
 - **破壞性變更**:強制新增 `MIGRATION.md` 或 CHANGELOG 條目;README 顯著位置標註;保留舊版 + deprecated 標記 + 指向新版
 
