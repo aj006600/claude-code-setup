@@ -68,7 +68,7 @@
 新功能 / bug 修復 / 重構 → 啟用 `tdd-feature-workflow` skill 編排 4 階段(需求 → 開發 → PR → Review & Merge)。完整流程、階段轉場 gate、委派對象見該 skill。
 
 常用 commands:
-- `/pre-dev-check` — 開發前檢查(git 狀態、遠端同步、測試基線)
+- `/pre-dev-check` — 開發前環境檢查(git 狀態、origin/dev 同步)
 - `/pre-pr-check` — PR 前完整檢查(tests、coverage、code-simplifier、lint / format / type-check、external-ref scan)
 - `/project-status` — 快速狀態快照
 

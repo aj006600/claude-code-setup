@@ -23,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.16.0] - 2026-04-27
+
+### Removed
+- `/pre-dev-check` Check #4 (Test baseline,跑 `uv run pytest tests/ -v` + STOP on failure):(a) hard gate 跑 full pytest 拖慢工作流啟動;(b) `.github/workflows/ci.yml` 對 PR / push 已驗證 origin/dev 通過 ruff + mypy + pytest --cov,本地 baseline 重複驗證;(c) `tdd-feature-workflow` Phase 2.4 第一個 TDD task 的「watch failing test fail」會自然觸發測試;(d) `-v` verbose 適合 debug 不適合 gate;(e) flaky e2e / 環境依賴測試會誤殺 pre-dev。Test baseline 的責任改由 CI(`.github/workflows/ci.yml`)與 Phase 2.4 共同承擔
+- `/pre-dev-check` Check #5 (SPEC.md feature check):與 `tdd-feature-workflow` Phase 1 (SKILL.md L60-83) 強制的 `superpowers:brainstorming → maintaining-spec-md → SPEC diff → User 確認` 重複,且階段轉場 gate (SKILL.md L221) 已明示「1→2 必須 SPEC.md 已更新」;Phase 2.1 跑 pre-dev 時 SPEC 必已處理完,此處再驗會形成循環指令(Phase 2.1 → 啟動 maintaining-spec-md → 回 Phase 1)
+- `/pre-dev-check` Check #2 (Current branch) 提供的「Stack new work on current branch」選項:`tdd-feature-workflow` Phase 2.2 (SKILL.md L92-95) 強制 `git checkout dev && git pull origin dev` 後 `git checkout -b`,根本不存在「stack on current」的合法路徑,此選項會誤導 user / Claude
+
+### Changed
+- `/pre-dev-check` 整體職責收斂為「環境檢查」單一責任:只保留 git uncommitted 狀態檢查 + `origin/dev` 同步狀態檢查(Phase 2.2 將從 dev 開分支,先 fetch 並比對是否有領先 commits;不在當前分支先 pull 避免誤動)。原 Check #3 的 `git status -sb` 比對「current branch 的 upstream」改為明確比對 `origin/dev`(Phase 2.2 真正的 base),解決原本 user 在 `feat/X` 分支跑 pre-dev 時誤比對 `origin/feat/X` 的語意模糊
+- `/pre-dev-check` Report 措辭從「Pre-dev check found <N> issue(s) ... Please resolve before starting new feature work」軟化為 informational「Pre-dev environment check ... Next: Phase 2.2 ...」並指向下一步,反映 pre-dev 多數是對話式檢查而非 hard gate;只有真正 blocking 情況(staged 未確認 / fetch 失敗等)才 surface
+- `.claude/CLAUDE.md` L71 `/pre-dev-check` 描述從「(git 狀態、遠端同步、測試基線)」改為「(git 狀態、origin/dev 同步)」反映實際 scope。原描述本就只列 3 項而檔案有 5 項(branch / SPEC 漏列),改後 cross-ref 與檔案行為對齊
+
+---
+
 ## [v1.15.3] - 2026-04-27
 
 ### Changed

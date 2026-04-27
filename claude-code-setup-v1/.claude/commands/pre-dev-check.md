@@ -1,62 +1,35 @@
 ---
-description: 開發新功能前的準備檢查（git 狀態、遠端同步、測試基線、SPEC.md）
+description: 開發新功能前的環境檢查（git 狀態 + origin/dev 同步）
 ---
 
-Execute pre-development checks before starting any new feature work.
+Run lightweight pre-dev environment checks. Heavy checks (full test run, SPEC verification, lint) live in `/pre-pr-check` or in `tdd-feature-workflow` Phase 1; do not duplicate them here.
 
 ## Checks
 
-### 1. Git uncommitted changes
+### 1. Uncommitted changes
 ```bash
 git status
 ```
-If uncommitted changes exist → ask User to stash / commit / discard.
+若有未提交變更 → 詢問 user 處理方式:stash / commit / discard。
 
-### 2. Current branch
-```bash
-git branch --show-current
-```
-If NOT on `dev` (or the intended base branch) → ask User whether to:
-- Switch to `dev` first
-- Stack new work on current branch
-
-### 3. Sync with remote
+### 2. origin/dev 同步狀態
+`tdd-feature-workflow` Phase 2.2 即將從 `dev` 開新分支,先 fetch 並比對是否有領先的 commits:
 ```bash
 git fetch origin
-git status -sb
+git log HEAD..origin/dev --oneline 2>/dev/null
 ```
-If behind remote → suggest `git pull`.
+若 origin/dev 有領先 commits → 告知 user,Phase 2.2 會以 `git checkout dev && git pull origin dev` 同步;**不在此處先 pull**(避免在 user 當前分支誤動)。
 
-### 4. Test baseline
-```bash
-uv run pytest tests/ -v
+## Report
+
 ```
-If any test fails → **STOP**. Do not proceed with new feature work on a failing baseline. Report failing tests.
+Pre-dev environment check
 
-### 5. SPEC.md feature check
-Read `.claude/SPEC.md`. Ask User what feature they plan to work on. Verify:
-- Feature listed in Functional Requirements?
-- If not → suggest activating `maintaining-spec-md` skill first
-- If yes → report its Acceptance Criteria
+Branch: <current> (last commit: <hash> <subject>)
+Uncommitted: clean | <N> files changed
+origin/dev: up to date | <N> commits ahead (Phase 2.2 will pull)
 
-## Report format
-
-On all-pass:
-```
-Pre-dev check passed
-
-Branch: dev (up to date with origin)
-Tests: <X> passed / 0 failed
-SPEC.md: <feature Y> listed with <N> Acceptance Criteria
-
-Ready to create feature branch: feat/<feature-name>
+→ Next: Phase 2.2 → git checkout dev && git pull origin dev && git checkout -b <type>/<name>
 ```
 
-On failure(s):
-```
-Pre-dev check found <N> issue(s):
-- [specific issue 1]
-- [specific issue 2]
-
-Please resolve before starting new feature work.
-```
+任一 check 出現 blocking 狀況(例:有 staged 但去處未明的 changes、fetch 失敗等)→ surface 給 user;否則無 gate。
