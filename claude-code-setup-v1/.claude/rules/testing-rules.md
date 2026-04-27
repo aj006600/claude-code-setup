@@ -29,6 +29,21 @@ def test_something():
     ...
 ```
 
+### Docstring 慣例
+
+測試函數與 fixture 的 docstring 用一行描述測試情境或 fixture 用途即可,不需完整 Google Style(Args / Returns / Raises / Example)——測試代碼豁免 `code-style.md` 的 docstring 規範,因為 test 名稱本身已是文檔,而 fixture 通常無 caller-facing 參數。
+
+```python
+async def test_get_user_success():
+    """測試成功取得 user"""
+    ...
+
+@pytest.fixture
+def sample_user():
+    """通用 user 測試樣本"""
+    return {"id": 1, "name": "test"}
+```
+
 ---
 
 ## 單元測試範例
@@ -37,11 +52,12 @@ def test_something():
 
 ```python
 # tests/unit/services/test_user_service.py
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from src.services.user import get_user
+import pytest
+
 from src.exceptions import NotFoundError
+from src.services.user import get_user
 
 
 @pytest.mark.asyncio
@@ -141,7 +157,7 @@ def sample_user():
 
 ### Async fixture with cleanup
 
-使用 `yield` + teardown 防止 resource leak：
+使用 `yield` + teardown 防止 resource leak。pytest 保證 `yield` 之後的 cleanup code 在測試結束時執行(包括測試失敗時),不需 `try/finally`：
 
 ```python
 # tests/conftest.py
@@ -153,11 +169,9 @@ import pytest_asyncio
 async def db_session():
     """Async DB session fixture — 測試後 rollback 並關閉連線"""
     session = await create_test_session()
-    try:
-        yield session
-    finally:
-        await session.rollback()
-        await session.close()
+    yield session
+    await session.rollback()
+    await session.close()
 
 
 @pytest_asyncio.fixture
@@ -205,14 +219,15 @@ async def test_fetch_data_success(httpx_mock):  # fixture 來自 pytest-httpx
     assert len(result["items"]) == 3
 ```
 
-### Redis / Cache
+### Redis / Cache (Unit-level Mocking)
 
-使用 `fakeredis` 或 mock：
+Unit 測試用 `unittest.mock.AsyncMock` 驗證行為(呼叫次數、傳入參數);若需驗證實際 Redis 命令語義(例如 `EXPIRE`、`ZADD` 行為),改用 `fakeredis`(屬於整合測試層級,標 `@pytest.mark.integration`)。
 
 ```python
 # tests/unit/test_cache.py
-import pytest
 from unittest.mock import AsyncMock
+
+import pytest
 
 from src.services.cache import get_cached
 
@@ -282,7 +297,7 @@ open htmlcov/index.html
 uv run pytest --cov=src --cov-fail-under=70
 ```
 
-`[tool.coverage.*]`（source、branch、fail_under、exclude_lines 等）配置見 `.claude/references/pyproject-tooling.example.toml`。本專案預設 fail_under = 70。
+`[tool.coverage.*]`（source、branch、fail_under、exclude_lines 等）配置見 `.claude/references/pyproject-tooling.example.toml`。
 
 ---
 

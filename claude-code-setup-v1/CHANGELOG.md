@@ -23,6 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.15.2] - 2026-04-27
+
+### Fixed
+- `testing-rules.md` 兩個範例的 import 順序違反 `code-style.md` PEP 8 分組規則。L40-44(`test_get_user`)與 L213-217(`test_get_cached`)把 `pytest`(3rd party)放在 `unittest.mock`(stdlib)之前,且未以空行分隔組別。Claude / user 直接抄此範例會被 ruff `I` rule 抓出,造成「rule 寫的 vs example 教的」自相矛盾。修正為 stdlib → 空行 → 3rd party → 空行 → local 三段式
+- `testing-rules.md` async fixture 範例(L152-160)使用多餘的 `try/finally` 包裹 `yield`。pytest 的 yield-style fixture 已保證 `yield` 之後的 cleanup code 在測試結束時執行(包括測試失敗與 raise exception 情境),`try/finally` 不僅冗餘還會誤導讀者以為這是必要保險。移除 `try/finally`,並在章節 intro 加註 pytest 的此行為保證,讓範例反映 pytest 真實機制
+- `testing-rules.md` Coverage 配置章節(原 L285)同時寫「配置見 toml」+「本專案預設 fail_under = 70」,後者與 `pyproject-tooling.example.toml` L88(真正 SSOT)及 `CLAUDE.md` L105(user 快速參考)三處重複。移除 testing-rules.md 的具體數字,只保留指向 toml 的 pointer——rule 的職責是「怎麼寫測試」,具體閾值屬於配置層
+
+### Changed
+- `testing-rules.md`「測試結構慣例」章節新增 `### Docstring 慣例` 子段,明示「測試函數與 fixture 的 docstring 用一行描述即可,不需完整 Google Style」並說明理由(test 名稱本身已是文檔、fixture 通常無 caller-facing 參數)。原本範例中 `sample_user`(L137)無 docstring、`db_session`(L153)有 one-liner、`test_get_user_success`(L48)有 one-liner——三種寫法並存讀者無從判斷;現規則明示豁免後,範例的 one-liner 風格成為標準
+- `testing-rules.md` Redis / Cache 章節(L208)標題改為 `### Redis / Cache (Unit-level Mocking)` 並重寫文字釐清 mock 與 fakeredis 的分工:unit 測試用 `unittest.mock.AsyncMock` 驗證行為(呼叫次數 / 參數);需驗證實際 Redis 命令語義(`EXPIRE` / `ZADD` 等)改用 `fakeredis` 並標 `@pytest.mark.integration`。原文「使用 `fakeredis` 或 mock」+ 範例只示範 mock 造成「標題承諾雙選項、實際只給一個」的不對稱
+
+---
+
 ## [v1.15.1] - 2026-04-27
 
 ### Fixed

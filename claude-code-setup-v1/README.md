@@ -303,5 +303,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.15.1
+**Template Version**: v1.15.2
 **Last Updated**: 2026-04-27
