@@ -34,7 +34,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 ### 4 Slash Commands
 - `/project-status` — 快速狀態快照
 - `/pre-dev-check` — 開發前檢查
-- `/pre-pr-check` — PR 前完整檢查（tests、coverage、code-simplifier、SPEC、README hints）
+- `/pre-pr-check` — PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints）
 - `/agent-cheatsheet` — 可用資源速查
 
 ### 1 Advisory Hook + 1 Guard Hook
@@ -44,7 +44,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 `secrets-scan-advisory.sh` 為 `exit 0` 不阻擋；`external-ref-guard.sh` 為 `exit 1` 阻擋（leak 不可逆、逃生門只需反引號包即可）。
 
 ### 1 CI Workflow
-- `.github/workflows/ci.yml` — GitHub Actions，PR 與 push 觸發 `ruff check` + `ruff format --check` + `mypy` + `pytest --cov`（與 `/pre-pr-check` 檢查項一致）
+- `.github/workflows/ci.yml` — GitHub Actions，PR 與 push 觸發 `ruff check` + `ruff format --check` + `mypy` + `pytest --cov --cov-fail-under=70`。CI 為 ruff / format / mypy / 測試+coverage 的權威 pre-merge gate；`/pre-pr-check` 不重複跑這些工具，只補位 CI 做不到的 workflow-aware 項目（code-simplifier agent、PR body external-ref scan、SPEC / README hints）
 
 ### 4 Reference Rules
 - `code-style.md` — Python 代碼風格（Required Standards + Recommended Tools 分層）
@@ -67,7 +67,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 | Plugin | 用途 | 引用位置 |
 |--------|------|---------|
 | `superpowers` | brainstorming / writing-plans / executing-plans / test-driven-development / verification-before-completion / finishing-a-development-branch 等 skills | `tdd-feature-workflow` skill |
-| `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | `tdd-feature-workflow` skill 階段 3.3、`/pre-pr-check` Level 2.2 |
+| `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | `tdd-feature-workflow` skill 階段 3.3、`/pre-pr-check` Level 2.1 |
 | `code-review` | PR review workflow(`/code-review` command 寫回 PR comment) | `tdd-feature-workflow` skill 階段 4.1 |
 
 ### MCP Servers
@@ -303,5 +303,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.16.0
+**Template Version**: v1.17.0
 **Last Updated**: 2026-04-27

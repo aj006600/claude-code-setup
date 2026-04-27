@@ -136,9 +136,11 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 啟用 `superpowers:verification-before-completion`——強制以剛跑過的命令輸出作為 evidence,禁「should pass」「probably works」等未驗證用語。與 3.2 互補:3.1 是紀律(必須 evidence 才能宣稱完成)、3.2 是實際產生 evidence 的動作。
 
 #### 3.2 執行 `/pre-pr-check` command
-- Level 1(tests hard gate)失敗 → 回 2.4 修復
-- Level 2(coverage / code-simplifier / lint / format / type-check / external-ref scan)→ 視情況處理
+- Level 1(測試+coverage 合併 hard gate,`pytest --cov-fail-under=70`)失敗 → 回 2.4 修復
+- Level 2(code-simplifier、external-ref body scan)→ 視情況處理
 - Level 3(SPEC / README 提示)→ 啟用對應 maintaining-* skill
+
+注意:`/pre-pr-check` 不重跑 ruff / format / mypy(CI 為這些工具的權威 pre-merge gate);若需本地驗證請手動跑或裝 IDE / pre-commit hooks。
 
 #### 3.3 處理 `code-simplifier:code-simplifier` 建議
 

@@ -149,4 +149,4 @@ from src.services.cache import get_cached
 
 具體配置(規則集、line-length、target-version、mypy strict 細項)集中於 `.claude/references/pyproject-tooling.example.toml`,於 `uv init` 後 merge 進你的 `pyproject.toml`(見 `README.md ## Quick Start`)。
 
-pre-merge 檢查由 `/pre-pr-check` command 統一執行,不需在此重述指令。
+ruff / mypy 的 pre-merge 檢查由 CI(`.github/workflows/ci.yml`)權威執行;`/pre-pr-check` 不重跑這些工具,只處理 CI 做不到的 workflow-aware 項目(code-simplifier agent、PR body external-ref scan、SPEC / README hints)。

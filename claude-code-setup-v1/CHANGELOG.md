@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.17.0] - 2026-04-27
+
+### Removed
+- `/pre-pr-check` 5 個與 CI 完全重複的 checks:原 Level 1.1 (`pytest tests/ -v`)、原 Level 2.1 獨立 coverage、原 Level 2.3 (`ruff check`)、原 Level 2.4 (`ruff format --check`)、原 Level 2.5 (`mypy src/`)。`.github/workflows/ci.yml` (L33/36/39/42) 已對 PR / push 跑 `ruff check` + `ruff format --check` + `mypy src/` + `pytest --cov-fail-under=70` 為權威 pre-merge gate;本地 pre-pr-check 重跑同樣工具屬「shift-left full mirror」設計但代價是雙倍時間 + 失敗點分散 + 規範不一致(local soft warning vs CI hard fail)。改為:CI 為 ruff / format / mypy / 測試+coverage 的權威 pre-merge gate,`/pre-pr-check` 只處理 CI 做不到的 workflow-aware 項目
+- `/pre-pr-check` Level 2.2 (code-simplifier) 內部的 3 步處理流程 + 1 重要備註。同一套處理流程 `tdd-feature-workflow/SKILL.md` 階段 3.3 (L143-151) 已寫 5 步完整版,雙寫導致 SSOT 漂移風險;改為此 command 只負責 dispatch agent + surface 輸出,handling 流程指向 SKILL.md
+- `/pre-pr-check` 原 2.6 external-ref scan 中 commit message 部分。`external-ref-guard.sh` PreToolUse hook (L45) 已擋 `git commit` 命令文本含外部 ref——commits 不可能含外部 ref(除非 user `--no-verify` bypass)。掃 commit messages 是假設 hook 被繞過的 paranoia;hook L18 註解明示真正補位是 `--body-file` 內容,因此縮到掃 PR body draft file
+- `/pre-pr-check` 所有 `if command -v ruff/mypy >/dev/null` tool-conditional fallback。CI 強制這些工具(README Quick Start L120 為必裝),「optional skip」是禮儀代碼——隨工具一併移除
+
+### Changed
+- `/pre-pr-check` Level 1 把原 1.1 (`pytest tests/ -v`) 與 2.1 (`pytest --cov=src --cov-report=term-missing`) 合併為單一 `pytest --cov=src --cov-report=term-missing --cov-fail-under=70`。原本同樣的測試集跑兩次(1.1 通過 → 2.1 必通過),浪費一次完整測試時間;`-v` verbose 不適合 gate 輸出,改用 default verbosity。Coverage 從原本「WARNING(soft)」升為硬 gate 的一部分,對齊 CI L42 `--cov-fail-under=70` 與 `pyproject-tooling.example.toml` L88 `fail_under = 70`,解決原本「pre-pr-check 軟 gate vs CI 硬 gate vs toml 硬 fail_under」三方語義不一致
+- `/pre-pr-check` Final report 從 9 行固定狀態行(包含 always-present "clean" 行)改為「只列非 clean 條目;全綠則一行 `All Level 1–3 checks passed`」。降低視覺疲勞,對齊 lean output 慣例
+- `.claude/CLAUDE.md` L72 `/pre-pr-check` 描述從「(tests、coverage、code-simplifier、lint / format / type-check、external-ref scan)」改為「(測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints);ruff / format / mypy 由 CI 權威執行不重複」反映實際 scope
+- `README.md` L37 `/pre-pr-check` 描述同步更新;L47 `.github/workflows/ci.yml` 註解從「與 `/pre-pr-check` 檢查項一致」改為「CI 為 ruff / format / mypy / 測試+coverage 的權威 pre-merge gate;`/pre-pr-check` 不重複跑這些工具,只補位 CI 做不到的 workflow-aware 項目」,反映兩者 non-overlapping;L70 `code-simplifier` 引用位置從 `/pre-pr-check Level 2.2` 改為 `Level 2.1`(coverage 移到 Level 1 後重新編號)
+- `.claude/rules/code-style.md` L152 從「pre-merge 檢查由 `/pre-pr-check` command 統一執行」改為「ruff / mypy 的 pre-merge 檢查由 CI 權威執行;`/pre-pr-check` 不重跑這些工具,只處理 workflow-aware 項目」,對齊新分工
+- `tdd-feature-workflow/SKILL.md` 階段 3.2 (L138-141) Level 描述更新:Level 1 改為「測試+coverage 合併 hard gate, `pytest --cov-fail-under=70`」、Level 2 從「coverage / code-simplifier / lint / format / type-check / external-ref scan」精簡為「code-simplifier、external-ref body scan」;新增註解明示「`/pre-pr-check` 不重跑 ruff / format / mypy,CI 為這些工具的權威 pre-merge gate」
+
+---
+
 ## [v1.16.0] - 2026-04-27
 
 ### Removed

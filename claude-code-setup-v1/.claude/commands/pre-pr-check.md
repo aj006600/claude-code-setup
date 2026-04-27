@@ -1,27 +1,27 @@
 ---
-description: PR 前的完整檢查（Level 1 hard gates / Level 2 soft warnings / Level 3 hints）
+description: PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints）
 ---
 
-Execute all pre-PR checks in order. Apply different pass/fail behavior per level.
+Run pre-PR checks that complement CI. `.github/workflows/ci.yml` is the authoritative pre-merge gate for ruff / format / mypy / tests / coverage; this command does **not** repeat those tools. It runs:
 
-## Level 1: Hard gates (stop on first failure)
+- a single combined test+coverage local fast-fail (highest signal for CI failure)
+- workflow-aware items CI cannot do (interactive code-simplifier dispatch, PR body file scan, SPEC / README sync hints)
 
-### 1.1 All tests pass
+## Level 1: Hard gate
+
+### 1.1 Tests + coverage
 ```bash
-uv run pytest tests/ -v
+uv run pytest --cov=src --cov-report=term-missing --cov-fail-under=70
 ```
-If any test fails → **STOP**. Do not run Level 2 or 3. Report failures; User must fix before PR.
+測試失敗或 coverage 低於 70% → **STOP**。User 修復後重跑;不進 Level 2 / 3。
+
+`--cov-fail-under=70` 與 CI L42 (`.github/workflows/ci.yml`) 及 `pyproject-tooling.example.toml` (`[tool.coverage.report] fail_under = 70`) 對齊;此值為單一 source of truth。
 
 ## Level 2: Soft gates (warn but continue)
 
-### 2.1 Coverage ≥ 70%
-```bash
-uv run pytest tests/ --cov=src --cov-report=term-missing
-```
-If below 70% → WARNING. List modules below target.
+### 2.1 Code quality via `code-simplifier:code-simplifier` agent
 
-### 2.2 Code quality via `code-simplifier:code-simplifier` agent
-Use Agent tool:
+Dispatch the agent and surface findings:
 ```
 Agent({
   subagent_type: "code-simplifier:code-simplifier",
@@ -29,57 +29,16 @@ Agent({
   prompt: "Review files changed in this branch compared to the dev base branch. Focus on: duplication, overly complex code, missing abstractions, unclear naming. Report findings WITHOUT modifying any files."
 })
 ```
-If suggestions returned → 不只 summarize,執行三步:
 
-1. **詳細呈現**每條建議:具體位置、修改前後對比、agent 的理由
-2. **CLAUDE 附上自己的判斷**:每條標 `[強烈建議]` / `[可選]` / `[不同意](理由)`
-3. **等待 User 決定**:明確提問「要採納哪些?」
+Findings 的處理流程(詳細呈現 → CLAUDE 標 [強烈建議] / [可選] / [不同意] → User 決定 → 採納回階段 2 走 TDD → 不採納記錄到 PR description)由 `tdd-feature-workflow/SKILL.md` 階段 3.3 統一管理,不在此 command 內重述,避免雙寫漂移。
 
-**重要**:User 決定採納任何條目後,不在此 command 內直接改——交棒給 `tdd-feature-workflow` 階段 3.3 走 TDD 流程(更新測試 → 修改代碼 → 重跑全測試)。
+### 2.2 External-repo reference scan (PR body file)
 
-### 2.3 Lint via `ruff check` (if available)
-```bash
-if command -v ruff >/dev/null 2>&1; then
-  uv run ruff check . || echo "[pre-pr-check] ruff check found issues"
-else
-  echo "[pre-pr-check] ruff not installed — skipping lint"
-fi
-```
-If issues found → WARNING. Surface specific rule violations; do not block.
+`external-ref-guard.sh` PreToolUse hook 已擋 `git commit` / `gh pr|issue create|edit|comment` 命令文本含外部 repo ref(`owner/repo#N` 或 `https://github.com/owner/repo/(issues|pull)/N`)。但 hook 看不到 `--body-file <path>` 的檔案內容;此處補位:
 
-### 2.4 Format check via `ruff format --check` (if available)
-```bash
-if command -v ruff >/dev/null 2>&1; then
-  uv run ruff format . --check || echo "[pre-pr-check] files need formatting"
-else
-  echo "[pre-pr-check] ruff not installed — skipping format check"
-fi
-```
-If drift detected → WARNING. Suggest running `uv run ruff format .`; do not block.
+若 branch 內存在 PR body draft file(`pr-body.md` / `.github/PULL_REQUEST_TEMPLATE.md` / 其他常見路徑) → 掃描檔案內容,偵測指向**其他 repo**(非 `git remote get-url origin`)的 refs。Backticks 內的 ref 視為安全(GitHub code span 不做 reference parsing,跳過)。
 
-### 2.5 Type check via `mypy` (if available)
-```bash
-if command -v mypy >/dev/null 2>&1; then
-  uv run mypy src/ || echo "[pre-pr-check] mypy found type errors"
-else
-  echo "[pre-pr-check] mypy not installed — skipping type check"
-fi
-```
-If type errors found → WARNING. Summarize top issues; do not block.
-
-### 2.6 External-repo reference scan
-
-Scan for `owner/repo#N` shortcuts and `https://github.com/owner/repo/(issues|pull)/N` URLs that point to OTHER repos than this one's origin. These would create GitHub "mentioned in ..." backlinks and leak PR content to unrelated projects' issues.
-
-Scope to scan:
-- The PR body draft you are about to pass to `gh pr create` (including `--body-file` contents, which the `external-ref-guard.sh` hook cannot see)
-- Commit messages on this branch since it diverged from the base branch: `git log <base>..HEAD --format=%B`
-
-Derive current repo from `git remote get-url origin`. Skip refs already wrapped in backticks (GitHub suppresses cross-refs inside inline code spans).
-
-If any external refs found → WARNING. Show each finding with its source (PR body / which commit). Suggest wrapping in backticks or rephrasing per `.claude/rules/git-rules.md` Cross-repo 引用安全格式. Do not block at this level — the hook will block at the actual `git commit` / `gh pr create` invocation.
-
-**Note**: Level 2.3-2.5 are tool-conditional — unavailable tools silently skip. Level 1 (tests) remains the only hard gate. This matches `code-style.md`'s "Recommended Tools" positioning.
+若有外部 ref → WARNING,列出 finding 與所在檔;建議用 backticks 包或改寫(見 `git-rules.md` Cross-repo 引用安全格式)。不 block——hook 會在實際 `gh pr create --body-file` 時以命令文本層級擋下(若 body-file 路徑出現在 command,hook 至少能看到引用本身;但內容仍須此處掃描)。
 
 ## Level 3: Hints (inform only, no gate)
 
@@ -90,30 +49,25 @@ Read `.claude/SPEC.md`. 本次 branch 的變更是否已在 SPEC 中有對應的
 - 無對應 Functional Requirement(新功能未寫入 SPEC) → hint: 啟用 `maintaining-spec-md` 補上
 
 ### 3.2 README / docs sync
-Inspect changed files in this branch. Do they include user-facing changes (new features, API changes, install step changes, new env vars, new dependencies)?
-If yes → hint: suggest activating `maintaining-readme-md` skill before PR.
+Inspect changed files in this branch. 是否包含 user-facing 變更(新功能、API 變動、安裝步驟變動、新環境變數、新依賴)?
+若是 → hint: 建議 PR 前啟用 `maintaining-readme-md` skill。
 
 ## Final report
 
+**只列非 clean 的條目**;全部通過則一行 `All Level 1–3 checks passed`。
+
+非全綠範例:
 ```
 Pre-PR Check Results
 
-[Level 1] Tests: <X> passed / FAILED
-[Level 2] Coverage: <X>% | below target 70%: <modules>
-[Level 2] code-simplifier: clean | <N> suggestions (see above)
-[Level 2] ruff check: clean | <N> issues | skipped (not installed)
-[Level 2] ruff format: clean | drift detected | skipped (not installed)
-[Level 2] mypy: clean | <N> type errors | skipped (not installed)
-[Level 2] external-ref scan: clean | <N> cross-repo refs found (see above)
-[Level 3] SPEC.md: up to date | branch changes not yet reflected in SPEC
-[Level 3] README: no user-facing change | user-facing changes detected
+[L1] FAILED — pytest exit non-zero (e.g., 2 tests failed / coverage 65% < 70%)
+[L2.1] code-simplifier: <N> suggestions (see above)
+[L2.2] external-ref scan: <N> cross-repo refs in pr-body.md
+[L3.1] SPEC.md: branch changes not yet reflected
+[L3.2] README: user-facing changes detected → consider maintaining-readme-md
 
-Summary:
-- Hard gates: PASSED / FAILED
-- Soft warnings: <N>
-- Hints: <N>
-
-Decision: User should review warnings before creating PR.
+Hard gate: FAILED → fix before PR
+Soft warnings: <N>; Hints: <N>
 ```
 
-If Level 1 fails, stop immediately; do not run Level 2 or 3.
+L1 失敗時立即 STOP,不跑 L2 / L3。

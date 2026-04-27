@@ -69,7 +69,7 @@
 
 常用 commands:
 - `/pre-dev-check` — 開發前環境檢查(git 狀態、origin/dev 同步)
-- `/pre-pr-check` — PR 前完整檢查(tests、coverage、code-simplifier、lint / format / type-check、external-ref scan)
+- `/pre-pr-check` — PR 前 workflow-aware 檢查(測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints);ruff / format / mypy 由 CI 權威執行不重複
 - `/project-status` — 快速狀態快照
 
 ---
