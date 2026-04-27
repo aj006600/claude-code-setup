@@ -23,6 +23,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.15.3] - 2026-04-27
+
+### Changed
+- `agent-cheatsheet.md` 的 `## Present as` 區塊從寫死的靜態清單(列出固定的 plugin / skill / MCP 名稱)改為「Output 骨架 + placeholder」。`CLAUDE.md` L139 與 `tdd-feature-workflow/SKILL.md` L52 都聲稱 `/agent-cheatsheet` 是「完整動態清單」,但原檔內容是 hard-coded 模板;現改為依 `ls` 輸出 + 當前 session system-reminder 動態填入,讓檔案實際行為對齊既有 cross-ref 承諾。新增「標註原則」段落,要求每個 entry 加 `[project-local]` / `[plugin:<name>]` / `[built-in]` / `[global]` scope tag,避免命名衝突誤導(例:本地 `code-reviewer` agent vs `feature-dev:code-reviewer` plugin agent)
+- Skill 分類重整:原 `[Project maintenance]` / `[Feature development]` / `[Code quality]` / `[Process]` / `[Cross-cutting]` 五類精簡為 `[Project maintenance]` / `[Feature development]` / `[Code review & verification]` / `[Investigation & process]` 四類。原 `[Code quality]` + `[Process]` 兩類分界武斷(`superpowers:requesting-code-review` 與 `superpowers:brainstorming` 都是 process skill 卻被分到不同類);`[Cross-cutting]` 是 dumping ground(只放兩條來路不明的 entry)
+
+### Removed
+- `agent-cheatsheet.md` 寫死於原模板的 user 個人環境條目:`graphify` skill(來自 user `~/.claude/CLAUDE.md` 的 global skill)、`arxiv-mcp-server` / `gitlab` / `claude_ai_Gmail` / `claude_ai_Google_Calendar` / `claude_ai_Google_Drive` MCPs(均不在 README Prerequisites,屬個人安裝)、`claude-api` skill(來路不明)。Template 不應將特定 user 環境的資源當作預設清單,其他 user 採用 template 後會誤以為這些是必備
+- `agent-cheatsheet.md` 找不到出處的 entry:`simplify` skill(template 用的是 `code-simplifier:code-simplifier` agent,已在 Plugin 區塊列過,此處重複且名稱錯誤)、`security-review` skill(template 任何文件均未提及)
+- `agent-cheatsheet.md` 中 `superpowers:code-reviewer — preferred for TDD workflow` 的「preferred」用詞。`tdd-feature-workflow/SKILL.md` L41 將 `/code-review` command 與 `superpowers:requesting-code-review` 並列為對外寫回 PR / 對內返回對話的雙路徑,沒有 preferred 之分;改為由 Claude 依 cross-ref 既有描述動態填入,不在模板鎖定定位
+
+### Fixed
+- `agent-cheatsheet.md` 中 `feature-dev:code-architect / code-explorer / code-reviewer` 原被列為 `feature dev specialists`(無條件推薦),與 `tdd-feature-workflow/SKILL.md` L49 的「**選配**——需深度探索 codebase 或對比多個架構方案時」抵觸。改為在 `[Feature development]` 類別下標註「選配」並註明使用情境
+
+---
+
 ## [v1.15.2] - 2026-04-27
 
 ### Fixed

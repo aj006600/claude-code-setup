@@ -2,90 +2,68 @@
 description: 列出本專案當前可用的 agents、skills、commands、MCPs 及其最佳使用時機
 ---
 
-Assemble and display a comprehensive cheat sheet of all agents, skills, commands, and MCPs currently available in this project.
+從當前 session 動態彙整可用資源並以分類速查表呈現。**只列出實際存在的資源**——以 `ls` 輸出與 session system-reminder 為準,不照抄模板,不揣測 user 環境是否安裝某 plugin / MCP。
 
 ## How to gather
 
 ### 1. Project-local resources
+
 ```bash
 ls .claude/agents/   2>/dev/null
 ls .claude/skills/   2>/dev/null
 ls .claude/commands/ 2>/dev/null
 ```
 
+每個本地 agent / skill 的描述從對應檔案的 frontmatter `description` 欄位摘取一行。
+
 ### 2. Plugin / global resources
-Check the system-reminder messages in the current session for:
-- Available agents (Agent tool list)
-- Available skills (Skill tool list)
+
+從當前 session 的 system-reminder 訊息提取:
+- Available agents(Agent tool 列表)
+- Available skills(Skill tool 列表)
 - Active MCP servers
 
-### 3. Organize by theme and scope
+### 3. 標註原則
 
-## Present as
+- **Scope tag**:每個 entry 加 `[project-local]` / `[plugin:<name>]` / `[built-in]` / `[global]`,避免同名衝突(例:本地 `code-reviewer` agent vs `feature-dev:code-reviewer` plugin agent;global skills vs project skills)
+- **描述對齊 cross-ref**:不要對單一 entry 編造定位,以 `tdd-feature-workflow/SKILL.md`「關鍵分工」表與 `CLAUDE.md`「Available Resources」既有描述為準。例如 `superpowers:code-reviewer` 應寫「dispatch by `superpowers:requesting-code-review`、結果返回對話」,不寫「preferred for X」這類沒有 cross-ref 支持的定位
+
+## Output 骨架
+
+按以下骨架填入步驟 1-2 找到的實際資源;類別無條目則 omit 整段。
 
 ```
 Agents & Skills Cheatsheet (<Project Name>)
 
-Note: 若以下清單中的 plugin / skill / MCP 未出現在 current session 的 system-reminder，
-      代表該資源尚未安裝。請參考 template README 的 Prerequisites 章節進行安裝。
-
 ━━ Agents (via Agent tool) ━━
 
-[Project-local]
-- <agent-name> — <purpose>, use when <context>
-  (e.g., test-automator, code-reviewer, documentation-engineer)
+[Project-local] — 透過 skill 委派或 Agent tool 使用
+- <agent-name> [project-local] — <一行用途;從 agents/<file>.md frontmatter 摘取>
 
-[Plugin / global]
-- code-simplifier:code-simplifier — simplify code before PR
-- superpowers:code-reviewer — plan alignment + quality review (preferred for TDD workflow)
-- general-purpose — open-ended research
-- Explore — codebase exploration (read-only)
-- Plan — architectural planning
-- feature-dev:code-architect / code-explorer / code-reviewer — feature dev specialists
+[Plugin / global] — 視已安裝 plugin 而定
+- <plugin>:<agent> [plugin:<plugin>] — <一行用途>
+- <built-in agent name> [built-in] — <一行用途>
 
 ━━ Skills (via Skill tool) ━━
 
-[Project maintenance] (trigger proactively per conversation context)
-- maintaining-spec-md — SPEC.md changes
-- maintaining-claude-md — CLAUDE.md changes
-- maintaining-readme-md — README / docs changes
+[Project maintenance] — 編輯 SPEC / CLAUDE / README 時觸發
+- <skill> [scope-tag] — <用途>
 
-[Feature development] (trigger at start / during / end of feature work)
-- tdd-feature-workflow (project) — 4-phase TDD orchestrator
-- superpowers:executing-plans — execute written plans
-- superpowers:test-driven-development — TDD discipline
-- superpowers:writing-plans — plan authoring
-- superpowers:verification-before-completion — final verification
-- superpowers:finishing-a-development-branch — branch completion
+[Feature development] — feature / bug / refactor 起點 ~ PR ~ merge
+- <skill> [scope-tag] — <用途>
+- 選配:`feature-dev:code-architect` / `feature-dev:code-explorer` [plugin:feature-dev] — 需深度探索 codebase 或對比多個架構方案時(若 plugin 已安裝)
 
-[Code quality]
-- simplify — code quality review
-- superpowers:requesting-code-review — prepare code review
-- code-review:code-review — PR review workflow
-- security-review — security review
+[Code review & verification] — pre-PR 審查、reviewer 反饋處理
+- <skill> [scope-tag] — <用途>
 
-[Process]
-- superpowers:brainstorming — design exploration
-- superpowers:systematic-debugging — bug hunting
-- superpowers:using-superpowers — meta-skill: skill discovery
-
-[Cross-cutting]
-- claude-api — Anthropic SDK / Claude API work
-- graphify — any input → knowledge graph
+[Investigation & process] — brainstorming / debugging / 探索
+- <skill> [scope-tag] — <用途>
 
 ━━ Commands (slash) ━━
+- /<command> [project-local | plugin:<name>] — <一行用途>
 
-- /project-status — quick status snapshot
-- /pre-dev-check — pre-development check
-- /pre-pr-check — pre-PR full check (tests, coverage, simplify, SPEC, README hints)
-- /agent-cheatsheet — this cheat sheet
-
-━━ MCPs ━━
-
-- context7 — up-to-date library documentation
-- arxiv-mcp-server — academic paper search
-- github / gitlab — repository operations
-- claude_ai_Gmail / claude_ai_Google_Calendar / claude_ai_Google_Drive — Google workspace
+━━ MCPs ━━ — 僅列當前 session 出現的 active MCP
+- <mcp-name> — <用途>
 
 ━━ Usage Tips ━━
 
