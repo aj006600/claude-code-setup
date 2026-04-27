@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.11.8] - 2026-04-27
+
+### Added
+- `maintaining-spec-md/SKILL.md` Workflow A 新增 Step A6「Commit 並 hand-off」,補上原本缺漏的初始 SPEC.md commit 動作 + 一句 hand-off 給 `tdd-feature-workflow` 階段 2。原本 Workflow A 從 A5 寫檔後直接到「依 User 決定順序實作」,既無 commit step 又逾本 skill scope(實作順序屬 tdd-feature-workflow 編排職責),容易讓 SPEC.md 隨之被打包進後續功能 commit、違反「SPEC 獨立 commit」規範
+- `maintaining-spec-md/SKILL.md` Workflow B Step B3 補上分支策略雙情境處理(情況 A 功能分支當前 commit / 情況 B dev/qas/main 開 `spec/<topic>` 分支 + push + PR),對齊 `maintaining-claude-md` Step B3 與 `maintaining-readme-md` Step 5 的處理風格。原本 Step B4 直接 `git commit` 假設 user 永遠在「正確分支」上,實際 user 在 main / dev 隨手提到 SPEC 變更時會違反分支策略
+
+### Changed
+- `maintaining-spec-md/SKILL.md` Workflow B 整段從 6 step 重組為 5 step:原 Step B3「等待 User 確認」整段純為「再三強調」沒有實質動作,併入 Step B2 結尾;後續 step 重編號(原 B4-B6 → 新 B3-B5)。Step 應為「動作節點」,純強調的 step 破壞此定位
+- `maintaining-spec-md/SKILL.md` Step B5(原 B6)「連動評估」hint 從只提 CLAUDE.md 擴充為同時 hint CLAUDE.md 與 README.md。SPEC 是最上游,變動通常向下游傳播兩條路徑(內部規範 → CLAUDE / 對外文檔 → README),原本只 hint CLAUDE 是規範鏈不完整。「與其他 skill / rule 的互動」表也對齊新增 `maintaining-readme-md` 條目
+- `maintaining-spec-md/SKILL.md` Semantic Versioning 規則第 3 行「修改既有需求細節」拆為兩行:既有需求**行為**變化(嚴格化 / 放寬 / 新增 Acceptance / 補上 Constraints)→ Minor;既有需求**措辭**釐清(無行為變化)→ Patch。原本不分行為與措辭一律 Minor 過嚴,違反 SemVer 「公開介面行為改變才 Minor」慣例,純文字釐清拉升 Minor 會稀釋版本語意
+- `maintaining-spec-md/SKILL.md` Step B3 Edit-and-commit 段移除「在 git repo 中:」冗詞前綴。template 採用後一定在 git repo,不需要 conditional
+
+### Removed
+- `maintaining-spec-md/SKILL.md` 觸發情境章節最末句「判斷要點:若只是內部實作細節...不需更新 SPEC.md」移除。同樣規則保留在 Gotchas 第 4 條「純實作細節不觸發」(該條附帶 why,更具教學價值),避免兩處規則打架
+- `maintaining-spec-md/references/spec-template.md` Change Log table 的 v1.1.0 example row(`| YYYY-MM-DD | v1.1.0 | Added [feature/change] |`)移除,只留 v1.0.0 Initial specification。Step A3 沒指引「初次建立要刪除示意 row」,實際會讓 first-build SPEC.md 殘留 example 行;template 自身應保持「立即可用」狀態
+
+---
+
 ## [v1.11.7] - 2026-04-27
 
 ### Added

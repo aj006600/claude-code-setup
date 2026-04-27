@@ -65,7 +65,6 @@ SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git
 | Date       | Version | Changes                          |
 |------------|---------|----------------------------------|
 | YYYY-MM-DD | v1.0.0  | Initial specification            |
-| YYYY-MM-DD | v1.1.0  | Added [feature/change]           |
 
 ---
 

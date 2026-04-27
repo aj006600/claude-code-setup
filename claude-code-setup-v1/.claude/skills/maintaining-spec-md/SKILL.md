@@ -33,8 +33,6 @@ SPEC 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git br
 | Bug 揭示 | Bug 揭示原需求錯誤 → 更新 Description / Acceptance |
 | 專案無 SPEC.md | 執行 Workflow A 建立初始版本 |
 
-判斷要點:若只是內部實作細節(例:換內部變數名)**不需**更新 SPEC.md,直接繼續實作。
-
 ---
 
 ## Workflow A:初次建立 SPEC.md
@@ -67,8 +65,18 @@ Read 或 Glob `.claude/SPEC.md` → 存在則改走 Workflow B。
 ### Step A5:User 確認後建立檔案
 Write 到 `.claude/SPEC.md`,告知檔案位置、版本、功能數。
 
-### Step A6:依 User 決定順序實作
-Re-read SPEC.md 確認理解,與 User 討論實作順序。實作中發現需求需調整 → 轉 Workflow B。
+### Step A6:Commit 並 hand-off
+
+初次建立 SPEC.md 後直接在當前分支 commit(獨立 commit,不混入其他改動):
+
+```bash
+git add .claude/SPEC.md
+git commit -m "spec: initial specification
+
+Authored-By: $(git config user.name) <$(git config user.email)>"
+```
+
+告知 User:「SPEC.md 已建立(v1.0.0)。後續實作建議啟用 `tdd-feature-workflow` skill 進入階段 2(`writing-plans` → `executing-plans`)。實作中若發現需求需調整,轉 Workflow B 處理。」
 
 ---
 
@@ -82,7 +90,7 @@ Re-read SPEC.md 確認理解,與 User 討論實作順序。實作中發現需求
 
 只是實作細節 → 不更新 SPEC,繼續實作。
 
-### Step B2:展示更新建議
+### Step B2:展示更新建議並等待確認
 
     SPEC.md 更新建議
 
@@ -103,34 +111,70 @@ Re-read SPEC.md 確認理解,與 User 討論實作順序。實作中發現需求
 
     是否確認這些變更?
 
-### Step B3:等待 User 確認
-
 三條 load-bearing 原則:
 - **不要**在未確認前直接修改 SPEC.md
 - **必須**先展示 diff 取得同意
 - User 有意見先討論調整,而非執著於原草稿
 
-### Step B4:執行更新
+### Step B3:依分支策略執行更新
+
 User 確認後:
 1. Edit 對應章節,確保格式一致
 2. 同步更新版本資訊:
    - Change Log 表格新增一行(Date / Version / Changes)
    - 底部 `**Last Updated**` 改為當日
    - 底部 `**Version**` 依 SemVer 遞增
-3. 在 git repo 中:SPEC.md 變更**獨立成一個 commit**,message 用 `spec` type:
+3. SPEC.md 變更**獨立成一個 commit**(不混入功能 commit),分支策略視當前情境:
 
-    ```
-    spec: <描述變更內容>
+```bash
+current_branch=$(git branch --show-current)
+```
 
-    Authored-By: $(git config user.name) <$(git config user.email)>
-    ```
+**情況 A:功能分支**(`feat/*`、`fix/*`、`refactor/*`、`hotfix/*`)
 
-### Step B5:向 User 確認結果
-摘要變更項目 + 版本資訊(舊版 → 新版 + 日期),開放調整機會。
+該功能本身觸發了 SPEC 變更(例:實作中發現 acceptance 需修訂),在當前分支 commit:
 
-### Step B6:連動評估 CLAUDE.md
-若變更影響 Project Overview / Tech Stack / Architecture:
-> 此次變更也影響 CLAUDE.md 的 [章節]。要接著啟用 `maintaining-claude-md` skill 同步更新嗎?
+```bash
+git add .claude/SPEC.md
+git commit -m "spec: <描述變更內容>
+
+Authored-By: $(git config user.name) <$(git config user.email)>"
+```
+
+**情況 B:`dev` / `qas` / `main` 分支**
+
+SPEC 變更與任何功能分支無關(例:User 單獨檢視整體規格、補強 Acceptance Criteria),建立獨立 spec 分支。**分支名以變更主題命名**(`spec/<topic>`),避免每次更新都撞同一個 branch:
+
+```bash
+git checkout -b spec/<topic>
+# 例:spec/refine-export-acceptance、spec/add-rate-limit-requirement
+
+git add .claude/SPEC.md
+git commit -m "spec: <描述變更內容>
+
+Authored-By: $(git config user.name) <$(git config user.email)>"
+git push origin spec/<topic>
+# 建立 PR 到 dev
+```
+
+選 topic 字眼:抓本次 Change Log 條目的核心動詞 / 名詞(例如 refine acceptance → `refine-export-acceptance`)。topic 不需精準,能讓 PR title 一眼分辨即可。
+
+若主題式命名意外撞到既有分支(本地或遠端):停下來回報 User,由 User 決定接續 commit 到既有分支、先處理掉既有 PR、或換另一個 topic 命名。
+
+### Step B4:向 User 確認結果
+
+摘要變更項目 + 版本資訊(舊版 → 新版 + 日期)+ commit 策略(當前功能分支 / spec 分支),開放調整機會。
+
+### Step B5:連動評估下游文檔
+
+SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User:
+
+- 影響 **Project Overview / Tech Stack / Architecture** → 提示啟用 `maintaining-claude-md` 同步開發規範
+- 影響 **user-facing**(新功能、API / CLI 變更、安裝步驟、新依賴)→ 提示啟用 `maintaining-readme-md` 同步對外文檔
+
+> 此次變更也影響 [CLAUDE.md / README.md] 的 [章節]。要接著啟用 [對應 skill] 同步更新嗎?
+
+兩者都不影響(純內部需求精修)→ 不需啟動下游 hook。
 
 ---
 
@@ -142,7 +186,8 @@ User 確認後:
 |---------|------|------|
 | 重大架構變更 / 破壞性改動 / 移除既有功能 / API 重構 | Major | v1.5.2 → v2.0.0 |
 | 新需求(Functional Requirements) | Minor | v1.0.0 → v1.1.0 |
-| 修改既有需求細節(Acceptance、Description、Constraints) | Minor | v1.1.0 → v1.2.0 |
+| 既有需求**行為**變化(嚴格化 / 放寬 / 新增 Acceptance / 補上 Constraints) | Minor | v1.1.0 → v1.2.0 |
+| 既有需求**措辭**釐清(無行為變化,例:把「至少 5 字」改為「至少 5 個字元」) | Patch | v1.1.0 → v1.1.1 |
 | 文字修正、錯字、格式 | Patch | v1.1.0 → v1.1.1 |
 
 ---
@@ -159,7 +204,8 @@ User 確認後:
 
 | 對象 | 關係 |
 |------|------|
-| `maintaining-claude-md` | SPEC.md 的 Overview / Tech Stack / Architecture 變更時連動觸發 |
+| `maintaining-claude-md` | SPEC.md 的 Overview / Tech Stack / Architecture 變更時 Step B5 連動 hint |
+| `maintaining-readme-md` | SPEC.md 的 user-facing 變更(新功能 / API / 安裝步驟)時 Step B5 連動 hint |
 | `.claude/rules/git-rules.md` | Commit 格式(`spec:` type + `Authored-By` trailer);SPEC 獨立 commit |
 | `tdd-feature-workflow` | 本 skill 是 TDD 流程的「需求確認階段」——先更新 SPEC,User 確認後才進入測試先行 |
 
