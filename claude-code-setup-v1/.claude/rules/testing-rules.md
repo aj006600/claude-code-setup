@@ -246,20 +246,6 @@ async def test_get_cached_hit():
 @pytest.mark.smoke         # 冒煙測試（基礎健全檢查）
 ```
 
-### `pyproject.toml` 配置
-
-```toml
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-asyncio_mode = "auto"
-markers = [
-    "slow: tests that take more than 1 second",
-    "integration: tests requiring external dependencies (DB, Redis, etc.)",
-    "e2e: full end-to-end tests",
-    "smoke: smoke tests for basic health checks",
-]
-```
-
 ### 使用範例
 
 ```bash
@@ -276,35 +262,11 @@ uv run pytest -m smoke
 uv run pytest -m "not slow"
 ```
 
+`[tool.pytest.ini_options]`(testpaths、asyncio_mode、markers 等）配置見 `.claude/references/pyproject-tooling.example.toml`，於 `uv init` 後 merge 進你的 `pyproject.toml`。
+
 ---
 
 ## Coverage 配置
-
-### `pyproject.toml`
-
-```toml
-[tool.coverage.run]
-source = ["src"]
-branch = true
-omit = [
-    "src/**/__init__.py",
-    "src/**/types.py",
-]
-
-[tool.coverage.report]
-fail_under = 70
-show_missing = true
-skip_covered = false
-exclude_lines = [
-    "pragma: no cover",
-    "raise NotImplementedError",
-    "if TYPE_CHECKING:",
-    "if __name__ == .__main__.:",
-]
-
-[tool.coverage.html]
-directory = "htmlcov"
-```
 
 ### 執行指令
 
@@ -319,6 +281,8 @@ open htmlcov/index.html
 # 強制 fail_under 檢查（CI 用）
 uv run pytest --cov=src --cov-fail-under=70
 ```
+
+`[tool.coverage.*]`（source、branch、fail_under、exclude_lines 等）配置見 `.claude/references/pyproject-tooling.example.toml`。本專案預設 fail_under = 70。
 
 ---
 

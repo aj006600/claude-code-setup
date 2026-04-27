@@ -86,18 +86,43 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 
 ---
 
-## Quick Start（3 步驟）
+## Quick Start（4 步驟）
 
-### Step 1：複製 setup
-
-將 `.claude/`、`.github/` 複製到你的新專案根目錄：
+### Step 1：初始化 Python 專案
 
 ```bash
-cp -r path/to/claude-code-setup-v1/.claude /path/to/your-project/
-cp -r path/to/claude-code-setup-v1/.github /path/to/your-project/
+mkdir my-project && cd my-project
+uv init
 ```
 
-### Step 2：啟動 Claude Code 並提出第一個需求
+`uv init` 會產生 `pyproject.toml`（含 `[project]` / `[build-system]`）、`README.md`、`main.py`、`.python-version`。
+
+### Step 2：複製 template setup
+
+將 `.claude/`、`.github/` 複製到你的專案根目錄：
+
+```bash
+cp -r path/to/claude-code-setup-v1/.claude .
+cp -r path/to/claude-code-setup-v1/.github .
+```
+
+### Step 3：Merge 推薦工具配置
+
+將 `.claude/references/pyproject-tooling.example.toml` 的 `[tool.*]` 區塊（ruff / mypy / pytest / coverage）merge 進 `uv init` 產生的 `pyproject.toml`：
+
+```bash
+# 簡單方式：append 到檔尾（若 pyproject.toml 尚無 [tool.*] 區塊）
+cat .claude/references/pyproject-tooling.example.toml >> pyproject.toml
+```
+
+或手動開檔複製對應 section（避免區塊重複）。完成後安裝 dev 依賴：
+
+```bash
+uv add --dev ruff mypy pytest pytest-asyncio pytest-cov
+uv sync
+```
+
+### Step 4：啟動 Claude Code 並提出第一個需求
 
 直接說明你要建立什麼：
 
@@ -112,17 +137,6 @@ Claude Code 會自動完成：
 3. 展示 diff → 你確認 → 一次 commit
 
 若需求尚不明確，skill 會主動詢問；若對話尚未提供足夠資訊（例如 framework 尚未選定），對應 placeholder 暫不替換，由後續對話中的 Workflow B 補上。
-
-### Step 3：調整 Rules（視團隊需求）
-
-檢視 `.claude/rules/` 並依團隊調整：
-
-| Rule | 可客製項目 |
-|------|-----------|
-| `code-style.md` | Formatter / Linter / Type Checker 選擇、docstring 格式 |
-| `testing-rules.md` | Markers、Coverage 目標、factory 選擇 |
-| `git-rules.md` | Commit convention 其他細節 |
-| `documentation-style.md` | 模板結構細節 |
 
 ### 完成：開始開發
 
@@ -145,6 +159,8 @@ claude-code-setup-v1/
 │   │   ├── testing-rules.md
 │   │   ├── git-rules.md
 │   │   └── documentation-style.md
+│   ├── references/               # 跨領域 reference
+│   │   └── pyproject-tooling.example.toml   # ruff/mypy/pytest/coverage [tool.*] 配置
 │   ├── skills/                   # 專案專屬 skills
 │   │   ├── maintaining-spec-md/
 │   │   ├── maintaining-claude-md/
@@ -219,6 +235,19 @@ Template ship 出來的 `.claude/CLAUDE-CHANGELOG.md` 是空種子（只有 head
 
 ## Advanced Customization
 
+### 調整 Rules（視團隊需求）
+
+檢視 `.claude/rules/` 並依團隊調整：
+
+| Rule | 可客製項目 |
+|------|-----------|
+| `code-style.md` | Formatter / Linter / Type Checker 選擇、docstring 格式 |
+| `testing-rules.md` | Markers、Coverage 目標、factory 選擇 |
+| `git-rules.md` | Commit convention 其他細節 |
+| `documentation-style.md` | 模板結構細節 |
+
+工具配置（`[tool.*]`）若需調整，編輯 `.claude/references/pyproject-tooling.example.toml`，再 merge 進 user 專案的 `pyproject.toml`。
+
 ### 新增 skill
 參考 `.claude/skills/` 現有 skill 作為結構範例。或在 Claude Code 啟用 `skill-creator:skill-creator` skill 引導建立。
 
@@ -276,5 +305,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.12.1
+**Template Version**: v1.13.0
 **Last Updated**: 2026-04-27

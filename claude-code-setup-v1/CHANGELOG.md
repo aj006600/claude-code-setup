@@ -23,6 +23,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.13.0] - 2026-04-27
+
+### Added
+- 新增 `.claude/references/pyproject-tooling.example.toml` snippet 檔(top-level `references/` 目錄首位居民),整合 `[tool.ruff]` / `[tool.ruff.lint]` / `[tool.ruff.format]` / `[tool.mypy]` / `[tool.pytest.ini_options]` / `[tool.coverage.*]` 全部配置,並含 header comment 指引使用流程(uv init → cat append → uv add --dev → uv sync)。snippet 而非完整 pyproject.toml 是因為夾帶完整 pyproject.toml 會讓 user 採用後跑 `uv init` 直接卡住(uv 拒絕覆寫已存在 pyproject.toml)
+- README Quick Start 新增 Step 1「初始化 Python 專案(uv init)」與 Step 3「Merge 推薦工具配置」,從 3 步驟擴為 4 步驟,完整覆蓋 user 從零到能跑 `uv run pytest` 的路徑
+- README「Template 結構」樹補 `.claude/references/pyproject-tooling.example.toml` 條目
+- README Advanced Customization 章節新增「調整 Rules(視團隊需求)」sub-section,容納原 Quick Start Step 3 內容(team customization 屬 Day-2,不應稀釋 Quick Start 的「快速上手」精神)
+
+### Changed
+- `code-style.md` 從 ~289 行重寫為 ~140 行,結構從「Required Standards + Recommended Tools(含完整工具介紹/比較/pyproject.toml 配置/CI 命令)」改為「Required Standards + Tools(本專案約定簡述)」;具體配置統一指向 `.claude/references/pyproject-tooling.example.toml`,pre-merge 檢查指向 `/pre-pr-check` command
+- `code-style.md` Naming Conventions 中 type variables 範例從 `T, TUser`(非標準寫法)改為 `T, K, V, UserT`(對齊 Python typing 慣例:短英文或 T 後綴)
+- `code-style.md` 其他慣例表「Async-first」改為「Sync / Async 一致性」並加前提「若專案採 async」,避免對 sync-only 專案(CLI 工具、ML pipeline、簡單 script)強加 async-first 預設
+- `testing-rules.md` 移除 `### \`pyproject.toml\` 配置` 與 `### \`pyproject.toml\`` 兩個 sub-section(分別在 Pytest Markers 與 Coverage 配置 下),這些 toml 區塊統一搬到 `pyproject-tooling.example.toml`;原章節保留「使用範例」「執行指令」段落,並加一句指引指向 snippet 檔
+- README Quick Start 步驟順移:原 Step 1「複製 setup」→ Step 2;原 Step 2「啟動 Claude Code」→ Step 4
+
+### Removed
+- `code-style.md` 的「Recommended Tools」整章關於 `ruff` 與 `black` 比較、`mypy` 與 `pyright` 對比、「Rust 實作比 black 快 100x」「2026 年事實標準」「Microsoft 出品」等 marketing-style 工具介紹文字。Rule 文件職責是「規範本身」,不是「技術選型介紹」;且 CLAUDE.md Tech Stack 已選定 ruff + mypy,rule 再 hedging「替代 black」「兩者都推薦」對已採此選擇的專案是噪音
+- `code-style.md` 的 ruff lint rule sets 表格(`E/W/F/I/N/UP/B/SIM/RUF` 各組規則作用)。具體 lint rules 仍保留在 `pyproject-tooling.example.toml [tool.ruff.lint] select` 並含 inline comment;rule 文件不重述
+- `code-style.md` 的「`pyproject.toml` 推薦配置」整段 toml 區塊(已抽到 snippet)
+- `code-style.md` 的「CI 建議」整章(原列 4 條 pre-merge 命令)。CI 規範屬 workflow,不屬 code style;`/pre-pr-check` command + `tdd-feature-workflow` 階段 3.2 + `.github/workflows/ci.yml` 已是該領域的 single source of truth,rule 再列一份即漂移風險
+
+---
+
 ## [v1.12.1] - 2026-04-27
 
 ### Fixed

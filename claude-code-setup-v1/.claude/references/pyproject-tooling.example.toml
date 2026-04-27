@@ -1,0 +1,99 @@
+# claude-code-setup-v1 — Recommended [tool.*] configuration
+#
+# This file contains ONLY [tool.*] sections. It is NOT a complete pyproject.toml.
+# Run `uv init` first to create your pyproject.toml with [project] / [build-system],
+# then merge these sections in.
+#
+# Usage:
+#   1. Run `uv init` first (creates pyproject.toml with [project] section).
+#   2. Append this file to your pyproject.toml, or copy each [tool.*] section
+#      manually:
+#        cat .claude/references/pyproject-tooling.example.toml >> pyproject.toml
+#   3. Install dev dependencies:
+#        uv add --dev ruff mypy pytest pytest-asyncio pytest-cov
+#        uv sync
+#
+# Full setup walkthrough: README.md ## Quick Start.
+
+# ---------------------------------------------------------------------------
+# Ruff — Formatter + Linter
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "SIM",      # simplify
+    "RUF",      # ruff-specific
+]
+ignore = [
+    "E501",  # line too long (formatter handles this)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ---------------------------------------------------------------------------
+# Mypy — Type Checker (strict mode)
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+# Legacy modules can opt out of strict mode incrementally:
+# [[tool.mypy.overrides]]
+# module = "src.legacy.*"
+# strict = false
+
+# ---------------------------------------------------------------------------
+# Pytest — Test runner config + markers
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "slow: tests that take more than 1 second",
+    "integration: tests requiring external dependencies (DB, Redis, etc.)",
+    "e2e: full end-to-end tests",
+    "smoke: smoke tests for basic health checks",
+]
+
+# ---------------------------------------------------------------------------
+# Coverage — pytest-cov configuration
+# ---------------------------------------------------------------------------
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = [
+    "src/**/__init__.py",
+    "src/**/types.py",
+]
+
+[tool.coverage.report]
+fail_under = 70
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
