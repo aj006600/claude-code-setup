@@ -1,6 +1,8 @@
 # Documentation Style Guide
 
-本專案的文檔編寫規範。適用於所有 markdown 檔案（CLAUDE.md、SPEC.md、README.md、docs/*、CHANGELOGs 等）。
+本專案的文檔編寫規範。適用於 user-facing markdown 檔案（CLAUDE.md、SPEC.md、README.md、docs/*、CHANGELOGs 等）。
+
+> **`.claude/rules/*.md` 與 `.claude/skills/**/SKILL.md` 不在本指南的「章節標題用英文」規則範圍內**——這些是給 Claude 與內部開發者閱讀的內部規範類文件,允許中文章節標題以維持閱讀流暢度。footer 慣例、Markdown 結構、Mermaid 等其他規則仍適用。
 
 ---
 

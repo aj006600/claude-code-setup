@@ -23,6 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.20.0] - 2026-04-27
+
+### Changed
+- `README.md` L28 「4 Maintenance Skills」分類錯誤修正:`tdd-feature-workflow` 是開發編排器(於關鍵節點委派 superpowers / code-review / maintaining-* 等 skills),不屬於文檔維護。拆為兩個 section——`### 3 Maintenance Skills`(三個 maintaining-*)+ `### 1 Workflow Orchestrator Skill`(tdd-feature-workflow)。對齊 CLAUDE.md L140-141 既有的「開發編排器 vs 專案文檔維護」分類
+- `README.md` Prerequisites 表 `superpowers` 條目從「列 6 個 + 等 skills」改為完整列出 `tdd-feature-workflow` 實際引用的 12 個 skills 並指向 SKILL.md「關鍵分工」表為 SSOT。原寫法的「等」字讓讀者誤以為是「主要那 6 個」,實際上 tdd-feature-workflow 還用到 systematic-debugging / requesting-code-review / code-reviewer / receiving-code-review / dispatching-parallel-agents / using-git-worktrees 等 6 個未列出的 skills
+
+### Fixed
+- `documentation-style.md` L3 適用範圍與 rule 自身行為矛盾修正:原寫「適用於所有 markdown 檔案」並規定「章節標題用英文」,但 documentation-style.md 自身與 testing-rules.md 都使用中文章節。明確收緊 scope 為「user-facing markdown 檔案」,並加註 `.claude/rules/*.md` 與 `.claude/skills/**/SKILL.md` 不在「章節標題用英文」規則範圍內(footer / Markdown 結構 / Mermaid 等其他規則仍適用)。避免未來 Claude session 讀到此 rule 後誤判為「需要把所有 rules 改英文」做出不必要的重構提案
+
+---
+
 ## [v1.19.0] - 2026-04-27
 
 ### Fixed
