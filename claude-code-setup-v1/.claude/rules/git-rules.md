@@ -21,6 +21,7 @@ dev (development) ← feat/<feature-name>
 | 緊急修復 | `hotfix/<bug-name>` | `hotfix/security-patch` |
 | 文檔更新 | `docs/<doc-name>` | `docs/api-reference` |
 | 重構 | `refactor/<scope>` | `refactor/database-layer` |
+| SPEC 變更 | `spec/<topic>` | `spec/add-rate-limit-requirement` |
 
 ---
 

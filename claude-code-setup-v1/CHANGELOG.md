@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.15.1] - 2026-04-27
+
+### Fixed
+- `git-rules.md` 分支命名表補上 `spec/<topic>` 一行,對齊 `maintaining-spec-md/SKILL.md` L149 已使用的 `spec/<topic>` 命名慣例(範例 `spec/refine-export-acceptance` / `spec/add-rate-limit-requirement`)。原本命名表只列 5 種(feat / fix / hotfix / docs / refactor),Claude 讀 git-rules 不會知道有 `spec/<topic>` 慣例,可能在 SPEC 獨立分支情境下誤用 `docs/spec-update` 之類命名。屬跨檔案命名抵觸修復
+
+---
+
 ## [v1.15.0] - 2026-04-27
 
 ### Removed
