@@ -57,6 +57,18 @@ Read `.claude/SPEC.md`. 本次 branch 的變更是否已在 SPEC 中有對應的
 Inspect changed files in this branch. 是否包含 user-facing 變更(新功能、API 變動、安裝步驟變動、新環境變數、新依賴)?
 若是 → hint: 建議 PR 前啟用 `maintaining-readme-md` skill。
 
+### 3.3 CLAUDE.md / CLAUDE-CHANGELOG.md sync
+
+對照 `maintaining-claude-md` 5 類觸發情境逐項 check;任一命中 → hint:
+
+- **開發規範**:新 coding convention、新流程要求、新測試策略(覆蓋率、測試類型)
+- **專案結構**:新增 / 移除目錄、模組重組、新技術堆疊
+- **工作流程**:Git workflow / CI / CD / 文檔更新流程變更
+- **專案需求**:User 特殊習慣、效能 / 安全 / 合規限制
+- **SPEC.md 連動**:Project Overview / FR 變更帶來新依賴或架構需求(若 L3.1 已 hint SPEC 更新且涉此類則連動)
+
+任一命中 → hint: 啟用 `maintaining-claude-md` 同步 CLAUDE.md + CLAUDE-CHANGELOG.md。
+
 ## Final report
 
 **只列非 clean 的條目**;全部通過則一行 `All Level 1–3 checks passed`。
@@ -70,6 +82,7 @@ Pre-PR Check Results
 [L2.2] external-ref scan: <N> cross-repo refs in pr-body.md
 [L3.1] SPEC.md: branch changes not yet reflected
 [L3.2] README: user-facing changes detected → consider maintaining-readme-md
+[L3.3] CLAUDE.md: tech stack changed in pyproject.toml → consider maintaining-claude-md
 
 Hard gate: FAILED → fix before PR
 Soft warnings: <N>; Hints: <N>

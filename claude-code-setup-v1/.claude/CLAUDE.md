@@ -67,8 +67,8 @@
 新功能 / bug 修復 / 重構 → 啟用 `tdd-feature-workflow` skill 編排 4 階段(需求 → 開發 → PR → Review & Merge)。完整流程、階段轉場 gate、委派對象見該 skill。
 
 常用 commands:
-- `/pre-dev-check` — 開發前環境檢查(git 狀態、origin/dev 同步)
-- `/pre-pr-check` — PR 前 workflow-aware 檢查(測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints);ruff / format / mypy 由 CI 權威執行不重複
+- `/pre-dev-check` — 開發前環境檢查(branch topology、git 狀態、origin/dev 同步)
+- `/pre-pr-check` — PR 前 workflow-aware 檢查(測試+coverage、code-simplifier、external-ref body scan、SPEC / README / CLAUDE.md hints);ruff / format / mypy 由 CI 權威執行不重複
 - `/project-status` — 快速狀態快照
 
 ---

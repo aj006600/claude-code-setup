@@ -23,6 +23,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.22.0] - 2026-04-28
+
+### Added
+- `claude-code-setup-v1/ROADMAP.md`:V2 設計藍圖與 wishlist 追蹤檔。極簡結構(`# Roadmap` + `## Wishlist` 單一章節)留 placeholder 由 user 自由條列;不承諾時程,純記錄演進方向
+
+### Fixed
+- `/pre-pr-check` Level 3 sync hints 缺漏 CLAUDE.md:原 L3.1(SPEC.md)+ L3.2(README)雙 hint 結構漏掉 CLAUDE.md,PR 前無提示「本次改動是否影響開發規範 / 專案結構 / 工作流程 / 專案需求 / SPEC 連動」,造成 CLAUDE.md 即使 `maintaining-claude-md` 觸發情境命中也不會被啟用。新增 L3.3 對照 `maintaining-claude-md` 5 類觸發情境逐項 check,任一命中 → hint 啟用 `maintaining-claude-md`;Final report 範例同步加 L3.3 範例行
+- `tdd-feature-workflow/SKILL.md` Phase 4.4 觸發條件過窄:原寫「若影響架構 / tech stack」只蓋 `maintaining-claude-md` 5 類觸發情境的 1 類(專案結構),漏掉開發規範 / 工作流程 / 專案需求 / SPEC 連動 4 類。展開為 5 類清單(與 `maintaining-claude-md` 觸發情境表 SSOT 對齊),Phase 4.4 在 PR review 通過後逐項 check
+- `/pre-dev-check` 缺漏 branch topology 檢查:原只檢查 uncommitted + origin/dev 同步,直接假設 main / dev / qas 三條長期分支存在。fresh repo 或只有 main 的 repo 採用 template 後,Phase 2.2 的 `git checkout dev && git pull origin dev` 會直接 fail。新增 Check 1(Branch topology)檢查 local + origin 是否存在三條長期分支;缺漏時列出建立指令給 user 確認(動 git 結構需 user 同意,不自動執行)。原 Check 1 / 2 順移為 2 / 3,Report 同步加 topology 行
+
+### Changed
+- `.claude/CLAUDE.md` 常用 commands 清單同步反映新增功能:`/pre-dev-check` 描述加 `branch topology`、`/pre-pr-check` 描述加 `CLAUDE.md hints`
+
+---
+
 ## [v1.21.0] - 2026-04-28
 
 ### Fixed

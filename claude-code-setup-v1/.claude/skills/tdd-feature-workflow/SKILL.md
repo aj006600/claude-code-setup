@@ -197,8 +197,17 @@ SPEC.md 變更須獨立 commit。
 #### 4.3 更新 User-facing 文檔(若變更影響 User)
 啟用 `maintaining-readme-md`——skill 會判斷狀態並把文檔更新加入同一 PR(merge 前)。
 
-#### 4.4 更新 CLAUDE.md(若影響架構 / tech stack)
-啟用 `maintaining-claude-md`。
+#### 4.4 更新 CLAUDE.md(逐項對照 5 類觸發情境)
+
+對照 `maintaining-claude-md` 觸發情境表逐項 check,任一命中即啟用該 skill:
+
+- **開發規範**:新 coding convention、新流程要求、新測試策略(覆蓋率、測試類型)
+- **專案結構**:新增 / 移除目錄、模組重組、新技術堆疊
+- **工作流程**:Git workflow / CI / CD / 文檔更新流程變更
+- **專案需求**:User 特殊習慣、效能 / 安全 / 合規限制
+- **SPEC.md 連動**:Project Overview / FR 變更帶來新依賴或架構需求(若 4.3 已啟用 SPEC 變更則必連動)
+
+純功能新增不觸發以上任一類 → 跳過。
 
 #### 4.5 Merge 與本地清理
 PR 通過 review + CI + 文檔同步後:
