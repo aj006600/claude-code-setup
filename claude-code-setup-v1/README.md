@@ -82,7 +82,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 
 ---
 
-## Quick Start（4 步驟）
+## Quick Start（5 步驟）
 
 ### Step 1：初始化 Python 專案
 
@@ -118,7 +118,19 @@ uv add --dev ruff mypy pytest pytest-asyncio pytest-cov
 uv sync
 ```
 
-### Step 4：啟動 Claude Code 並提出第一個需求
+### Step 4：設定 GitHub remote
+
+先在 GitHub 建好空 repo（不要勾 README / .gitignore / license，避免與 template 衝突），然後設定 remote：
+
+```bash
+git remote add origin https://github.com/<user>/<repo>.git
+```
+
+`uv init` 已自動跑 `git init`，本 step 只負責設定 remote、不 push。實際 push 在 Step 5 完成首次客製化 commit 後執行。
+
+> 用 Personal Access Token (PAT) 認證的 user 注意：本 template 含 `.github/workflows/ci.yml`，首次 push 可能因 PAT 缺 `workflow` scope 被 GitHub 擋。詳見 [Troubleshooting](#troubleshooting)。
+
+### Step 5：啟動 Claude Code 並提出第一個需求
 
 直接說明你要建立什麼：
 
@@ -229,6 +241,30 @@ Template ship 出來的 `.claude/CLAUDE-CHANGELOG.md` 是空種子（只有 head
 
 ---
 
+## Troubleshooting
+
+### Push 被拒：`refusing to allow a Personal Access Token to create or update workflow ...`
+
+**症狀**：首次 `git push` 時 GitHub 回覆：
+
+```
+! [remote rejected] main -> main (refusing to allow a Personal Access Token to create or update workflow ".github/workflows/ci.yml" without "workflow" scope)
+```
+
+**原因**：用 Personal Access Token (PAT) 認證但 token 缺 `workflow` scope。GitHub 對「修改 `.github/workflows/` 內容」的 push 強制要求此 scope，即使是 repo owner 也擋。HTTPS remote 配 git credential helper 儲存 PAT 是最常踩的情境。
+
+**三個解法**（任選）：
+
+- **`gh auth login` 重登**（推薦）：web flow 會發完整 scope 的 token，之後 git CLI 透過 gh 的 credential helper 認證
+- **改用 SSH key**：
+  ```bash
+  git remote set-url origin git@github.com:<user>/<repo>.git
+  ```
+  SSH 認證無 scope 概念，直接通
+- **修補既有 PAT**：GitHub Settings → Developer settings → Personal access tokens → 編輯該 token → 加勾 `workflow` scope → 儲存
+
+---
+
 ## Advanced Customization
 
 ### 調整 Rules（視團隊需求）
@@ -298,5 +334,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.24.0
+**Template Version**: v1.25.0
 **Last Updated**: 2026-04-28

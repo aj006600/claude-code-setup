@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.25.0] - 2026-04-28
+
+### Added
+- `README.md` Quick Start 新增 Step 4「設定 GitHub remote」(原 Step 4 順移為 Step 5):`uv init` 已自動 `git init` 但 remote 須手動設定;若跳過此步,user 首次 `git push` 才會發現未設 remote 屬可預防的 surprise。明示用 HTTPS remote(`git remote add origin https://...`),Step 4 只設不 push,實際 push 由 Step 5 完成首個客製化 commit 後執行。Quick Start 標題從「4 步驟」改為「5 步驟」
+- `README.md` 新增 `## Troubleshooting` 章節(FAQ 與 Advanced Customization 之間):首條覆蓋「Push 被 GitHub 拒,PAT 缺 workflow scope」場景。本 template 含 `.github/workflows/ci.yml`,首次 push 若 user 用 HTTPS + PAT 認證且 token 無 `workflow` scope 會被 GitHub 擋(典型訊息:`refusing to allow a Personal Access Token to create or update workflow ... without "workflow" scope`),屬高頻採用門檻。列三個解法(`gh auth login` 重登、改 SSH、PAT 加 scope);Step 4 末段加 cross-link 指向此區
+
+---
+
 ## [v1.24.0] - 2026-04-28
 
 ### Changed
