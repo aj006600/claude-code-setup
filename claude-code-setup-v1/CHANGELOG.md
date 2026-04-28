@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.25.1] - 2026-04-28
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` description 中文觸發詞改為更貼近 user 自然中文句式:`"實作 X"、"開發 Y"、"修 bug"、"refactor"` → `"請幫我重構"、"我想要添加新功能"、"請幫我 debug"、"請分析"`。description 是 Claude Code skill 觸發語意匹配對象,觸發詞越貼近 user 實際說法、skill 自動觸發精度越高;原模板化短語(英中混雜「實作 X / 開發 Y」)較少在實際對話中出現,容易讓真實 user query 漏觸發本 skill
+
+---
+
 ## [v1.25.0] - 2026-04-28
 
 ### Added

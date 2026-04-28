@@ -1,6 +1,6 @@
 ---
 name: tdd-feature-workflow
-description: 'Use when starting, resuming, or finalizing any feature / bug fix / refactor / multi-step code change. Triggers include "實作 X"、"開發 Y"、"修 bug"、"refactor"、handing over a spec or plan, "繼續" an in-progress feature, or opening a PR. Orchestrates the full 4-phase TDD lifecycle (requirement → plan & implement → pre-PR verification → review & merge) by delegating to superpowers skills, code-review, and maintaining-* skills at the right checkpoints. Trigger proactively even without explicit mention of "TDD" — stand-alone code changes without the discipline wrapper are how projects accumulate technical debt.'
+description: 'Use when starting, resuming, or finalizing any feature / bug fix / refactor / multi-step code change. Triggers include "請幫我重構"、"我想要添加新功能"、"請幫我 debug"、"請分析"、handing over a spec or plan, "繼續" an in-progress feature, or opening a PR. Orchestrates the full 4-phase TDD lifecycle (requirement → plan & implement → pre-PR verification → review & merge) by delegating to superpowers skills, code-review, and maintaining-* skills at the right checkpoints. Trigger proactively even without explicit mention of "TDD" — stand-alone code changes without the discipline wrapper are how projects accumulate technical debt.'
 ---
 
 # TDD Feature Workflow(本專案開發編排)
