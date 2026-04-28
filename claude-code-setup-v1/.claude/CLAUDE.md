@@ -43,6 +43,8 @@
 │   ├── skills/               # 專案專屬 skills
 │   ├── commands/             # Slash commands
 │   ├── hooks/                # PreToolUse hooks(見 Safety & Hooks 章節)
+│   ├── docs/
+│   │   └── plans/            # Claude TDD 工作 plan(由 superpowers:writing-plans 產出,非 user-facing)
 │   └── settings.json         # Claude Code 設定
 ├── src/                      # 主要程式碼
 │   └── <your-modules>/       # 依專案需求組織

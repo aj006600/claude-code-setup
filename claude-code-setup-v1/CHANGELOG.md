@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.24.0] - 2026-04-28
+
+### Changed
+- `tdd-feature-workflow/SKILL.md` 階段 2.3 / 2.4 加入 plan 路徑 override:本 template 將 plan 寫到 `.claude/docs/plans/YYYY-MM-DD-<feature>.md`,覆寫 `superpowers:writing-plans` skill L18 預設路徑 `docs/plans/`。理由:plan 屬 Claude TDD 工作 artifact 與 `.claude/SPEC.md` 同 family 住 `.claude/`;`docs/` 留給 user-facing 技術文件(由 `maintaining-readme-md` 的 service / reference / guide 三類 template 管理),兩者混在同一目錄會讓 `maintaining-readme-md` 掃目錄時難分辨、user team review 時 `docs/` 充斥日期式檔名屬雜訊。Override 為純 prompt 層(`superpowers:executing-plans` Step 1 不寫死路徑、由主對話線 hand-off 提供),無需動 superpowers 本體。階段 2.4 同步說明 hand-off 帶 plan 完整路徑給 executing-plans
+- `.claude/CLAUDE.md` Architecture 樹與 `README.md` Template 結構樹同步加入 `.claude/docs/plans/` 條目,標註「Claude TDD 工作 plan,由 superpowers:writing-plans 產出,非 user-facing」;README 樹順手調整 `hooks/` 從末位改為倒數第二,讓 `docs/plans/` 接到末位(user 採用 template 後才會自動產生此目錄,放末位語意較對)
+
+---
+
 ## [v1.23.0] - 2026-04-28
 
 ### Removed

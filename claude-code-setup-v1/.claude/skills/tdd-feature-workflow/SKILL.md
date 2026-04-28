@@ -108,6 +108,8 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 #### 2.3 寫 plan(bite-sized TDD tasks)
 啟用 `superpowers:writing-plans` skill。產出的 plan 中每個 task 本身已含完整 TDD 循環:`寫 failing test → 跑它失敗 → 最小實作 → 跑它通過 → commit`(見 writing-plans skill 的 Bite-Sized Task Granularity 章節)。因此階段 2 不需要在 plan 之外另外獨立「寫 failing test」步驟——該動作已是 plan 第一個 task 的第一個 step。
 
+**Plan 路徑 override**:本 template 將 plan 寫到 `.claude/docs/plans/YYYY-MM-DD-<feature>.md`,覆寫 `superpowers:writing-plans` skill L18 預設路徑 `docs/plans/`。理由:plan 屬 Claude TDD 工作 artifact,與 `.claude/SPEC.md` 同 family 住 `.claude/`;`docs/` 留給 user-facing 技術文件(由 `maintaining-readme-md` 的 service / reference / guide 三類 template 管理),避免 `maintaining-readme-md` 掃目錄時難分辨、user team review 時被日期式檔名雜訊干擾。Override 屬純 prompt 層(`superpowers:executing-plans` 不寫死路徑、靠主對話線 hand-off 帶路徑),無需動 superpowers 本體。
+
 **選配加強**(複雜功能):
 - 深度探索 codebase → 委派 `feature-dev:code-explorer` agent
 - 想對比多個架構方案 → 並行委派 2-3 個 `feature-dev:code-architect` agent(分別聚焦最小改動 / 清潔架構 / 實用平衡)
@@ -118,7 +120,7 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 - E2E:`tests/e2e/test_<feature>_e2e.py`
 
 #### 2.4 執行 plan(TDD 循環 × N)
-啟用 `superpowers:executing-plans` 批次執行 plan(含 checkpoint review)。每個 task 的 Step 1「寫 failing test」與 Step 2「watch it fail」由**主對話線親自**執行——TDD 紀律的核心是 bite-sized 紅綠節奏與親眼確認「測試真的在測對的行為」,主線親自執行才能保證這份觀察不失真,不委派給 sub-agent。
+啟用 `superpowers:executing-plans` 批次執行 plan(含 checkpoint review),hand-off 時帶上 2.3 寫入的 `.claude/docs/plans/<filename>.md` 完整路徑(該 skill 不寫死路徑、靠主對話線提供)。每個 task 的 Step 1「寫 failing test」與 Step 2「watch it fail」由**主對話線親自**執行——TDD 紀律的核心是 bite-sized 紅綠節奏與親眼確認「測試真的在測對的行為」,主線親自執行才能保證這份觀察不失真,不委派給 sub-agent。
 
 遇到 TDD 細節疑義(例如「這個 test 該怎麼寫才對」、「watch it fail 時失敗訊息不對」)→ 查閱 `superpowers:test-driven-development` skill 的 Red-Green-Refactor 原則作為紀律參考,**不將其獨立啟用為一個階段**(它的內容已被 plan tasks 內建)。
 

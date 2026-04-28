@@ -164,9 +164,11 @@ claude-code-setup-v1/
 │   │   │   └── references/       # 3 份 doc templates
 │   │   └── tdd-feature-workflow/
 │   ├── commands/                 # Slash commands
-│   └── hooks/
-│       ├── secrets-scan-advisory.sh
-│       └── external-ref-guard.sh
+│   ├── hooks/
+│   │   ├── secrets-scan-advisory.sh
+│   │   └── external-ref-guard.sh
+│   └── docs/
+│       └── plans/                # Claude TDD 工作 plan(由 superpowers:writing-plans 產出,非 user-facing)
 └── .github/                      # User 同時複製此目錄
     └── workflows/
         └── ci.yml                # GitHub Actions CI
@@ -296,5 +298,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.23.0
+**Template Version**: v1.24.0
 **Last Updated**: 2026-04-28
