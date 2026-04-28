@@ -23,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.23.0] - 2026-04-28
+
+### Removed
+- `tdd-feature-workflow/SKILL.md`「補充資源(選配)」段移除 `superpowers:dispatching-parallel-agents` + `superpowers:using-git-worktrees` bullet:V1 排除原因為單人 dev 對「多獨立 sub-task 並行」痛感不強、心智負擔超過收益,獨立模組變更需有明確並行價值才值得引入相關工具與心智模型。同條目連動移除自 `README.md` Prerequisites 表 superpowers 條目。V2 演進方向移到 `ROADMAP.md` Wishlist
+- `tdd-feature-workflow/SKILL.md` 階段 1 design.md 理由段 downstream consumer 列表移除 `superpowers:subagent-driven-development`:該 skill 已在 v1.18.0 評估後不適配本 template 工作模型(衝突 phase 2.4「主對話線親自看紅綠」核心紀律),不再列為 downstream consumer 候選對象。原文剩下 `writing-plans` / `executing-plans` 兩條主流程 consumer,「design.md 無 downstream consumer」論證仍成立。V2 評估方向同步入 `ROADMAP.md` Wishlist
+
+### Added
+- `ROADMAP.md` Wishlist 加入兩條 V2 演進方向(`superpowers:subagent-driven-development` 整合評估、`superpowers:using-git-worktrees` + `dispatching-parallel-agents` 並行模式評估),各附 V1 排除原因 + V2 評估點作為 future context;避免 V2 重新評估時失去歷史,循環踩同樣的坑
+
+### Changed
+- `README.md` footer 從 v1.20.0 同步至 v1.23.0:v1.21.0 / v1.22.0 兩次 ship 時 footer 漏 bump 屬上版疏漏,本版一次補回。footer 兩欄(`Template Version` / `Last Updated`)恢復與 CHANGELOG 一致
+
+---
+
 ## [v1.22.0] - 2026-04-28
 
 ### Added

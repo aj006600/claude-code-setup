@@ -63,7 +63,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 ### Plugins / Skills
 | Plugin | 用途 | 引用位置 |
 |--------|------|---------|
-| `superpowers` | `tdd-feature-workflow` 各階段委派的多個 skills（brainstorming、writing-plans、executing-plans、test-driven-development、systematic-debugging、verification-before-completion、requesting-code-review / code-reviewer / receiving-code-review、finishing-a-development-branch、dispatching-parallel-agents、using-git-worktrees）；完整委派表見 `tdd-feature-workflow/SKILL.md`「關鍵分工」 | `tdd-feature-workflow` skill |
+| `superpowers` | `tdd-feature-workflow` 各階段委派的多個 skills（brainstorming、writing-plans、executing-plans、test-driven-development、systematic-debugging、verification-before-completion、requesting-code-review / code-reviewer / receiving-code-review、finishing-a-development-branch）；完整委派表見 `tdd-feature-workflow/SKILL.md`「關鍵分工」 | `tdd-feature-workflow` skill |
 | `code-simplifier` | 代碼審查（`code-simplifier:code-simplifier` agent） | `tdd-feature-workflow` skill 階段 3.3、`/pre-pr-check` Level 2.1 |
 | `code-review` | PR review workflow(`/code-review` command 寫回 PR comment) | `tdd-feature-workflow` skill 階段 4.1 |
 
@@ -296,5 +296,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.20.0
-**Last Updated**: 2026-04-27
+**Template Version**: v1.23.0
+**Last Updated**: 2026-04-28

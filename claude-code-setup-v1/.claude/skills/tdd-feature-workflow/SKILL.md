@@ -47,7 +47,6 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 **補充資源(選配)**——以下為流程不變、可額外搭配的工具,Claude 應在符合情境時主動採用:
 
 - `feature-dev:code-explorer` / `code-architect` — 需深度探索 codebase 或對比多個架構方案時
-- `superpowers:dispatching-parallel-agents` + `superpowers:using-git-worktrees` — 識別到多個彼此獨立、無依賴的 sub-task / sub-feature 時並行,**每個子任務仍各自走完階段 1-4 的 TDD 流程**
 
 完整動態清單見 `/agent-cheatsheet`。
 
@@ -81,7 +80,7 @@ User 提需求
 - brainstorming 對話結束 → 啟用 `maintaining-spec-md`(完整跳過第 1、2 步)
 - `writing-plans` 銜接由階段 2 接管
 
-**理由**:design.md 無 downstream consumer(`writing-plans` / `executing-plans` / `subagent-driven-development` 皆不讀此檔,plan 產出基於 brainstorming 對話 context + 主對話線傳遞需求);省去 ceremonial 中介檔,階段 1 唯一必要產出為 `.claude/SPEC.md`。
+**理由**:design.md 無 downstream consumer(`writing-plans` / `executing-plans` 皆不讀此檔,plan 產出基於 brainstorming 對話 context + 主對話線傳遞需求);省去 ceremonial 中介檔,階段 1 唯一必要產出為 `.claude/SPEC.md`。
 
 **SPEC.md 啟動條件**:
 
