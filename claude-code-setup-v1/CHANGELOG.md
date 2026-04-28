@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.21.0] - 2026-04-28
+
+### Fixed
+- `tdd-feature-workflow/SKILL.md` 階段 1 編排 bug:`superpowers:brainstorming` skill 結尾的 `## After the Design` 章節會自動指示 Claude (a) 寫 `docs/plans/YYYY-MM-DD-<topic>-design.md` + commit、(b) 詢問 "Ready to set up for implementation?" 並銜接 `superpowers:writing-plans`。原階段 1 流程圖只用「啟用 maintaining-spec-md」這類抽象敘事編排,具體性弱於 brainstorming 的明確檔名 + commit 指令——主對話線進入 brainstorming context 後跟隨第三方 skill 的 hand-off,寫了 design.md 並直接進 writing-plans,跳過 `maintaining-spec-md` 整個 SPEC.md 環節,造成需求未經討論就進實作。修正方式:階段 1 新增「Hand-off 攔截」小節,明確列出 brainstorming `## After the Design` 兩動作 + 主對話線 override 路徑(brainstorming 對話結束 → 直接啟用 `maintaining-spec-md`,完整跳過寫 design.md 與 writing-plans 銜接;writing-plans 留到階段 2 啟用)。同時新增 Artifact 分工明示 design.md 在 superpowers 各下游 skill(`writing-plans` / `executing-plans` / `subagent-driven-development`)中皆無 downstream consumer(plan 產出基於 brainstorming 對話 context + 主對話線傳遞需求),屬 ceremonial 中介檔——階段 1 唯一必要產出為 `.claude/SPEC.md`。流程圖同步更新標 `[攔截]` 節點,階段 1 → 2 gate 從「SPEC.md 已更新 + User 確認」精緻化為「`.claude/SPEC.md` 已含本次需求的 FR + Acceptance Criteria,User 確認 diff(新增 / 修訂或『完全照舊』明確判斷)」明示通過條件
+
+---
+
 ## [v1.20.0] - 2026-04-27
 
 ### Changed

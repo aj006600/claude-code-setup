@@ -62,14 +62,26 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 ```
 User 提需求
     ↓
-啟用 superpowers:brainstorming 討論釐清(需求明確時 skill 自身會快速通過)
+啟用 superpowers:brainstorming(對話釐清需求,需求明確時自動快速通過)
     ↓
-啟用 maintaining-spec-md
+[攔截]brainstorming 對話結束 → 跳過整個 "After the Design" 章節
     ↓
-Skill 產出 SPEC 更新 diff → User 確認
+啟用 maintaining-spec-md → SPEC.md diff → User 確認
     ↓
-進入階段 2
+進入階段 2(writing-plans 於階段 2 啟用)
 ```
+
+**Hand-off 攔截**
+
+`brainstorming` 結尾 "After the Design" 兩動作(階段 1 全部跳過):
+1. Write `docs/plans/YYYY-MM-DD-<topic>-design.md` + commit
+2. 詢問 "Ready to set up for implementation?" → 銜接 `writing-plans`
+
+主對話線編排:
+- brainstorming 對話結束 → 啟用 `maintaining-spec-md`(完整跳過第 1、2 步)
+- `writing-plans` 銜接由階段 2 接管
+
+**理由**:design.md 無 downstream consumer(`writing-plans` / `executing-plans` / `subagent-driven-development` 皆不讀此檔,plan 產出基於 brainstorming 對話 context + 主對話線傳遞需求);省去 ceremonial 中介檔,階段 1 唯一必要產出為 `.claude/SPEC.md`。
 
 **SPEC.md 啟動條件**:
 
@@ -220,7 +232,7 @@ git branch -d feat/<feature-name>
 
 | 轉場 | Gate |
 |------|------|
-| 1 → 2 | SPEC.md 已更新 + User 確認 |
+| 1 → 2 | `.claude/SPEC.md` 已含本次需求的 FR + Acceptance Criteria,User 確認 diff(新增 / 修訂或「完全照舊」明確判斷) |
 | 2 → 3 | 所有 plan tasks 完成(executing-plans Step 4 結束)+ 全測試綠 + 實作中產生的新需求 / 細節變化已回寫 SPEC(若有) |
 | 3 → 4 | `/pre-pr-check` 全通過(含 coverage 70%+)+ code-simplifier 建議已處理 + verification-before-completion 通過 + PR 已建立 + CI checks 通過 |
 | 4 完成 | 文檔同步(README / CLAUDE 視情況)+ PR merged + 分支已清理(local + remote) |
