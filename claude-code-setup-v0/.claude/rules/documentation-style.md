@@ -75,7 +75,7 @@ Overview → Quick Start → Architecture → API Endpoints → Configuration �
 
 **模板**：
 
-```markdown
+````markdown
 # [Service Name]
 
 [一句話描述服務功能]
@@ -165,7 +165,7 @@ uv run pytest tests/integration/... -v
 ---
 
 **Last Updated**: YYYY-MM-DD
-```
+````
 
 ---
 
@@ -226,7 +226,7 @@ uv run pytest tests/integration/... -v
 
 **模板**：
 
-```markdown
+````markdown
 # [Guide Title]
 
 [一句話描述]
@@ -257,7 +257,7 @@ uv run pytest tests/integration/... -v
 ---
 
 **Last Updated**: YYYY-MM-DD
-```
+````
 
 ---
 
