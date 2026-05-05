@@ -1,24 +1,35 @@
 # Roadmap
 
-本檔記錄 V0 → V1 的設計演進方向作為決策史。V1 之後的演進方向見 [`claude-code-setup-v1/ROADMAP.md`](../claude-code-setup-v1/ROADMAP.md)。
+V0 已識別的改進方向。
 
-## V0 → V1 已完成演進
+## 主動觸發取代被動讀取
 
-從 rule-driven 過渡到 skill-driven 的 5 個核心動因(完整論述見 `claude-code-setup-v1/README.md` `## Design Rationale`):
+目前 rule 仰賴 CLAUDE.md 提示讓 Claude 去 Read 規範,觸發精度受限於對話語意。將「有步驟的流程」(文檔維護、TDD 編排)改為 skill,利用 description 語意匹配主動載入。
 
-- **主動觸發 vs 被動讀取**:rule 仰賴 CLAUDE.md 提示與當下對話語意去 Read,觸發精度低;V1 將「有步驟的流程」改為 skill,description 語意匹配時自動載入
-- **Workflow 結構**:V0 用 prose 敘述「Step 1 → Step 5」流程,Claude 臨場易漏步驟;V1 skill 內建多步驟 workflow + 分支判斷(如 `maintaining-claude-md` Workflow A/B)
-- **跨 skill 協作鏈**:`maintaining-spec-md` → `maintaining-claude-md` → `maintaining-readme-md` 在關鍵節點互相 hook,形成規範同步鏈;V0 的 rules 之間無此機制
-- **領域知識隨 skill 載入**:Semantic Versioning、Keep a Changelog、TDD 紀律寫進 skill body,觸發時自動進入 context;V0 需 Claude 主動 Read 才知細節
-- **智慧延後執行時機**:`maintaining-readme-md` 依實作狀態(實作中 / 完成未 PR / PR 中 / 已 merge)決定執行時機,避免 TDD 中途干擾也避免文檔遺忘補上;V0 只有單一「pre-merge」觸發點
+## Workflow 結構化
 
-## V0 設計遺產對照(V1 處置)
+目前流程以 prose 敘述「Step 1 → Step N」,Claude 臨場易漏步驟。改為結構化 workflow,內建多步驟 + 分支判斷(如文檔維護依情境走不同 workflow)。
 
-| V0 設計 | V1 處置 |
-|---------|---------|
-| `*-rules.md` 各檔獨立 footer 與版本號 | 移除——統一由 template CHANGELOG 追蹤;rule 為 reference 文件不需 per-rule versioning |
-| `claude-update-rules.md` / `spec-update-rules.md` / `readme-update-rules.md` 三檔(How to update XXX) | 改為 `maintaining-claude-md` / `maintaining-spec-md` / `maintaining-readme-md` 三 skill,description 自動觸發 |
-| `development-workflow-details.md`(TDD 4 階段 prose) | 改為 `tdd-feature-workflow` skill 編排,各階段委派 superpowers skills |
-| `code-style.md` / `testing-rules.md` / `git-rules.md` / `documentation-style.md` | 保留為 rule 檔案(reference 性質)+ 內容大幅擴充 |
-| 無自動化層 | 補上 `/pre-dev-check` / `/pre-pr-check` / `/project-status` / `/agent-cheatsheet` commands、`secrets-scan-advisory.sh` / `external-ref-guard.sh` hooks、`.github/workflows/ci.yml` |
-| 無工具配置 | 補上 `.claude/references/pyproject-tooling.example.toml`(ruff / mypy / pytest / coverage `[tool.*]`) |
+## 跨規範協作鏈
+
+目前 `claude-update-rules.md` / `spec-update-rules.md` / `readme-update-rules.md` 三檔各自獨立,無互相觸發機制。在文檔維護規範的關鍵節點互相 hook,形成自動同步鏈(如 SPEC 更新 → 評估 CLAUDE.md 是否需同步 → 評估 README 是否需更新)。
+
+## 領域知識隨規範載入
+
+目前 Semantic Versioning、Keep a Changelog、TDD 紀律等領域知識散布在各 rule 中,需 Claude 主動 Read 才能取得。將領域知識嵌入對應的規範載體中,觸發時自動進入 context,減少遺漏。
+
+## 文檔更新時機智慧化
+
+目前 `readme-update-rules.md` 只有單一「PR Review 通過後 merge 前」觸發點。改為依實作狀態(實作中 / 完成未 PR / PR 中 / 已 merge)動態決定文檔更新執行時機,避免 TDD 中途干擾也避免文檔遺忘補上。
+
+## 自動化層
+
+目前無 slash command、無 PreToolUse hook、無 CI workflow,規範執行完全靠 Claude 自律。改進:
+
+- 補上開發前 / PR 前檢查的 slash commands
+- 補上安全防護 hooks(如 secrets scan、cross-repo reference guard)
+- 補上 CI workflow(ruff / mypy / pytest / coverage)
+
+## 工具配置參考
+
+目前無統一的工具配置範例。提供 `pyproject.toml` 的 `[tool.*]` 配置範例(ruff / mypy / pytest / coverage),讓新專案快速對齊工具設定。

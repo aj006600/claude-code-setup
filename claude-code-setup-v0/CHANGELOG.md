@@ -2,7 +2,7 @@
 
 All notable changes to the **claude-code-setup-v0 template itself** will be documented in this file.
 
-V0 是 setup 的 **rule-driven** 設計版本。Active development 在 [`claude-code-setup-v1/`](../claude-code-setup-v1/)(skill-driven)。兩者使用相同外部工具,V0 不含 skill / command / hook / CI 自動化層。
+V0 是 setup 的 **rule-driven** 設計版本,不含 skill / command / hook / CI 自動化層。
 
 The format is based on [Keep a Changelog v1.1.0](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [v0.1.0] - 2026-05-04
 
-Rule-driven design baseline。Claude Code 透過 `.claude/CLAUDE.md` 引用 `.claude/rules/*.md` 被動讀取規範,所有開發流程以 prose 表達,無 skill / command / hook 自動化機制。V0 → V1 設計演進回顧見 `ROADMAP.md`。
+Rule-driven design baseline。Claude Code 透過 `.claude/CLAUDE.md` 引用 `.claude/rules/*.md` 被動讀取規範,所有開發流程以 prose 表達,無 skill / command / hook 自動化機制。改進方向見 `ROADMAP.md`。
 
 ### Added
 - `.claude/CLAUDE.md` — 主規範入口,涵蓋 Project Overview、Tech Stack(Python 3.11+ / uv)、Architecture、Development Workflow(4 階段 TDD)、Coding Conventions(命名 / Modular / SOLID)、Testing Protocols、Development Checklist;以動態引用 `.claude/rules/*.md` 各篇規範作為單一規範入口
@@ -57,7 +57,7 @@ Rule-driven design baseline。Claude Code 透過 `.claude/CLAUDE.md` 引用 `.cl
 - `.claude/rules/testing-rules.md` — pytest 測試慣例;測試命名 + 單元測試 + 整合測試 + fixture 範例
 - `.claude/rules/documentation-style.md` — 文檔撰寫規範(章節分隔符、Footer 格式、標題層級、程式碼區塊語言標記、Mermaid 圖表)+ 三類文檔模板(Service / Reference / Guide)+ 章節命名標準
 
-### Design Notes(供 V0 → V1 演進對照)
-- **Per-rule versioning**:每個 rule 檔案各自附 `**Last Updated**` + `**Version**` footer;V1 v1.0.4 評估後認定為反模式(各 rule 版本互不相干、user 不會每次編輯都同步),改為由 template `CHANGELOG.md` 統一追蹤
-- **被動讀取模式**:Claude Code 仰賴 CLAUDE.md 的「需查看並遵循 `xxx-rules.md`」提示去 Read 規範,觸發精度受限於 CLAUDE.md context 與當下對話語意;V1 改為 skill description 主動觸發,語意匹配時自動載入規範與 workflow
-- **無自動化層**:V0 不含 slash command / hook / CI workflow;規範執行完全靠 Claude 自律。V1 補上 `/pre-dev-check` 等 commands、`secrets-scan-advisory.sh` / `external-ref-guard.sh` hooks、`ci.yml` GitHub Actions
+### Design Notes
+- **Per-rule versioning**:每個 rule 檔案各自附 `**Last Updated**` + `**Version**` footer;後續評估認定為反模式(各 rule 版本互不相干、user 不會每次編輯都同步),改為由 template `CHANGELOG.md` 統一追蹤
+- **被動讀取模式**:Claude Code 仰賴 CLAUDE.md 的「需查看並遵循 `xxx-rules.md`」提示去 Read 規範,觸發精度受限於 CLAUDE.md context 與當下對話語意;改進方向見 `ROADMAP.md`
+- **無自動化層**:不含 slash command / hook / CI workflow;規範執行完全靠 Claude 自律;改進方向見 `ROADMAP.md`
