@@ -92,4 +92,3 @@ async def db_session():
 ---
 
 **Last Updated**: 2026-01-13
-**Version**: v1.0.0

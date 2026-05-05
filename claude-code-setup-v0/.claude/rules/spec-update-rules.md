@@ -3,7 +3,7 @@
 > **目標**: **這是給 Claude Code 的規則與指引**，讓 Claude Code 理解如何撰寫和維護專案規格文件。
 >
 > **檔案位置**:
-> - 本指引：`.claude/rules/spec-rules.md`
+> - 本指引：`.claude/rules/spec-update-rules.md`
 > - 專案規格：`.claude/SPEC.md`
 
 ---
@@ -71,7 +71,7 @@
 
 **建議格式化輸出給 User**：
 
-    📋 SPEC.md 更新建議
+    **SPEC.md 更新建議**
 
     我注意到以下變更需要同步更新 SPEC.md：
 
@@ -105,9 +105,8 @@
 #### Step 3: 等待 User 確認
 
 **重要原則**：
-- ❌ **不要**在未經 User 確認前直接修改 SPEC.md
-- ✅ **必須**先展示 diff 並取得同意
-- ✅ 如果 User 有其他意見，根據回饋調整更新內容
+- **必須**先展示 diff 並取得同意
+- 如果 User 有其他意見，根據回饋調整更新內容
 
 ---
 
@@ -148,7 +147,7 @@ User 確認後，執行以下操作：
 
 **建議格式化輸出**：
 
-    ✅ SPEC.md 已更新
+    **SPEC.md 已更新**
 
     **更新摘要**：
     - 新增功能：User Authentication 支援 OAuth 2.0
@@ -209,7 +208,7 @@ User 確認後，執行以下操作：
     Claude:
     我注意到這是一個新功能需求，建議先更新 SPEC.md：
 
-    📋 SPEC.md 更新建議
+    **SPEC.md 更新建議**
 
     **受影響的章節**：
     1. Functional Requirements - 新增功能「Data Export」
@@ -229,13 +228,6 @@ User 確認後，執行以下操作：
     ```
 
     是否確認新增這個功能到 SPEC？
-
-### 不好的做法
-
-    User: "我想新增使用者可以匯出 CSV 的功能"
-
-    Claude: 好的，我直接開始實作 CSV 匯出功能...
-    [沒有先確認需求細節，沒有更新 SPEC]
 
 ---
 

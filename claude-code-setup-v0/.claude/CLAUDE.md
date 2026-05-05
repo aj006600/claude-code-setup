@@ -85,8 +85,9 @@ Code review → 更新 README.md 及相關文檔 → 合併 → 刪除分支
   - CLAUDE CODE 需查看並遵循 `.claude/rules/spec-update-rules.md` 流程
 - [ ] 檢查當前 git 狀態: `git status`
 - [ ] 確認所有測試通過: `uv run pytest tests/ -v`
+- [ ] 同步 dev 最新狀態: `git checkout dev && git pull origin dev`
 - [ ] 建立功能分支: `git checkout -b feat/<feature-name>`
-  - CLAUDE CODE 需查看並遵從 ```.claude/rules/git-rules.md``` 的 "分支命名規範" 章節
+  - CLAUDE CODE 需查看並遵從 `.claude/rules/git-rules.md` 的 "分支命名規範" 章節
 
 ### 開發中
 - [ ] 先撰寫測試（TDD）
@@ -103,7 +104,7 @@ Code review → 更新 README.md 及相關文檔 → 合併 → 刪除分支
 - [ ] 提交變更並建立 PR 到 `dev`
 
 ### Review 與 Merge
-- [ ] Code review（使用 code-reviewer agent）
+- [ ] Code review（使用 superpowers:code-reviewer）
   - 若未通過，回到「開發中」階段遵循流程規範進行修改
 - [ ] Review 通過後，更新文檔（README.md, docs/）
   - CLAUDE CODE 需查看並遵從 ```.claude/rules/readme-update-rules.md``` 的 "檢查 README.md 是否需要更新"、"README.md 更新流程" 章節
@@ -112,4 +113,3 @@ Code review → 更新 README.md 及相關文檔 → 合併 → 刪除分支
 ---
 
 **Last Updated**: YYYY-MM-DD
-**Version**: v1.0.0

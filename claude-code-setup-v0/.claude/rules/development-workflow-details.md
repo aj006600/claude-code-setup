@@ -4,7 +4,7 @@
 
 ### 1. 需求確認階段
 1. User 提出需求
-2. Claude Code 依照 `.claude/rules/spec-rules.md` 撰寫/更新 SPEC.md
+2. Claude Code 依照 `.claude/rules/spec-update-rules.md` 撰寫/更新 SPEC.md
 3. Claude Code 向 User 展示 SPEC.md diff 並確認
 4. User 確認後才開始開發
 
@@ -72,10 +72,10 @@
    ```
 
 ### 4. Review 與 Merge 階段
-1. PR Review（使用 **code-reviewer** agent）
+1. PR Review（使用 **superpowers:code-reviewer**）
    - 若未通過，回到「開發階段」遵循流程規範進行修改
 
-2. Review 通過後，更新文檔（使用 documentation-engineer agent）
+2. Review 通過後，更新文檔
    - 更新 README.md（如有必要）
    - 更新 docs/（如有必要）
    - 將文檔更新加入同一個 PR
@@ -95,4 +95,3 @@
 ---
 
 **Last Updated**: 2026-01-14
-**Version**: v1.0.0

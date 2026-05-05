@@ -26,7 +26,7 @@ PR Review 通過後，在 merge 前檢查以下文檔是否需要更新：
 ### 1. 分析本次 PR 的變更內容
 思考：這個變更是否影響使用者？是否需要更新文檔？
 
-### 2. 使用 documentation-engineer agent 更新文檔
+### 2. 更新文檔
 - **每個章節的標題使用英文，內容以繁體中文為主，技術術語請使用英文** 
 - 識別需要文檔更新的部分
 - 更新 README.md 的相關章節
@@ -73,4 +73,3 @@ Claude: "我建議更新 README.md 的 API Reference 章節，
 ---
 
 **Last Updated**: 2026-01-14
-**Version**: v1.0.0

@@ -2,7 +2,7 @@
 
 All notable changes to the **claude-code-setup-v0 template itself** will be documented in this file.
 
-V0 是 setup 早期的 **rule-driven** 設計,於 2026-05-04 凍結為歷史快照。Active development 已遷移至 [`claude-code-setup-v1/`](../claude-code-setup-v1/);V0 之後不再演進,需要 setup template 請改用 V1。本檔僅保留 V0 自身的 baseline 紀錄。
+V0 是 setup 的 **rule-driven** 設計版本。Active development 在 [`claude-code-setup-v1/`](../claude-code-setup-v1/)(skill-driven)。兩者使用相同外部工具,V0 不含 skill / command / hook / CI 自動化層。
 
 The format is based on [Keep a Changelog v1.1.0](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
@@ -17,13 +17,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-<!-- V0 已凍結,Unreleased 區塊保留以維持 Keep a Changelog 結構;後續無變更計畫。 -->
+---
+
+## [v0.2.0] - 2026-05-05
+
+修正 V0 內部邏輯衝突,使所有 rule 之間一致且可用。
+
+### Changed
+- `.claude/CLAUDE.md` — Development Checklist 分支建立步驟加上 `git checkout dev && git pull origin dev`,對齊 `development-workflow-details.md`
+- `.claude/CLAUDE.md` — `code-reviewer agent` 改為 `superpowers:code-reviewer`
+- `.claude/rules/development-workflow-details.md` — `code-reviewer agent` 改為 `superpowers:code-reviewer`;移除 `documentation-engineer agent` 引用
+- `.claude/rules/claude-update-rules.md` — 分支 workflow 加上 base branch(`dev`)與 PR target;移除引用不存在的 `CLAUDE-CHANGELOG.md` 的 TODO 註解
+- `.claude/rules/readme-update-rules.md` — 移除 `documentation-engineer agent` 引用
+- `.claude/rules/documentation-style.md` — 移除專案特定硬編碼「work project」,改為通用描述
+- `.claude/rules/spec-update-rules.md` — emoji 改為純文字粗體;移除負面描述「不好的做法」區塊
+
+### Fixed
+- `.claude/rules/development-workflow-details.md` — 檔名引用 `spec-rules.md` 修正為 `spec-update-rules.md`
+- `.claude/rules/spec-update-rules.md` — 自身檔名引用 `spec-rules.md` 修正為 `spec-update-rules.md`
+
+### Removed
+- 所有 rule 檔案與 CLAUDE.md 的 `**Version**` footer(per-rule versioning 為反模式,統一由本 CHANGELOG 追蹤)
 
 ---
 
 ## [v0.1.0] - 2026-05-04
 
-V0 凍結快照——rule-driven design baseline。Claude Code 透過 `.claude/CLAUDE.md` 引用 `.claude/rules/*.md` 被動讀取規範,所有開發流程以 prose 表達,無 skill / command / hook 自動化機制。本版本後 V0 不再演進,V0 → V1 演進回顧見 `ROADMAP.md`。
+Rule-driven design baseline。Claude Code 透過 `.claude/CLAUDE.md` 引用 `.claude/rules/*.md` 被動讀取規範,所有開發流程以 prose 表達,無 skill / command / hook 自動化機制。V0 → V1 設計演進回顧見 `ROADMAP.md`。
 
 ### Added
 - `.claude/CLAUDE.md` — 主規範入口,涵蓋 Project Overview、Tech Stack(Python 3.11+ / uv)、Architecture、Development Workflow(4 階段 TDD)、Coding Conventions(命名 / Modular / SOLID)、Testing Protocols、Development Checklist;以動態引用 `.claude/rules/*.md` 各篇規範作為單一規範入口
