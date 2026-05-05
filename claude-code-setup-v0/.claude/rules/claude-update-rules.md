@@ -1,10 +1,5 @@
 # claude-update-rules.md
 
-<!-- 
-TODO: 
-1. 還有SPEC更新時, 要判斷是否要修改CLAUDE.md的Project Overview, Tech Stack, Architecture 等
-2. 新增修改CLAUDE-CHANGELOG.md的規則
--->
 ## 檢查 CLAUDE.md 是否需要更新
 當 User 提出以下類型的需求時,應主動檢查本文件是否需要更新:
 
@@ -48,10 +43,12 @@ CLAUDE: 我注意到這個需求可能需要更新 CLAUDE.md 的以下部分：
 
 ### 3. User 確認後，更新 CLAUDE.md
 ```bash
+git checkout dev && git pull origin dev
 git checkout -b docs/update-claude-md
-git add CLAUDE.md
+git add .claude/CLAUDE.md
 git commit -m "docs(claude): update development guidelines based on new requirements"
 git push origin docs/update-claude-md
+gh pr create --base dev --title "docs(claude): update development guidelines"
 ```
 
 ### 4. 告知 User 更新完成
@@ -109,4 +106,3 @@ Claude: "我建議更新 'Git Commit Guidelines' 章節,
 ---
 
 **Last Updated**: 2026-01-13
-**Version**: v1.0.0

@@ -1,20 +1,20 @@
 # claude-code-setup-v0
 
-Claude Code 專案配置模板 — 第零版:**rule-driven 簡潔設計**、純文字規範驅動的早期 setup。
+Claude Code 專案配置模板 — 第零版:**rule-driven 設計**,透過 CLAUDE.md + rules 被動讀取規範,不含 skill / command / hook / CI 自動化層。
 
-> **狀態**:V0 已凍結為歷史快照。Active development 在 [`claude-code-setup-v1/`](../claude-code-setup-v1/),新專案請直接採用 V1。本目錄保留供設計演進對照與極簡需求情境使用。
+> V1 採用 skill-driven 設計,提供更完整的自動觸發與 workflow 編排。兩者使用相同的外部工具,核心差異在於規範傳遞機制(被動讀取 vs 主動觸發)。詳見 [V0 vs V1 對照](#v0-vs-v1-對照)。
 
 ---
 
 ## Overview
 
-V0 是 setup template 的最初設計,採 **rule-driven 模式**——Claude Code 透過 `.claude/CLAUDE.md` 引用 `.claude/rules/*.md` 被動讀取規範。整個 setup 由純 markdown 構成,沒有 skill / command / hook / CI 自動化層。
+V0 採 **rule-driven 模式**——Claude Code 透過 `.claude/CLAUDE.md` 引用 `.claude/rules/*.md` 被動讀取規範。使用與 V1 相同的外部工具(superpowers / code-simplifier plugins、context7 / github MCPs),但不含 skill / command / hook / CI 自動化層。
 
 設計訴求:
 
-- **極簡**:只有 markdown 規範檔,無腳本、無自動觸發
-- **純文字規範**:開發流程、TDD 紀律、文檔規範皆以 prose 表達
-- **低依賴**:無需 superpowers / code-simplifier plugin、無需 MCP server,只需基本 Python 環境
+- **Rule-driven**:所有規範以 markdown 表達,Claude 被動讀取而非由 skill description 主動觸發
+- **無自動化層**:無 slash command、無 PreToolUse hook、無 CI workflow
+- **Prose 流程描述**:TDD 4 階段、文檔維護流程皆以 prose 敘述,無結構化 workflow 分支判斷
 
 ---
 
@@ -45,8 +45,11 @@ V0 是 setup template 的最初設計,採 **rule-driven 模式**——Claude Cod
 | Python 3.11+ | 開發語言 |
 | `uv` | Python 套件管理 |
 | `git` | 版本控制 |
-
-無其他外部依賴(skill / plugin / MCP / CI 皆無)。
+| `gh` | GitHub CLI(PR 建立) |
+| `superpowers` plugin | TDD plan 執行(`executing-plans`)+ code review(`code-reviewer`) |
+| `code-simplifier` plugin | 代碼審查與優化 |
+| `context7` MCP | 查詢最新 library 文檔 |
+| `github` MCP | GitHub 資源查詢 |
 
 ---
 
@@ -80,8 +83,8 @@ cp -r path/to/claude-code-setup-v0/.claude .
 ```
 claude-code-setup-v0/
 ├── README.md                  # 本檔
-├── CHANGELOG.md               # V0 自身演進史(凍結於 v0.1.0)
-├── ROADMAP.md                 # V0 → V1 演進回顧
+├── CHANGELOG.md               # V0 自身演進史
+├── ROADMAP.md                 # V0 → V1 設計演進對照
 └── .claude/
     ├── CLAUDE.md              # 主規範入口
     ├── SPEC.md                # 專案規格空白模板
@@ -100,7 +103,7 @@ claude-code-setup-v0/
 
 ## V0 vs V1 對照
 
-| 面向 | V0(本版,frozen) | V1(active) |
+| 面向 | V0(本版) | V1 |
 |------|------------------|--------------|
 | 設計典範 | Rule-driven(Claude 被動讀規範) | Skill-driven(規範由 skill description 主動觸發載入) |
 | 文檔維護 | `claude-update-rules.md` / `spec-update-rules.md` / `readme-update-rules.md` 三 rule,Claude 自行判斷 | `maintaining-claude-md` / `maintaining-spec-md` / `maintaining-readme-md` 三 skill 自動觸發 |
@@ -109,8 +112,7 @@ claude-code-setup-v0/
 | Hooks | 無 | `secrets-scan-advisory.sh`(advisory)+ `external-ref-guard.sh`(guard) |
 | CI | 無 | `.github/workflows/ci.yml`(ruff / mypy / pytest / coverage) |
 | 工具配置 | 無 | `pyproject-tooling.example.toml`(ruff / mypy / pytest / coverage `[tool.*]`) |
-| Per-rule versioning | 每個 rule 獨立 footer 與版本號 | 取消;統一由 template CHANGELOG 追蹤 |
-| 外部依賴 | `uv` + `git` + Python 3.11+ | 加上 `superpowers` / `code-simplifier` / `code-review` plugins、`context7` / `github` MCPs、`gh` CLI |
+| 外部依賴 | `superpowers` / `code-simplifier` plugins + `context7` / `github` MCPs + `gh` CLI + Python 3.11+ / `uv` / `git` | 同 V0 基礎,另加 `code-review` plugin |
 
 完整 V0 → V1 設計演進原因見 [`claude-code-setup-v1/README.md`](../claude-code-setup-v1/README.md) 的 `## Design Rationale` 章節。
 
@@ -118,19 +120,19 @@ claude-code-setup-v0/
 
 ## 何時用 V0
 
-- 評估 setup template 的演進歷史,作為 V1 設計決策對照
+- 偏好 rule-driven 的被動讀取模式,不需要 skill 主動觸發
 - 想以 V0 為起點客製自己的 rule-driven 設計
-- 極端輕量需求:不希望引入 skill / plugin / hook / CI 任何自動化層
+- 不需要 slash command / hook / CI 自動化層
 
-對絕大多數實際專案而言,**直接用 V1**——自動觸發、workflow 編排、安全防護皆已內建,使用體驗顯著優於 V0。
-
----
-
-## 升級到 V1
-
-V0 → V1 為大幅重構,無向下兼容的 migration script。建議直接以 V1 作為新專案模板;既有 V0 專案若要升級,參考 V1 README 的 Quick Start,並用本檔的 V0 vs V1 對照表逐項引入 skills / commands / hooks。
+V1 提供更完整的 skill-driven 自動觸發、workflow 編排、安全防護(hooks)與 CI——如需這些能力,建議直接採用 V1。
 
 ---
 
-**Template Version**: v0.1.0
-**Last Updated**: 2026-05-04
+## 遷移到 V1
+
+V0 與 V1 共享相同外部工具,核心差異在自動化層(skills / commands / hooks / CI)。既有 V0 專案若要遷移,參考 V1 README 的 Quick Start,並依本檔的 V0 vs V1 對照表逐項引入。
+
+---
+
+**Template Version**: v0.2.0
+**Last Updated**: 2026-05-05

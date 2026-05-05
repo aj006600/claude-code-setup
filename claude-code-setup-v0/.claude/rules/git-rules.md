@@ -75,4 +75,3 @@ git commit -m "perf(search): add caching"
 ---
 
 **Last Updated**: 2026-01-14
-**Version**: v1.0.0

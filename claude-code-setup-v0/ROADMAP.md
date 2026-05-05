@@ -1,6 +1,6 @@
 # Roadmap
 
-V0 已凍結為歷史快照,**無未來計畫**。本檔記錄 V0 → V1 的演進方向作為設計決策史。V1 之後的演進方向見 [`claude-code-setup-v1/ROADMAP.md`](../claude-code-setup-v1/ROADMAP.md)。
+本檔記錄 V0 → V1 的設計演進方向作為決策史。V1 之後的演進方向見 [`claude-code-setup-v1/ROADMAP.md`](../claude-code-setup-v1/ROADMAP.md)。
 
 ## V0 → V1 已完成演進
 

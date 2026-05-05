@@ -1,6 +1,6 @@
 # Documentation Style Guide
 
-SMT AI Agent 專案的文檔編寫規範。
+專案文檔編寫規範。
 
 ---
 
@@ -35,7 +35,7 @@ SMT AI Agent 專案的文檔編寫規範。
 ```markdown
 # Receiver Service
 
-SMT 製程數據接收服務，負責接收機台數據、驗證格式、暫存 Redis。
+資料接收服務，負責接收外部數據、驗證格式、暫存至快取。
 ```
 
 ### 程式碼區塊
@@ -65,7 +65,7 @@ SMT 製程數據接收服務，負責接收機台數據、驗證格式、暫存 
 
 ### 類型一：Service 文檔
 
-適用：`receiver-service.md`, `simulator-service.md`, `queue-dispatcher-service.md`
+適用：各服務說明文檔（如 `xxx-service.md`）
 
 **章節順序**：
 
