@@ -17,11 +17,9 @@ Claude Code 專案配置模板集合。每個版本獨立存放於平行資料�
 
 ## How to Adopt
 
-1. 選擇想用的版本(新專案推薦 [`claude-code-setup-v1`](./claude-code-setup-v1/README.md);V0 僅供設計對照,不建議用於新專案)
+1. 選擇想用的版本(各版本定位見上表)
 2. 進入該資料夾閱讀其 README.md
 3. 依 README 的 Quick Start 步驟執行
-
-V0 → V1 的設計演進原因見 [`claude-code-setup-v1/README.md`](./claude-code-setup-v1/README.md) `## Design Rationale` 與 [`claude-code-setup-v0/ROADMAP.md`](./claude-code-setup-v0/ROADMAP.md)。
 
 ---
 
@@ -37,9 +35,9 @@ oh-my-claude-setup/
 │   ├── .claude/                 ← 實際採用時複製此目錄
 │   └── .github/                 ← 實際採用時複製此目錄(CI workflow)
 ├── claude-code-setup-v0/        ← 第零版 template(Rule-driven)
-│   ├── README.md                ← V0 簡介 + V0 vs V1 對照
-│   ├── CHANGELOG.md             ← V0 baseline 紀錄
-│   ├── ROADMAP.md               ← V0 → V1 演進回顧
+│   ├── README.md                ← V0 簡介與使用指南
+│   ├── CHANGELOG.md             ← V0 演進紀錄
+│   ├── ROADMAP.md               ← V0 改進方向
 │   └── .claude/                 ← 實際採用時複製此目錄
 └── memo/                        ← 開發筆記(.gitignore)
 ```
