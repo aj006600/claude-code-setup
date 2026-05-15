@@ -8,6 +8,7 @@ Claude Code 專案配置模板集合。每個版本獨立存放於平行資料�
 
 | 版本 | 定位 | 狀態 |
 |------|------|------|
+| [`global`](./global/) | Global Claude Code 配置（`~/.claude/CLAUDE.md`）— 所有專案共用的基礎行為設定 | **Active** |
 | [`claude-code-setup-v1`](./claude-code-setup-v1/) | 通用 Python 專案 setup — 3 maintaining skills + 1 workflow orchestrator skill、4 slash commands、1 advisory hook + 1 guard hook、CI workflow | **Active** |
 | [`claude-code-setup-v0`](./claude-code-setup-v0/) | Rule-driven 設計 — 透過 CLAUDE.md + rules 被動讀取規範,無 skill / command / hook / CI 自動化層 | **Maintained** |
 
@@ -28,6 +29,9 @@ Claude Code 專案配置模板集合。每個版本獨立存放於平行資料�
 ```
 oh-my-claude-setup/
 ├── README.md                    ← 本檔案
+├── global/                      ← Global 配置(~/.claude/CLAUDE.md)
+│   ├── README.md                ← 說明與使用方式
+│   └── CLAUDE.md                ← Global 配置 snapshot
 ├── claude-code-setup-v1/        ← 第一版 template(Active)
 │   ├── README.md                ← Template 完整說明與 adoption 指南
 │   ├── CHANGELOG.md             ← Template 自身演進史
@@ -39,9 +43,8 @@ oh-my-claude-setup/
 │   ├── CHANGELOG.md             ← V0 演進紀錄
 │   ├── ROADMAP.md               ← V0 改進方向
 │   └── .claude/                 ← 實際採用時複製此目錄
-└── memo/                        ← 開發筆記(.gitignore)
 ```
 
 ---
 
-**Last Updated**: 2026-05-05
+**Last Updated**: 2026-05-16
