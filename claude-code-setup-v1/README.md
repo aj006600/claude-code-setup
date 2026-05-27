@@ -8,7 +8,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 
 這是給 Claude Code 使用的專案 setup template。它提供一組經過設計的 skills、commands、rules、agents 與 hooks，讓 Claude Code 在開發 Python 專案時：
 
-- **自動維護規範一致性**：SPEC.md、CLAUDE.md、README / docs 透過 skill 自動同步
+- **自動維護規範一致性**：SPEC.md、architecture.md、CLAUDE.md、README / docs、journal 各有專責 skill 自動同步
 - **強制 TDD 紀律**：4 階段 workflow 編排，委派 superpowers skills
 - **提供最佳實踐預設**：code style、testing、git、documentation 規範內建
 - **降低認知負擔**：commands 減少重複操作，advisory hook 提供安全網
@@ -25,10 +25,14 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 
 ## What's Included
 
-### 3 Maintenance Skills
-- `maintaining-spec-md` — SPEC.md 建立 / 維護
-- `maintaining-claude-md` — CLAUDE.md 更新 + 專案內 CLAUDE-CHANGELOG.md 同步
+### 5 Maintenance Skills（一份 doc SoT 對一個 maintainer）
+- `maintaining-spec-md` — SPEC.md 建立 / 維護（需求 + 可量化 Success Criteria + `[NEEDS CLARIFICATION]` 標記）
+- `maintaining-architecture-md` — `.claude/docs/architecture.md` 維護（現行架構 + Tech Stack + 目錄結構 + 設計決策索引）
+- `maintaining-claude-md` — CLAUDE.md（開發原則 / constitution）更新 + 專案內 CLAUDE-CHANGELOG.md 同步
 - `maintaining-readme-md` — README.md + docs/ 更新（含 3 種文檔 templates）
+- `maintaining-journal-md` — `.claude/docs/journal/journal.md` 決策史維護（ADR + Lessons + Timeline，Postmortem 選配）
+
+文件軸分離:SPEC = What must do、architecture = What is now、CLAUDE = 開發原則、journal = Why decided、README/docs = 怎麼用。每個事實單一真相,彼此交叉連結。
 
 ### 1 Workflow Orchestrator Skill
 - `tdd-feature-workflow` — 4 階段 TDD 開發編排（需求 → 實作 → PR → Review & Merge），於關鍵節點委派給 superpowers / code-review / maintaining-* 等 skills
@@ -158,8 +162,10 @@ Claude Code 會自動完成：
 claude-code-setup-v1/
 ├── README.md                     # Template 使用說明（本檔）
 ├── CHANGELOG.md                  # Template 自身演進史（不複製到 user 專案）
+├── docs/                         # Template 自身文檔（不複製到 user 專案）
+│   └── journal/journal.md        # Template 自身演進的決策史 ADR（對應 CHANGELOG 的 Why）
 ├── .claude/                      # User 複製此目錄到專案
-│   ├── CLAUDE.md                 # 開發規範（需客製；Workflow A 自動處理）
+│   ├── CLAUDE.md                 # 開發原則 / constitution（需客製；Workflow A 自動處理）
 │   ├── CLAUDE-CHANGELOG.md       # 空種子——user 專案自己的 CLAUDE.md 變更歷史
 │   ├── settings.json             # Claude Code 設定（含 hook 註冊）
 │   ├── rules/                    # 開發規範
@@ -171,16 +177,20 @@ claude-code-setup-v1/
 │   │   └── pyproject-tooling.example.toml   # ruff/mypy/pytest/coverage [tool.*] 配置
 │   ├── skills/                   # 專案專屬 skills
 │   │   ├── maintaining-spec-md/
+│   │   ├── maintaining-architecture-md/
 │   │   ├── maintaining-claude-md/
 │   │   ├── maintaining-readme-md/
 │   │   │   └── references/       # 3 份 doc templates
+│   │   ├── maintaining-journal-md/
 │   │   └── tdd-feature-workflow/
 │   ├── commands/                 # Slash commands
 │   ├── hooks/
 │   │   ├── secrets-scan-advisory.sh
 │   │   └── external-ref-guard.sh
 │   └── docs/
-│       └── plans/                # Claude TDD 工作 plan(由 superpowers:writing-plans 產出,非 user-facing)
+│       ├── architecture.md       # 現行架構描述（template；maintaining-architecture-md 維護）
+│       ├── journal/              # 決策史:CONVENTIONS.md（規範）+ journal.md（空種子）
+│       └── plans/                # Claude TDD 工作 plan（superpowers:writing-plans 產出，非 user-facing）
 └── .github/                      # User 同時複製此目錄
     └── workflows/
         └── ci.yml                # GitHub Actions CI
@@ -334,5 +344,5 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 
 ---
 
-**Template Version**: v1.25.1
-**Last Updated**: 2026-04-28
+**Template Version**: v1.26.0
+**Last Updated**: 2026-05-27
