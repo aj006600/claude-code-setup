@@ -5,7 +5,9 @@ description: Use when the user proposes new coding conventions, workflow adjustm
 
 # Maintaining CLAUDE.md
 
-這個 skill 讓 Claude Code 正確維護 `.claude/CLAUDE.md`(專案開發規範的真實來源)與搭配的 `.claude/CLAUDE-CHANGELOG.md`(變更歷史)。規範變動經「展示 diff → User 確認 → 同步 CHANGELOG」流程,避免漂移。
+這個 skill 讓 Claude Code 正確維護 `.claude/CLAUDE.md`(專案開發規範的真實來源)。規範變動經「展示 diff → User 確認 → commit」流程,避免漂移。
+
+CLAUDE.md **不採 SemVer 版本號、不配 changelog 檔**:規範不是被消費的契約。演進史由 `git log -- .claude/CLAUDE.md` 提供、決策理由由 `.claude/docs/decisions/`(`maintaining-decisions-md`)提供;footer 只保留 `Last Updated`。
 
 ---
 
@@ -91,7 +93,7 @@ grep -n '<[a-zA-Z][^>]*>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
 - **dry-run 結果**:每個匹配的 `<檔案>:<行號>:<片段>`,讓 user 確認替換範圍正確
 - **替換對照表**:placeholder → 實際值(用 Step A2 收集)
 - **NOTICE 區塊清理計畫**:CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 連同前後空行刪除
-- **版本基線**:Workflow A 把 CLAUDE.md footer 填為 `Version: v1.0.0` / `Last Updated: 今日`,代表 user 專案規範的起點(獨立於 template 自身演進)。CLAUDE-CHANGELOG.md(空種子)寫入第一個 baseline entry `[v1.0.0]`
+- **footer**:Workflow A 把 CLAUDE.md footer 的 `Last Updated` 填為今日(無 SemVer 版本號、無 changelog)
 
 請 User 確認後再進 Step A4 執行。User 若只想試跑 template、尚未決定方向 → 尊重並 skip 本 workflow。
 
@@ -104,34 +106,23 @@ grep -n '<[a-zA-Z][^>]*>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
 
 placeholder 數量少(CLAUDE.md 內僅此二處),Edit tool 逐處改可控且每步都能 review。架構 / Tech Stack 的填寫由 `maintaining-architecture-md` 另行處理,本 skill 不碰。
 
-### Step A5:填入版本基線並寫 CHANGELOG baseline
+### Step A5:填入 footer
 
-1. 填 CLAUDE.md footer:`Last Updated` → 今日;`Version` → `v1.0.0`
-2. 在 `.claude/CLAUDE-CHANGELOG.md` 的 `[Unreleased]` 下方新增:
-
-```markdown
-## [v1.0.0] - <今日日期>
-
-### Added
-- Initial development guidelines adopted from claude-code-setup-v1 template and customized for <Project Name>
-- Project Overview 章節依需求填入(Tech Stack / Architecture 由 architecture.md 維護)
-```
+填 CLAUDE.md footer 的 `Last Updated` → 今日。CLAUDE.md 無 SemVer、無 changelog 檔——首次客製化的紀錄就是這個 commit 本身(git log)。
 
 ### Step A6:Commit
 
 初次客製化通常在尚未有功能分支時,直接在當前分支 commit:
 
 ```bash
-git add .claude/
-git commit -m "chore(template): initial customization
+git add .claude/CLAUDE.md
+git commit -m "chore(template): initial CLAUDE.md customization
 
-Replaced template placeholders with project-specific values.
-Removed TEMPLATE NOTICE block.
-Set CLAUDE.md to v1.0.0 as this project's own baseline and wrote
-corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md."
+Replaced template placeholders with project-specific values and
+removed the TEMPLATE NOTICE block."
 ```
 
-告知 User:「Template 客製化完畢。後續任何規範 / 架構 / 技術堆疊變更由本 skill 的 Workflow B 處理。」
+告知 User:「CLAUDE.md 客製化完畢。後續規範變更由本 skill 的 Workflow B 處理;架構 / 技術堆疊變更由 `maintaining-architecture-md` 處理。」
 
 ---
 
@@ -163,10 +154,6 @@ corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md."
     [diff]
     ```
 
-    **版本影響**:
-    - 版本號:v1.1.0 → v1.2.0
-    - CHANGELOG 將新增條目([Added / Changed / ...])
-
     是否確認這些變更?
 
 三條 load-bearing 原則:
@@ -184,10 +171,10 @@ current_branch=$(git branch --show-current)
 
 該功能本身觸發了 CLAUDE.md 更新(例:新增測試策略導致 Testing Protocols 調整),在當前分支 commit。
 
-**重要**:CLAUDE.md / CHANGELOG 改動**獨立成一個 commit**,不混入 feature commit。保持「功能 commit 只動 src/tests、規範 commit 只動 .claude/」的界線——混在一起會讓 git log 分不清「這個 commit 改了功能 + 規範」還是「只改了功能」,違反 git-rules.md「每個 commit 是一個邏輯完整的改動」。
+**重要**:CLAUDE.md 改動**獨立成一個 commit**,不混入 feature commit。保持「功能 commit 只動 src/tests、規範 commit 只動 .claude/」的界線——混在一起會讓 git log 分不清「這個 commit 改了功能 + 規範」還是「只改了功能」,違反 git-rules.md「每個 commit 是一個邏輯完整的改動」。
 
 ```bash
-git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
+git add .claude/CLAUDE.md
 git commit -m "docs(claude): update development guidelines for <feature>"
 ```
 
@@ -200,27 +187,26 @@ CLAUDE.md 更新與任何功能分支無關(例:User 單獨提規範調整),建�
 git checkout -b docs/claude-md-pre-commit-hook
 # 或:docs/claude-md-google-docstring、docs/claude-md-rabbitmq-deps 等
 
-git add .claude/CLAUDE.md .claude/CLAUDE-CHANGELOG.md
+git add .claude/CLAUDE.md
 git commit -m "docs(claude): update development guidelines"
 git push origin <branch-name>
 # 建立 PR 到 dev
 ```
 
-選 topic 字眼:抓本次 CHANGELOG entry 的核心動詞 / 名詞(例如新增 pre-commit hook 規定 → `pre-commit-hook`;改 docstring 風格 → `google-docstring`)。topic 不需精準,能讓 PR title 一眼分辨即可。
+選 topic 字眼:抓本次變更的核心動詞 / 名詞(例如新增 pre-commit hook 規定 → `pre-commit-hook`;改 docstring 風格 → `google-docstring`)。topic 不需精準,能讓 PR title 一眼分辨即可。
 
 若主題式命名仍意外撞到既有分支(本地或遠端):停下來回報 User,由 User 決定接續 commit 到既有分支、先處理掉既有 PR(merge / close)、或換另一個 topic 命名。
 
-### Step B4:必須同步完成的三項
+### Step B4:必須同步完成的兩項
 
 1. 修改 CLAUDE.md 內容章節
-2. 更新 footer:`Last Updated` → 當日;`Version` → 依 SemVer 遞增
-3. CLAUDE-CHANGELOG.md 頂部新增對應版本條目(Keep a Changelog 格式)
+2. 更新 footer:`Last Updated` → 當日
 
-**兩檔必須在同一個 commit**,確保歷史可追溯。
+無版本號要 bump、無 changelog 要寫——commit 本身就是歷史紀錄。變更理由若涉 trade-off,連動 `maintaining-decisions-md` 開 ADR(見 Step B6)。
 
 ### Step B5:向 User 確認結果
 
-摘要變更項目 + 版本資訊(舊 → 新 + 日期)+ commit 策略(當前功能分支 / docs 分支)。
+摘要變更項目 + commit 策略(當前功能分支 / docs 分支)。
 
 ### Step B6:連動評估下游
 
@@ -232,60 +218,21 @@ git push origin <branch-name>
 
 ---
 
-## Semantic Versioning 規則
+## 歷史與理由(取代 SemVer + changelog)
 
-| 變更類型 | 遞增 | 範例 |
-|---------|------|------|
-| 重大架構變更(章節重構、移除既有規範、工作流程重大改動) | Major | v1.2.0 → v2.0.0 |
-| 新增章節或規範(Added) | Minor | v1.1.0 → v1.2.0 |
-| 修改既有規範細節(Changed) | Minor | v1.1.0 → v1.2.0 |
-| 文字修正、錯字、格式調整 | Patch | v1.1.0 → v1.1.1 |
+CLAUDE.md 不採 SemVer 版本號、不配 changelog 檔——規範不是被消費的契約,套用 release-changelog 的 ceremony 無回報。三條分工:
 
----
+- **改了什麼、何時改** → `git log -- .claude/CLAUDE.md`(原生、免維護;commit message 描述規範變了什麼)
+- **為什麼這樣改**(有 2+ 方案 trade-off 的規範決策)→ `.claude/docs/decisions/` ADR(連動 `maintaining-decisions-md`)
+- footer 只保留 `Last Updated`(無 `Version`)
 
-## CLAUDE-CHANGELOG.md 維護規則
-
-採 [Keep a Changelog v1.1.0](https://keepachangelog.com/en/1.1.0/) 格式。
-
-| 分類 | 使用時機 |
-|------|---------|
-| `Added` | 新增章節、新增規範項目 |
-| `Changed` | 修改既有規範的內容或細節 |
-| `Deprecated` | 即將移除但暫時保留的規範 |
-| `Removed` | 移除的章節或規範 |
-| `Fixed` | 修正錯字、邏輯錯誤、矛盾描述 |
-| `Security` | 安全相關規範的變更 |
-
-撰寫原則:
-- 版本反序排列(最新在最上)
-- 條目描述**規範變了什麼**(行為差異),而非**改了哪一行**(實作細節),以利後續讀規範的 Claude 與 dev 理解
-
-(commit 同步、版本號一致由 Step B4 + Gotchas 統一處理,此處不重述。)
-
-條目範例:
-
-```markdown
-## [v1.2.0] - 2026-04-23
-
-### Added
-- Development Workflow 章節新增 pre-commit hook 流程,強制 commit 前 lint + 測試
-
-### Changed
-- Coding Conventions 的 docstring 格式從 NumPy Style 改為 Google Style(連動 `code-style.md`)
-
-### Removed
-- 移除 `notebooks/` 目錄說明,專案不再使用 Jupyter Notebooks
-```
-
-**與 template 自身 CHANGELOG 的區分**:
-- `.claude/CLAUDE-CHANGELOG.md`:user 專案自己的 CLAUDE.md 演進史,由本 skill 寫入
-- `CHANGELOG.md`(template 根目錄):claude-code-setup-v1 template 自身的演進史。User 複製 `.claude/` 時**不會跟著過去**。本 skill **不寫入**此檔。
+**與 template 自身 CHANGELOG 的區分**:`CHANGELOG.md`(template 根目錄)記錄 claude-code-setup-v1 template 自身的演進史,**不隨 `.claude/` 複製到 user 專案**,本 skill **不寫入**。
 
 ---
 
 ## 特殊情況
 
-- **多個小變更累積**:一次展示所有 diff,版本號僅遞增一次,CHANGELOG 條目可整合多個分類
+- **多個小變更累積**:一次展示所有 diff,收斂成一個 commit(commit message 整合描述各項變更)
 
 ---
 
@@ -317,7 +264,7 @@ git push origin <branch-name>
     + commit 前強制 pre-commit lint
     ```
 
-    版本 v1.1.0 → v1.2.0,CHANGELOG 新增 Changed 條目。是否確認?
+    是否確認?(commit 即歷史;規範決策若涉 trade-off,連動 `maintaining-decisions-md` 開 ADR 記 Why)
 
 **正確反應**(若觸發其實是架構):若 User 說的是「引入 RabbitMQ、把服務拆三組」,那是 **Tech Stack + 架構**變更 → 提示改用 `maintaining-architecture-md`(更新 architecture.md 的 Tech Stack + Code Structure)、`maintaining-decisions-md`(開 ADR 記為什麼引入 / 怎麼拆),CLAUDE.md 僅在因此產生新規範時才動。
 
@@ -327,6 +274,6 @@ git push origin <branch-name>
 
 ## Gotchas(容易忘記的關鍵點)
 
-- **CLAUDE.md 與 CHANGELOG 必須同一個 commit**:分開 commit 會讓版本歷史對不上,日後 git blame 找不到對應 entry
-- **footer 三處版本必須完全一致**:`Last Updated`、`Version`、CHANGELOG 最新條目——任一不一致即等於對 user 撒謊
+- **CLAUDE.md 規範變更獨立 commit**:不混入 feature code(規範 commit 只動 .claude/),保持 git log 可追——git log 就是 CLAUDE.md 的演進史
+- **footer 只更新 `Last Updated`**:CLAUDE.md 無 SemVer、無 changelog 檔;別再寫版本號或找 CLAUDE-CHANGELOG
 - **User 未確認前絕不直接改檔**:展示 diff → 等確認 → 才動手;這是 load-bearing 信任原則,違反一次 user 就不再相信本 skill 的 diff preview

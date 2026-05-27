@@ -28,7 +28,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 ### 5 Maintenance Skills（一份 doc SoT 對一個 maintainer）
 - `maintaining-spec-md` — SPEC.md 建立 / 維護（需求 + 可量化 Success Criteria + `[NEEDS CLARIFICATION]` 標記）
 - `maintaining-architecture-md` — `.claude/docs/architecture.md` 維護（現行架構 + Tech Stack + 目錄結構 + 設計決策索引）
-- `maintaining-claude-md` — CLAUDE.md（開發原則 / constitution）更新 + 專案內 CLAUDE-CHANGELOG.md 同步
+- `maintaining-claude-md` — CLAUDE.md（開發原則 / constitution）更新（演進靠 git log + decisions/，不配 changelog 檔）
 - `maintaining-readme-md` — README.md + docs/ 更新（含 3 種文檔 templates）
 - `maintaining-decisions-md` — `.claude/docs/decisions/decisions.md` 決策史維護（ADR + Lessons + Timeline，Postmortem 選配）
 
@@ -167,7 +167,6 @@ claude-code-setup-v1/
 ├── .claude/                      # User 複製此目錄到專案
 │   ├── CLAUDE.md                 # 開發原則 / constitution（需客製；Workflow A 自動處理）
 │   ├── SPEC.md                   # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）
-│   ├── CLAUDE-CHANGELOG.md       # 空種子——user 專案自己的 CLAUDE.md 變更歷史
 │   ├── settings.json             # Claude Code 設定（含 hook 註冊）
 │   ├── rules/                    # 開發規範
 │   │   ├── code-style.md
@@ -237,18 +236,11 @@ A: 編輯 `.claude/settings.json`：
 ### Q: Skill 沒有自動觸發？
 A: Skill 的 description 欄位決定何時觸發。若語境不在 description 涵蓋範圍內，可手動啟用：使用 Claude Code 的 Skill tool，傳入 `skill: "maintaining-spec-md"` 等。
 
-### Q: CLAUDE.md 版本號如何演進？
-A: 採 Semantic Versioning。`maintaining-claude-md` skill 會自動處理版本遞增與 CHANGELOG 條目。
+### Q: CLAUDE.md 沒有版本號 / changelog？
+A: 是，刻意如此。開發規範不是被消費的契約（不像 SPEC 是需求契約），套用 SemVer 與 release-changelog 的 ceremony 無回報。CLAUDE.md 的演進由 `git log -- .claude/CLAUDE.md` 追蹤、決策理由由 `.claude/docs/decisions/`（ADR）承載，footer 只保留 `Last Updated`。（SPEC.md / architecture.md 仍保留 SemVer——它們的版本有契約 / 現況語意。）
 
-### Q: 為什麼有兩個 CHANGELOG？職責怎麼區分？
-A: 兩者追蹤不同範圍：
-
-| 檔案 | 追蹤範圍 | 讀者 | 跟隨 `.claude/` 複製嗎？ |
-|---|---|---|---|
-| `claude-code-setup-v1/CHANGELOG.md` | **Template 自身**的演進（skill / command / hook / rule / README 等） | Template 評估者、升級者 | 否（只存在於 template repo） |
-| `.claude/CLAUDE-CHANGELOG.md` | **User 專案**自己的 CLAUDE.md 規範演進 | User 專案的 team | 是（空種子，由 Workflow A 寫入首個 v1.0.0） |
-
-Template ship 出來的 `.claude/CLAUDE-CHANGELOG.md` 是空種子（只有 header 與 `[Unreleased]`）。首次執行 `maintaining-claude-md` Workflow A 時會自動寫入 baseline `v1.0.0` entry，標註 "adopted from claude-code-setup-v1 template vX.Y.Z"。之後所有 CLAUDE.md 變更都累積到這個檔案，和 template 自身的 `CHANGELOG.md` 互不干擾。
+### Q: 那 `CHANGELOG.md` 是什麼？
+A: `claude-code-setup-v1/CHANGELOG.md` 只追蹤 **template 自身**的演進（skill / command / hook / rule / README 等），給 template 評估者 / 升級者看，**不隨 `.claude/` 複製到 user 專案**。User 專案不需維護任何 changelog 檔。
 
 ---
 

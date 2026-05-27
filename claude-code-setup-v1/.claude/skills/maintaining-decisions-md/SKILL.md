@@ -152,4 +152,4 @@ decisions 變更**獨立成一個 commit**,不混入功能 code。commit message
 
 ---
 
-> **Template 自身的 decisions**:claude-code-setup-v1 template 維護自己的演進決策於 `docs/decisions/`(repo 層、非 `.claude/` 下,不隨 adopter 複製),與不會 ship 的 `CHANGELOG.md` 同級。Adopter 採用後在自己的 `.claude/docs/decisions/decisions.md`(空種子)累積專案決策。兩者互不干擾,同 `CHANGELOG.md` 與 `.claude/CLAUDE-CHANGELOG.md` 的分工模式。
+> **Template 自身的 decisions**:claude-code-setup-v1 template 維護自己的演進決策於 `docs/decisions/`(repo 層、非 `.claude/` 下,不隨 adopter 複製),與不會 ship 的 `CHANGELOG.md` 同級。Adopter 採用後在自己的 `.claude/docs/decisions/decisions.md`(空種子)累積專案決策。兩者互不干擾——同 `CHANGELOG.md`(template 自身、不 ship)與 adopter 各自檔案的分工。

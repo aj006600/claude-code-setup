@@ -17,11 +17,14 @@
 
 ### 需 footer 的檔案類型
 
-- `.claude/CLAUDE.md`：主規範，與 `CLAUDE-CHANGELOG.md` pair，由 `maintaining-claude-md` skill 維護
+**Last Updated + Version（SemVer）**:
 - `.claude/docs/architecture.md`：現行架構描述，由 `maintaining-architecture-md` skill 維護
 - User 專案的產品文檔：`SPEC.md`、`README.md`、`docs/*.md`
 
-統一格式：
+**只需 Last Updated（無 Version）**:
+- `.claude/CLAUDE.md`：開發規範不是被消費的契約，不採 SemVer;演進靠 `git log -- .claude/CLAUDE.md` + `.claude/docs/decisions/`，由 `maintaining-claude-md` skill 維護
+
+格式：
 
 ```markdown
 ---
@@ -31,7 +34,7 @@
 ```
 
 - `**Last Updated**`：必填，ISO 8601 日期格式（YYYY-MM-DD）
-- `**Version**`：必填，採 [Semantic Versioning](https://semver.org/)
+- `**Version**`：採 [Semantic Versioning](https://semver.org/);CLAUDE.md 省略此行
 
 ### 不需 footer 的檔案類型
 

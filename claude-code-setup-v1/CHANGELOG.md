@@ -2,7 +2,7 @@
 
 All notable changes to the **claude-code-setup-v1 template itself** will be documented in this file.
 
-This tracks the evolution of the template (skills, commands, hooks, rules, README, CI workflow, and the bundled `.claude/CLAUDE.md` baseline). For tracking changes to **your own project's** `.claude/CLAUDE.md` after adopting this template, use `.claude/CLAUDE-CHANGELOG.md` — which ships as an empty seed for you to populate.
+This tracks the evolution of the template (skills, commands, hooks, rules, README, CI workflow, and the bundled `.claude/CLAUDE.md` baseline). Your own project's CLAUDE.md evolution is tracked by `git log` and `.claude/docs/decisions/` — the template ships no per-project changelog.
 
 The format is based on [Keep a Changelog v1.1.0](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
@@ -25,16 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [v1.26.0] - 2026-05-27
 
-**主軸:** 引入「決策文件系統」,補上 template 一直缺的 **Why 層**(決策史),並用「按軸分離 + 單一真相 + 交叉連結」重整文件架構。對照 jmd6e0-agent 的 `.claude/docs` 概念、研究 GitHub `spec-kit` 與 `oh-my-claudecode` 後 right-sizing 而成(取精煉版,非照搬重量級 conventions)。決策脈絡見 `docs/decisions/decisions.md` ADR-0001 ~ ADR-0009。
+**主軸:** 引入「決策文件系統」,補上 template 一直缺的 **Why 層**(決策史),並用「按軸分離 + 單一真相 + 交叉連結」重整文件架構。對照 jmd6e0-agent 的 `.claude/docs` 概念、研究 GitHub `spec-kit` 與 `oh-my-claudecode` 後 right-sizing 而成(取精煉版,非照搬重量級 conventions)。決策脈絡見 `docs/decisions/decisions.md` ADR-0001 ~ ADR-0010。
 
 ### Added
-- **decisions 決策系統(ship 給 adopter)**:新增 `.claude/docs/decisions/CONVENTIONS.md`(精煉版 decisions 撰寫規範:ADR + Lessons + Timeline 為核心,Postmortem 選配,約 240 行)與 `.claude/docs/decisions/decisions.md`(空種子,比照 `CLAUDE-CHANGELOG.md` 模式)。補上「為什麼這樣決定」這層——code 說 What/How、git log 說 When,而 Why 最易隨人員流動蒸發。研究發現連 spec-kit 都缺持久 ADR 層,這是最具差異化的一塊。目錄 / skill 命名採標準術語 `decisions`(對齊 MADR / adr-tools),見 ADR-0001、ADR-0008
+- **decisions 決策系統(ship 給 adopter)**:新增 `.claude/docs/decisions/CONVENTIONS.md`(精煉版 decisions 撰寫規範:ADR + Lessons + Timeline 為核心,Postmortem 選配,約 240 行)與 `.claude/docs/decisions/decisions.md`(空種子,headers only)。補上「為什麼這樣決定」這層——code 說 What/How、git log 說 When,而 Why 最易隨人員流動蒸發。研究發現連 spec-kit 都缺持久 ADR 層,這是最具差異化的一塊。目錄 / skill 命名採標準術語 `decisions`(對齊 MADR / adr-tools),見 ADR-0001、ADR-0008
 - **`maintaining-decisions-md` skill**:在決策點(2+ 方案 + trade-off)觸發寫 ADR、事故寫 Postmortem(選配)、戰術經驗寫 Lesson、里程碑更新 Timeline
 - **`.claude/docs/architecture.md`(現行架構描述)**:template placeholder 形態,承接「系統現在長什麼樣」(系統圖 + Components + Tech Stack + Code Structure + Design Decisions 索引,cross-ref ADR)。對齊 spec-kit 的 constitution/spec/plan 軸分離。見 ADR-0002 / ADR-0003
 - **`maintaining-architecture-md` skill**:維護 architecture.md,維持「一份 doc SoT 對一個 maintainer」對稱(maintenance skills 由 3 增至 5)。見 ADR-0007
 - **SPEC.md 精簡升級**:加入可量化且 technology-agnostic 的 **Success Criteria** section 與 `[NEEDS CLARIFICATION: <問題>]` 標記慣例(取自 spec-kit 的高 CP 值項目,不引入 P1/P2/P3 user stories 全套);內容隨 SPEC.md placeholder 一起 ship(見下方 ADR-0009)。見 ADR-0004
 - **`/pre-pr-check` 跨文件一致性掃描(L2.3)**:借 spec-kit `/analyze` 概念,自動驗 `[NEEDS CLARIFICATION]` 殘留、ADR Status 與 Decision Index 一致、cross-ref 連結可解析、footer 版本一致——以工具取代手動 health check。見 ADR-0005
-- **`docs/decisions/decisions.md`(template 自身,不 ship)**:dogfood 本次優化的 ADR-0001 ~ ADR-0009 + Lessons + Timeline,與 `CHANGELOG.md` 同級、用 template 自己 ship 的 CONVENTIONS 維護
+- **`docs/decisions/decisions.md`(template 自身,不 ship)**:dogfood 本次優化的 ADR-0001 ~ ADR-0010 + Lessons + Timeline,與 `CHANGELOG.md` 同級、用 template 自己 ship 的 CONVENTIONS 維護
 
 ### Changed
 - **`.claude/CLAUDE.md` 回歸純 constitution**:Architecture 樹與 Tech Stack 兩節移出至 architecture.md,改為指向 architecture.md / SPEC / decisions 的指標表;Available Resources 補列兩個新 skill
@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Removed
 - `.claude/CLAUDE.md` 的 **Tech Stack** 與 **Architecture** 兩節:移至 `.claude/docs/architecture.md`(現行架構單一 SoT);CLAUDE.md 只保留指標連結,避免 constitution 與 how/tech 混居造成雙頭維護。見 ADR-0003
 - `maintaining-spec-md/references/spec-template.md`:SPEC.md placeholder 檔本身即模板,移除以避免與 reference 雙頭維護(ADR-0009)
+- **`.claude/CLAUDE-CHANGELOG.md`**:移除整個 per-project changelog 檔;CLAUDE.md footer 一併停用 SemVer `Version`、只留 `Last Updated`。規範不是被消費的契約,Keep-a-Changelog / SemVer 的 ceremony 無回報——CLAUDE.md 演進改由 `git log -- .claude/CLAUDE.md` 追蹤、理由由 decisions/ ADR 承載。連動更新 `maintaining-claude-md`(Workflow A/B 去除版本基線 / bump / changelog 寫入)、documentation-style、git-rules、`/pre-pr-check`、`/project-status`、README FAQ。SPEC.md / architecture.md 的 SemVer 保留。見 ADR-0010
 
 ---
 
