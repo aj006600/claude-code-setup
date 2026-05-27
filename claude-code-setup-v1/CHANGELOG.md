@@ -23,6 +23,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.26.0] - 2026-05-27
+
+**主軸:** 引入「決策文件系統」,補上 template 一直缺的 **Why 層**(決策史),並用「按軸分離 + 單一真相 + 交叉連結」重整文件架構。對照 work-repo 的 `.claude/docs` 概念、研究 GitHub `spec-kit` 與 `oh-my-claudecode` 後 right-sizing 而成(取精煉版,非照搬重量級 conventions)。決策脈絡見 `docs/journal/journal.md` ADR-0001 ~ ADR-0007。
+
+### Added
+- **journal 決策系統(ship 給 adopter)**:新增 `.claude/docs/journal/CONVENTIONS.md`(精煉版 journal 撰寫規範:ADR + Lessons + Timeline 為核心,Postmortem 選配,約 240 行)與 `.claude/docs/journal/journal.md`(空種子,比照 `CLAUDE-CHANGELOG.md` 模式)。補上「為什麼這樣決定」這層——code 說 What/How、git log 說 When,而 Why 最易隨人員流動蒸發。研究發現連 spec-kit 都缺持久 ADR 層,這是最具差異化的一塊。見 ADR-0001
+- **`maintaining-journal-md` skill**:在決策點(2+ 方案 + trade-off)觸發寫 ADR、事故寫 Postmortem(選配)、戰術經驗寫 Lesson、里程碑更新 Timeline
+- **`.claude/docs/architecture.md`(現行架構描述)**:template placeholder 形態,承接「系統現在長什麼樣」(系統圖 + Components + Tech Stack + Code Structure + Design Decisions 索引,cross-ref ADR)。對齊 spec-kit 的 constitution/spec/plan 軸分離。見 ADR-0002 / ADR-0003
+- **`maintaining-architecture-md` skill**:維護 architecture.md,維持「一份 doc SoT 對一個 maintainer」對稱(maintenance skills 由 3 增至 5)。見 ADR-0007
+- **SPEC.md 精簡升級**:`spec-template.md` 新增可量化且 technology-agnostic 的 **Success Criteria** section 與 `[NEEDS CLARIFICATION: <問題>]` 標記慣例(取自 spec-kit 的高 CP 值項目,不引入 P1/P2/P3 user stories 全套)。見 ADR-0004
+- **`/pre-pr-check` 跨文件一致性掃描(L2.3)**:借 spec-kit `/analyze` 概念,自動驗 `[NEEDS CLARIFICATION]` 殘留、ADR Status 與 Decision Index 一致、cross-ref 連結可解析、footer 版本一致——以工具取代手動 health check。見 ADR-0005
+- **`docs/journal/journal.md`(template 自身,不 ship)**:dogfood 本次優化的 ADR-0001 ~ ADR-0007 + Lessons + Timeline,與 `CHANGELOG.md` 同級、用 template 自己 ship 的 CONVENTIONS 維護
+
+### Changed
+- **`.claude/CLAUDE.md` 回歸純 constitution**:Architecture 樹與 Tech Stack 兩節移出至 architecture.md,改為指向 architecture.md / SPEC / journal 的指標表;Available Resources 補列兩個新 skill
+- **既有 skill 路由全面同步**:`maintaining-claude-md`(範圍邊界、觸發表、placeholder、pattern、互動表、description 去除 tech/arch 觸發避免誤觸)、`maintaining-spec-md`(下游路由改指 architecture.md、加 Success Criteria / NEEDS CLARIFICATION)、`maintaining-readme-md`(上游來源加 architecture.md)、`tdd-feature-workflow`(關鍵分工表加 journal、phase 4 文檔同步加 architecture / journal、架構引用改 architecture.md)
+- **`documentation-style.md`**:footer 需 / 不需清單納入新檔;標題語言豁免納入 `journal/CONVENTIONS.md`;architecture.md 適用標準規則、journal.md 比照 CHANGELOG
+- **`/project-status`**:File versions 加讀 architecture.md footer
+- **`README.md`**:What's Included(3 → 5 maintenance skills + 文件軸分離說明)、Template 結構樹(加 architecture.md / journal / template 自身 docs)、Overview
+
+### Removed
+- `.claude/CLAUDE.md` 的 **Tech Stack** 與 **Architecture** 兩節:移至 `.claude/docs/architecture.md`(現行架構單一 SoT);CLAUDE.md 只保留指標連結,避免 constitution 與 how/tech 混居造成雙頭維護。見 ADR-0003
+
+---
+
 ## [v1.25.1] - 2026-04-28
 
 ### Changed
