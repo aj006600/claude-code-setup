@@ -1,11 +1,11 @@
 ---
 name: maintaining-spec-md
-description: Use when the user proposes new features, modifies requirements, changes scope or acceptance criteria, discovers technical constraints affecting requirements, or when API / data model / architecture changes affect specs. Also use when bug fixes reveal requirement misunderstandings, or when the project has no SPEC.md yet. Trigger proactively even without explicit mention of "SPEC.md" — any conversation touching requirements, features, scope, acceptance criteria, or project goals should invoke this skill. Keeping SPEC.md synchronized with implementation is load-bearing for this project.
+description: Use when the user proposes new features, modifies requirements, changes scope or acceptance criteria, discovers technical constraints affecting requirements, or when API / data model / architecture changes affect specs. Also use when bug fixes reveal requirement misunderstandings, or when SPEC.md still carries its template placeholders (first customization). Trigger proactively even without explicit mention of "SPEC.md" — any conversation touching requirements, features, scope, acceptance criteria, or project goals should invoke this skill. Keeping SPEC.md synchronized with implementation is load-bearing for this project.
 ---
 
 # Maintaining SPEC.md
 
-這個 skill 讓 Claude Code 正確建立與維護 `.claude/SPEC.md`——專案的需求 single source of truth。
+這個 skill 讓 Claude Code 正確客製化與維護 `.claude/SPEC.md`——專案的需求 single source of truth。SPEC.md 以 placeholder 檔 ship(同 CLAUDE.md / architecture.md),首次經 Workflow A 透過需求對話填入。
 
 ---
 
@@ -31,52 +31,64 @@ SPEC 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git br
 | 程式碼改動 | user-facing API / schema 改變(影響 FR / Acceptance) |
 | Acceptance 達成 | 功能完成 → 勾選已達成的 Acceptance Criteria checkbox |
 | Bug 揭示 | Bug 揭示原需求錯誤 → 更新 Description / Acceptance |
-| 專案無 SPEC.md | 執行 Workflow A 建立初始版本 |
+| SPEC.md 仍含 template placeholder | 執行 Workflow A 客製化初始版本 |
 
 ---
 
-## Workflow A:初次建立 SPEC.md
+## Workflow A:初次客製化(template placeholder 替換)
 
-### Step A1:確認檔案不存在
-Read 或 Glob `.claude/SPEC.md` → 存在則改走 Workflow B。
+SPEC.md 以 placeholder 檔形式 ship(同 CLAUDE.md / architecture.md)。Workflow A 透過需求對話填入內容、替換 placeholder、移除 NOTICE——**結構已在檔案裡,本 workflow 是填入,不是憑空建檔**。
+
+### Step A1:確認 entry condition
+`<!-- TEMPLATE NOTICE` 區塊仍在頂端是「未客製化」的可靠訊號:
+
+```bash
+grep -n '<!-- TEMPLATE NOTICE' .claude/SPEC.md
+```
+
+未命中 → 已客製化,改走 Workflow B。命中 → 進 Step A2。
 
 ### Step A2:向 User 收集需求
 用自然對話或 AskUserQuestion 收集:
 1. **專案目的與背景**:要解決什麼問題?目標使用者?
-2. **核心功能需求**(至少 2-3 個):功能清單,各含 User Needs 與初步 Acceptance Criteria
+2. **核心功能需求**(至少 2-3 個):各含 User Needs 與初步 Acceptance Criteria
 3. **範圍邊界**:哪些**不在**範圍內?
+4. **成功指標**:1-2 條可量化、technology-agnostic 的專案層級結果(Success Criteria)
 
 具體提問避免空白頁困境。可舉例引導:「例如:不處理批次匯入、不支援多語系」。
 
-> **不在本 workflow 收集的事項**:技術選型(語言版本、外部依賴、技術限制、架構、目錄結構)屬 `.claude/docs/architecture.md` 的 Tech Stack / Code Structure 範疇——SPEC 建立後若需記錄,啟用 `maintaining-architecture-md` skill 接手處理。職責切分清楚,規範鏈才不會重疊漂移。
+> **不在本 workflow 收集的事項**:技術選型(語言版本、外部依賴、技術限制、架構、目錄結構)屬 `.claude/docs/architecture.md` 的 Tech Stack / Code Structure 範疇——SPEC 客製後若需記錄,啟用 `maintaining-architecture-md` skill 接手處理。職責切分清楚,規範鏈才不會重疊漂移。
 
-### Step A3:草擬初始 SPEC.md
-讀 `references/spec-template.md` 並依結構填寫:
-- 已知資訊填入對應欄位;未確定處標 `[NEEDS CLARIFICATION: <具體問題>]`(而非靜默假設)
-- Functional Requirements 至少 2-3 個,各含初步 Acceptance Criteria
-- Success Criteria 至少 1-2 條:可量化、technology-agnostic 的專案層級成功指標(避免「應正確運作」這類不可測描述)
-- Change Log 第一行:`Initial specification`
-- 版本號 `v1.0.0`、Last Updated 為當日
+### Step A3:依對話填入 placeholder
+以 `.claude/SPEC.md` 既有結構為骨架,替換 `<...>` / `[...]` placeholder:
+- 已知資訊填入;未確定處標 `[NEEDS CLARIFICATION: <具體問題>]`(勿靜默假設)
+- Functional Requirements:把範例區塊展開成實際 2-3 個 FR,各含 Acceptance Criteria;多餘範例清掉
+- Success Criteria 至少 1-2 條(可量化、tech-agnostic,避免「應正確運作」這類不可測描述)
 
-### Step A4:展示並確認
-**不要**直接 Write 檔案。在對話中展示完整內容 + 摘要(專案目標、功能數),請 User 確認:
-1. 需求理解是否正確?
-2. 驗收標準是否清楚?
-3. 有無遺漏?
+### Step A4:展示替換計畫並確認
+**不直接改檔。** 展示:
+- 替換後完整內容(或 diff)+ 摘要(專案目標、功能數)
+- NOTICE 區塊清理計畫
+- 版本基線:footer 設 `Version: v1.0.0` / `Last Updated: 今日`、Change Log 首行 `Initial specification`
 
-### Step A5:User 確認後建立檔案
-Write 到 `.claude/SPEC.md`,告知檔案位置、版本、功能數。
+請 User 確認:需求理解正確?驗收清楚?有無遺漏?
+
+### Step A5:User 確認後執行
+用 **Edit tool**(每處有可見 diff、可回滾):
+1. 移除頂端 `<!-- TEMPLATE NOTICE -->` 區塊(含前後空行)
+2. 替換各 placeholder(用 Step A2 收集)
+3. footer 填 `Version: v1.0.0`、`Last Updated: 今日`;Change Log 首行 `Initial specification`
 
 ### Step A6:Commit 並 hand-off
 
-初次建立 SPEC.md 後直接在當前分支 commit(獨立 commit,不混入其他改動):
+獨立 commit(不混入其他改動):
 
 ```bash
 git add .claude/SPEC.md
-git commit -m "spec: initial specification"
+git commit -m "spec: customize specification for <project>"
 ```
 
-告知 User:「SPEC.md 已建立(v1.0.0)。後續實作建議啟用 `tdd-feature-workflow` skill 進入階段 2(`writing-plans` → `executing-plans`)。實作中若發現需求需調整,轉 Workflow B 處理。」
+告知 User:「SPEC.md 已客製化(v1.0.0)。後續實作建議啟用 `tdd-feature-workflow` skill 進入階段 2(`writing-plans` → `executing-plans`)。實作中若發現需求需調整,轉 Workflow B 處理。」
 
 ---
 
@@ -249,4 +261,4 @@ SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User
 
 ---
 
-SPEC.md 完整 template 見 `references/spec-template.md`。
+SPEC.md 的結構即 template ship 出去的 `.claude/SPEC.md` placeholder 本身——無獨立 reference template(同 CLAUDE.md / architecture.md 模式,避免雙頭維護)。

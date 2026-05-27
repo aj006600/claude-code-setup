@@ -18,6 +18,7 @@
 | [ADR-0006](#adr-0006-採精煉版而非照搬-jmd6e0-全套-conventions) | 採精煉版而非照搬 jmd6e0 全套 CONVENTIONS | Accepted | 2026-05-27 | Process |
 | [ADR-0007](#adr-0007-architecturemd-用獨立的-maintaining-architecture-md-skill) | architecture.md 用獨立的 maintaining-architecture-md skill | Accepted | 2026-05-27 | Architecture |
 | [ADR-0008](#adr-0008-決策史命名採-decisions非-journal) | 決策史命名採 decisions(非 journal) | Accepted | 2026-05-27 | Documentation |
+| [ADR-0009](#adr-0009-specmd-改為-ship-placeholder-檔對齊-claude-與-architecture) | SPEC.md 改為 ship placeholder 檔(對齊 CLAUDE 與 architecture) | Accepted | 2026-05-27 | Documentation |
 
 ---
 
@@ -190,6 +191,26 @@
 - 保留 `journal`:被否決——非標準術語;標準名的紅利雖主要綁 one-file-per-ADR 結構,但「正式產品對外辨識度」仍值得對齊。
 - `decision-log`:被否決——較 journal 好,但仍非工具鏈標準名;`decisions`(MADR)最標準。
 
+### ADR-0009: SPEC.md 改為 ship placeholder 檔(對齊 CLAUDE 與 architecture)
+
+| 欄位 | 內容 |
+|------|------|
+| Status | Accepted |
+| Date | 2026-05-27 |
+| Refs | [ADR-0003](#adr-0003-從-claudemd-抽出-architecture--tech-stack-到-architecturemd) |
+
+**Context** — SPEC.md 原本不 ship 實體檔,由 maintaining-spec-md Workflow A 從 `references/spec-template.md` 生成於首次使用。但 CLAUDE.md / architecture.md 皆以 placeholder 檔 ship。SPEC 是唯一 copy `.claude/` 後看不到的核心文件——template 內三種「出生方式」(placeholder 檔 / 空種子 / 生成)並存,SPEC 的「生成」造成不對稱、結構不可見、可靠度較低(依賴 skill 觸發而非確定性檔案)。
+
+**Decision** — SPEC.md 改為 ship placeholder 檔(TEMPLATE NOTICE + Overview / FR 範例 / Success Criteria 骨架),對齊 CLAUDE.md / architecture.md。`maintaining-spec-md` Workflow A 從「建檔」改為「偵測 NOTICE → 需求對話 → 替換 placeholder」。移除 `references/spec-template.md`(placeholder 檔即模板,避免雙頭維護)。需求對話(Step A2)保留,只是寫入既有檔而非建檔。
+
+**Consequences**
+- 正面:三核心文件出生方式一致;copy 後結構即可見;`/project-status`、`/pre-pr-check` 一致性檢查總能找到檔;可靠度升。
+- 負面:與 spec-kit「生成 spec」模型分歧(v1 是 copy-the-structure template 模型、非 CLI 生成器,故合理);placeholder 僅能放範例 FR 骨架(同 CLAUDE.md placeholder 限制)。
+
+**Alternatives Considered**
+- 維持生成-on-use(對齊 spec-kit):被否決——v1 是 copy-`.claude/` 模型,shipped placeholder 才一致且可靠(user 選此)。
+- 保留 spec-template.md 當 reference + 也 ship placeholder:被否決——兩個來源會 drift,雙頭維護。
+
 ---
 
 ## 4. Lessons Learned
@@ -219,5 +240,5 @@
 - 與 user 多輪 brainstorming:對照 jmd6e0 `.claude/docs` 概念、研究 GitHub spec-kit 與 oh-my-claudecode 的機制。
 - 確立方向:加 decisions(Why 層)、軸分離不照搬 prd、CLAUDE.md 抽出 Architecture+Tech Stack、SPEC 精簡升級、一致性用 command。產出 ADR-0001 ~ ADR-0007。
 - 在 `feat/decision-docs-system` 分支實作:ship 端(decisions 骨架 + architecture.md + 2 個新 maintaining skill + SPEC/pre-pr-check 升級)、連動修正既有 skill 路由、dogfood 本 decisions。
-- PR review 期間決議:移除 migration 指引(視為多餘);命名由 `journal` 改為標準術語 `decisions`(ADR-0008),連動改名約十餘處。
+- PR review 期間決議:移除 migration 指引(視為多餘);命名由 `journal` 改為標準術語 `decisions`(ADR-0008),連動改名約十餘處;SPEC.md 改為 ship placeholder 檔、移除 spec-template.md(ADR-0009)。
 - 對應 PR:`feat/decision-docs-system` → `main`(暫不 merge)。
