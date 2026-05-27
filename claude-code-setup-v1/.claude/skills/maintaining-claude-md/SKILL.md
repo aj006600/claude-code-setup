@@ -1,6 +1,6 @@
 ---
 name: maintaining-claude-md
-description: Use when the user proposes new coding conventions, project structure changes, workflow adjustments (git flow, CI/CD), testing strategy changes, docstring / naming updates, new technical dependencies, development checklist changes, or new project-specific constraints. Also use when SPEC.md's Project Overview or Functional Requirements change in ways that imply new tech stack, dependencies, or architecture; or when CLAUDE.md still has the `<!-- TEMPLATE NOTICE -->` block at the top and conversation has revealed the corresponding decisions for filling in the inline `<...>` placeholders. Trigger proactively even without explicit mention of "CLAUDE.md" — any conversation touching development rules, coding standards, project structure, or workflow conventions should invoke this skill, because keeping CLAUDE.md in sync with practice is load-bearing for every subsequent Claude Code session.
+description: Use when the user proposes new coding conventions, workflow adjustments (git flow, CI/CD), testing strategy changes, docstring / naming updates, development checklist changes, or new project-specific constraints (performance / security / compliance). Also use when SPEC.md's Project Overview changes in ways that imply new development principles or workflow rules; or when CLAUDE.md still has the `<!-- TEMPLATE NOTICE -->` block at the top and conversation has revealed the corresponding decisions for filling in the inline `<...>` placeholders. Tech stack / architecture / directory-structure changes belong to maintaining-architecture-md (architecture.md), not this skill. Trigger proactively even without explicit mention of "CLAUDE.md" — any conversation touching development rules, coding standards, or workflow conventions should invoke this skill, because keeping CLAUDE.md in sync with practice is load-bearing for every subsequent Claude Code session.
 ---
 
 # Maintaining CLAUDE.md
@@ -15,10 +15,12 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。規範�
 
 實務痛點:
 - 換 linter 但沒改 CLAUDE.md → AI 仍產出舊規則
-- 目錄結構重整但 Architecture 沒更新 → AI 建檔到錯位置
+- 新增 commit / PR 流程要求但 Development Workflow 沒更新 → AI 不照新流程走
 - 測試策略調整但 Testing Protocols 沒同步 → AI 寫的測試不符新標準
 
 **CLAUDE.md 與 practice 脫節 = AI 行為與團隊共識脫節。**
+
+> **範圍邊界**:CLAUDE.md 只放**開發原則與規範**(constitution)。現行**架構、Tech Stack、目錄結構**已移至 `.claude/docs/architecture.md`,由 `maintaining-architecture-md` skill 維護;CLAUDE.md 只保留指向它的連結。涉及技術棧 / 架構 / 目錄變更時,改用該 skill,不在本 skill 處理。
 
 ---
 
@@ -27,10 +29,11 @@ CLAUDE.md 是**每次 Claude Code 對話都會載入**的開發規範。規範�
 | 類別 | 何時觸發 |
 |------|---------|
 | 開發規範 | 新 coding convention、新流程要求、新測試策略(覆蓋率、測試類型) |
-| 專案結構 | 新增 / 移除目錄、模組重組、新技術堆疊 |
 | 工作流程 | Git workflow、CI/CD、文檔更新流程變更 |
 | 專案需求 | User 特殊習慣、效能 / 安全 / 合規限制 |
-| SPEC.md 連動 | Project Overview 變更 / Functional Requirements 新增或修改帶來新依賴或架構需求 |
+| SPEC.md 連動 | Project Overview 變更帶來新開發原則或流程需求 |
+
+技術棧 / 架構 / 目錄結構變更 → 改用 `maintaining-architecture-md`(architecture.md 是其 SoT,不在本 skill 處理)。
 
 (觸發條件以「對話揭示的決策」為主;檔案是否含 placeholder 由下方 entry 邏輯處理,不算觸發條件。)
 
@@ -75,12 +78,11 @@ grep -n '<[a-zA-Z][^>]*>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
 | Placeholder | 來源 |
 |-------------|------|
 | `<Project Name>` | User 提到的專案名 |
-| `<One-sentence description...>` | User 第一個需求的摘要 |
-| `<your framework, ...>` | User 選擇的 framework(若提及) |
-| `<list project-specific dependencies...>` | 明確提到的 SDK / DB / 第三方依賴 |
-| Architecture 樹的 `<project-name>` / `<your-modules>` | 從需求推導的模組切分 |
+| `<One-sentence description of what this project does>` | User 第一個需求的摘要 |
 
-部分欄位資訊不完整(例如 framework 已選但詳細模組切分未定)→ 保留範例結構並標註,告知「待後續決策明確時由 Workflow B 補上」。
+> Tech Stack / framework / 目錄結構等 placeholder 不在 CLAUDE.md——它們在 `architecture.md`,由 `maintaining-architecture-md` 的 Workflow A 處理。本 skill 只填 CLAUDE.md 內的 Project Name 與一句話描述。
+
+資訊不完整(例如專案名已定但描述未明)→ 保留 placeholder 並標註,告知「待後續決策明確時由 Workflow B 補上」。
 
 ### Step A3:展示替換計畫
 
@@ -98,9 +100,9 @@ grep -n '<[a-zA-Z][^>]*>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
 依 Step A3 dry-run 結果,**用 Edit tool 逐檔處理**(每處替換有可見 diff、可回滾,優於 sed 直接改檔):
 
 1. 移除 CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 區塊(含前後空行)
-2. 替換 CLAUDE.md 各 `<...>` placeholder(用 Step A2 收集的對照,涵蓋 `<Project Name>`、`<your framework, ...>`、Architecture 樹的 `<project-name>` / `<your-modules>` 等)
+2. 替換 CLAUDE.md 的 `<Project Name>` 與 `<One-sentence description of what this project does>`(用 Step A2 收集的對照)
 
-placeholder 數量通常少(< 10 處),Edit tool 逐處改可控且每步都能 review;若 dry-run 結果意外大量,先回 User 確認是否仍照計畫進行。
+placeholder 數量少(CLAUDE.md 內僅此二處),Edit tool 逐處改可控且每步都能 review。架構 / Tech Stack 的填寫由 `maintaining-architecture-md` 另行處理,本 skill 不碰。
 
 ### Step A5:填入版本基線並寫 CHANGELOG baseline
 
@@ -112,7 +114,7 @@ placeholder 數量通常少(< 10 處),Edit tool 逐處改可控且每步都能 r
 
 ### Added
 - Initial development guidelines adopted from claude-code-setup-v1 template and customized for <Project Name>
-- Project Overview / Tech Stack / Architecture 章節依需求填入
+- Project Overview 章節依需求填入(Tech Stack / Architecture 由 architecture.md 維護)
 ```
 
 ### Step A6:Commit
@@ -139,8 +141,9 @@ corresponding v1.0.0 entry to CLAUDE-CHANGELOG.md."
 
 自問:
 - 這是新增、修改、還是刪除規範?
-- 影響哪些章節?(Project Overview / Tech Stack / Architecture / Development Workflow / Coding Conventions / Testing Protocols / Development Checklist)
+- 影響哪些章節?(Project Overview / Development Workflow / Coding Conventions / Testing Protocols / Rules Index / Safety & Hooks)
 - 連動影響哪些 rules?(`git-rules.md` / `code-style.md` / `testing-rules.md`)
+- 是技術棧 / 架構變更嗎?→ 不在本 skill,改用 `maintaining-architecture-md`
 - 暫時實驗還是正式規範?
 
 若不影響(例:純內部變數命名)→ 向 User 簡短說明後跳出 skill。
@@ -179,7 +182,7 @@ current_branch=$(git branch --show-current)
 
 **情況 A:功能分支**(`feat/*`、`fix/*`、`refactor/*`、`hotfix/*`、`docs/*`)
 
-該功能本身觸發了 CLAUDE.md 更新(例:新增功能模組導致 Architecture 調整),在當前分支 commit。
+該功能本身觸發了 CLAUDE.md 更新(例:新增測試策略導致 Testing Protocols 調整),在當前分支 commit。
 
 **重要**:CLAUDE.md / CHANGELOG 改動**獨立成一個 commit**,不混入 feature commit。保持「功能 commit 只動 src/tests、規範 commit 只動 .claude/」的界線——混在一起會讓 git log 分不清「這個 commit 改了功能 + 規範」還是「只改了功能」,違反 git-rules.md「每個 commit 是一個邏輯完整的改動」。
 
@@ -219,13 +222,13 @@ git push origin <branch-name>
 
 摘要變更項目 + 版本資訊(舊 → 新 + 日期)+ commit 策略(當前功能分支 / docs 分支)。
 
-### Step B6:連動評估 README.md
+### Step B6:連動評估下游
 
-若本次變更包含 **User-facing** 項目(Project Overview 調整、Tech Stack 新增依賴、Architecture 變更、新 CLI 介面 / 環境變數):
+若本次變更包含 **User-facing** 項目(Project Overview 調整、新 CLI 介面 / 環境變數、影響使用方式的流程):
 
 > 此次變更可能也影響 README.md 與 docs/。建議接著啟用 `maintaining-readme-md` skill 同步檢查。要進行嗎?
 
-純內部規範(coding conventions、測試策略)→ 不需啟動此 hook。
+若對話其實揭示了**技術棧 / 架構**變更(被誤導進本 skill)→ 提示改用 `maintaining-architecture-md`。純內部規範(coding conventions、測試策略)→ 不需啟動下游 hook。
 
 ---
 
@@ -290,7 +293,9 @@ git push origin <branch-name>
 
 | 對象 | 關係 |
 |------|------|
-| `maintaining-spec-md` | SPEC.md 的 Overview / Functional Requirements 變更帶來新依賴或架構需求時連動觸發本 skill |
+| `maintaining-architecture-md` | Tech Stack / 架構 / 目錄結構已移到 architecture.md;涉及這些的觸發改由它處理,各守各的 SoT |
+| `maintaining-spec-md` | SPEC.md 的 Overview 變更帶來新開發原則時連動本 skill |
+| `maintaining-journal-md` | 開發規範背後若有「為什麼這樣定」的決策(2+ 方案 trade-off)→ 連動開 ADR |
 | `maintaining-readme-md` | Step B6 在 User-facing 變更時建議啟用 readme skill |
 | `.claude/rules/git-rules.md` | Commit message 格式(`docs(claude):` 或 `chore(template):`)、分支命名 |
 | `tdd-feature-workflow` | 分支策略須協同,避免破壞功能 PR 的 commit 邏輯完整性 |
@@ -299,26 +304,24 @@ git push origin <branch-name>
 
 ## Pattern 示例
 
-**觸發**:`User: "引入 RabbitMQ,把 OrderService 拆成 OrderAPI / OrderWorker / OrderNotifier 三個服務"`
+**觸發**:`User: "docstring 改用 Google Style,而且 commit 前強制跑 pre-commit lint"`
 
-**正確反應**(編排上下游連動):
+**正確反應**(這是開發規範變更,正屬 CLAUDE.md):
 
-    這變更影響 SPEC.md(FR 拆三組)+ CLAUDE.md(Tech Stack + Architecture)。先啟用 `maintaining-spec-md` 處理 SPEC,commit 後本 skill 接力:
+    這影響 CLAUDE.md 的 Coding Conventions + Development Workflow,並連動 code-style.md:
 
     ```diff
-    ## Tech Stack
-    + Message Queue: RabbitMQ
-
-    ## Architecture
-      src/
-    +   order_api/
-    +   order_worker/
-    +   order_notifier/
+    ## Coding Conventions
+    + Docstring 採 Google Style(細節見 code-style.md)
+    ## Development Workflow
+    + commit 前強制 pre-commit lint
     ```
 
-    版本 v1.1.0 → v1.2.0。是否確認?
+    版本 v1.1.0 → v1.2.0,CHANGELOG 新增 Changed 條目。是否確認?
 
-**錯誤反應**:跳過 SPEC 直接改 CLAUDE → 規範鏈斷裂,下次對話讀 SPEC 仍以為是單體。
+**正確反應**(若觸發其實是架構):若 User 說的是「引入 RabbitMQ、把服務拆三組」,那是 **Tech Stack + 架構**變更 → 提示改用 `maintaining-architecture-md`(更新 architecture.md 的 Tech Stack + Code Structure)、`maintaining-journal-md`(開 ADR 記為什麼引入 / 怎麼拆),CLAUDE.md 僅在因此產生新規範時才動。
+
+**錯誤反應**:把架構 / 技術棧變更硬塞進 CLAUDE.md → 與 architecture.md 雙頭維護。
 
 ---
 
