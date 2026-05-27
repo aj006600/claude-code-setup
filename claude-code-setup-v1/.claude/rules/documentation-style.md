@@ -2,7 +2,9 @@
 
 本專案的文檔編寫規範。適用於 user-facing markdown 檔案（CLAUDE.md、SPEC.md、README.md、docs/*、CHANGELOGs 等）。
 
-> **`.claude/rules/*.md` 與 `.claude/skills/**/SKILL.md` 不在本指南的「章節標題用英文」規則範圍內**——這些是給 Claude 與內部開發者閱讀的內部規範類文件,允許中文章節標題以維持閱讀流暢度。footer 慣例、Markdown 結構、Mermaid 等其他規則仍適用。
+> **`.claude/rules/*.md`、`.claude/skills/**/SKILL.md` 與 `.claude/docs/journal/CONVENTIONS.md` 不在本指南的「章節標題用英文」規則範圍內**——這些是給 Claude 與內部開發者閱讀的內部規範類文件,允許中文章節標題以維持閱讀流暢度。footer 慣例、Markdown 結構、Mermaid 等其他規則仍適用。
+>
+> **`.claude/docs/architecture.md` 適用標準規則**(章節英文 / 內文繁中 / footer 含 Version)——它是現行架構描述,屬產品 / 工程文檔。`.claude/docs/journal/journal.md` 為決策 log,比照 CHANGELOG(無 footer)。
 
 ---
 
@@ -16,6 +18,7 @@
 ### 需 footer 的檔案類型
 
 - `.claude/CLAUDE.md`：主規範，與 `CLAUDE-CHANGELOG.md` pair，由 `maintaining-claude-md` skill 維護
+- `.claude/docs/architecture.md`：現行架構描述，由 `maintaining-architecture-md` skill 維護
 - User 專案的產品文檔：`SPEC.md`、`README.md`、`docs/*.md`
 
 統一格式：
@@ -34,7 +37,8 @@
 
 - `.claude/rules/*.md`：規範類參考文件，版本追蹤由專案 CHANGELOG 代管；per-rule versioning 會造成各 rule 版本號互不相干、user 也不會每次編輯都同步，是反模式
 - `.claude/skills/*/SKILL.md`：由 template 自身 `CHANGELOG.md` 追蹤演進
-- CHANGELOG 類檔案：本身即為歷史紀錄（Keep a Changelog 格式），不需再加 footer
+- `.claude/docs/journal/CONVENTIONS.md`：規範類參考文件，同 `rules/*.md`
+- CHANGELOG 類與 `journal.md`：本身即為歷史 / 決策紀錄，不需再加 footer
 
 ## 標題層級
 

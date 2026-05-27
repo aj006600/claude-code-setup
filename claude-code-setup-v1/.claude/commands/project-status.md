@@ -25,6 +25,7 @@ git log --oneline -5 # recent commits
 
 讀 footer 取 `Version` 與 `Last Updated`:
 - `.claude/SPEC.md`
+- `.claude/docs/architecture.md`
 - `.claude/CLAUDE.md`
 
 **Edge cases**:
@@ -46,6 +47,8 @@ Uncommitted: clean | <N> files changed
 
 SPEC.md: <version> (<date>) | not yet created
 - Functional Requirements: <N>
+
+architecture.md: <version> (<date>) | not yet created
 
 CLAUDE.md: <version> (<date>) | not yet initialized
 

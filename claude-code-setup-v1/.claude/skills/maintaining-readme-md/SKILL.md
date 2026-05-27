@@ -1,6 +1,6 @@
 ---
 name: maintaining-readme-md
-description: Use when the user introduces new features, changes API or CLI interfaces, modifies installation / setup steps, adds dependencies, changes user-visible architecture, updates configuration options, renames public modules, or when SPEC.md / CLAUDE.md upstream changes affect user-facing content. Trigger proactively even without explicit mention of "README" or "documentation" — any conversation about user-facing changes, new features, install / setup, or how-to-use aspects should invoke this skill, because user-facing docs drifting from implementation is how developers judge whether a project is alive or abandoned.
+description: Use when the user introduces new features, changes API or CLI interfaces, modifies installation / setup steps, adds dependencies, changes user-visible architecture, updates configuration options, renames public modules, or when SPEC.md / architecture.md / CLAUDE.md upstream changes affect user-facing content. Trigger proactively even without explicit mention of "README" or "documentation" — any conversation about user-facing changes, new features, install / setup, or how-to-use aspects should invoke this skill, because user-facing docs drifting from implementation is how developers judge whether a project is alive or abandoned.
 ---
 
 # Maintaining README.md and docs/
@@ -25,7 +25,7 @@ README 是接觸專案的**第一印象**:
 | 類別 | 何時觸發 |
 |------|---------|
 | User-facing 實作 | 新功能、API / CLI 變更、安裝步驟、架構(User 可感知)、設定選項、公開模組重命名 |
-| 上游連動 | SPEC.md Overview 改動 → README Overview;CLAUDE.md Tech Stack 新依賴 → Installation;Architecture 改動 → docs/ |
+| 上游連動 | SPEC.md Overview 改動 → README Overview;architecture.md Tech Stack 新依賴 → Installation;architecture.md 架構改動 → docs/ |
 | docs/ 專屬 | 新功能需詳細 Service 文檔、API 文檔、新範例 / tutorials / troubleshooting |
 
 ---
@@ -130,7 +130,7 @@ git push origin docs/update-readme-<feature>
 
 執行中若發現變更源頭其實來自 SPEC.md 或 CLAUDE.md 但那些檔案尚未同步更新,提醒 User:
 
-> 本次 README 變更對應的功能 / 架構,在 SPEC.md 或 CLAUDE.md 尚未反映。建議先啟用 `maintaining-spec-md` / `maintaining-claude-md` 更新上游,避免規範鏈斷裂。
+> 本次 README 變更對應的功能 / 架構,在 SPEC.md、architecture.md 或 CLAUDE.md 尚未反映。建議先啟用 `maintaining-spec-md` / `maintaining-architecture-md` / `maintaining-claude-md` 更新上游,避免規範鏈斷裂。
 
 ---
 

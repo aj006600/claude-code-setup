@@ -14,51 +14,17 @@
 
 ---
 
-## Tech Stack (技術堆疊)
+## Project Architecture (專案架構)
 
-<!-- TEMPLATE: Below is a Python-focused baseline. Replace items marked with `<...>` to fit your project. -->
+現行架構、技術棧(Tech Stack)、目錄結構與設計決策索引集中於 [`.claude/docs/architecture.md`](docs/architecture.md),由 `maintaining-architecture-md` skill 維護。本檔(CLAUDE.md)只放**開發原則與規範**(constitution),架構細節單一真相在 architecture.md,兩邊用連結而非複製。
 
-- **Language**: Python 3.11+
-- **Package Manager**: uv
-- **Web Framework**: `<your framework, e.g., FastAPI / Starlette / Django>`
-- **Testing**: pytest, pytest-asyncio
-- **Linter / Formatter**: ruff
-- **Type Checker**: mypy
-- **Version Control**: Git
-- **其他依賴**: `<list project-specific dependencies here, e.g., database clients, SDK integrations>`
+各文件分工:
 
----
-
-## Architecture (專案架構)
-
-<!-- TEMPLATE: Replace the tree below with your actual project structure -->
-
-```
-<project-name>/
-├── .claude/                  # Claude Code 配置
-│   ├── CLAUDE.md             # 開發規範 (本文件)
-│   ├── SPEC.md               # 專案規格(由 maintaining-spec-md skill 建立)
-│   ├── CLAUDE-CHANGELOG.md   # 本專案 CLAUDE.md 變更歷史(Keep a Changelog)
-│   ├── rules/                # 開發規範參考(見 Rules Index 章節)
-│   ├── skills/               # 專案專屬 skills
-│   ├── commands/             # Slash commands
-│   ├── hooks/                # PreToolUse hooks(見 Safety & Hooks 章節)
-│   ├── docs/
-│   │   └── plans/            # Claude TDD 工作 plan(由 superpowers:writing-plans 產出,非 user-facing)
-│   └── settings.json         # Claude Code 設定
-├── src/                      # 主要程式碼
-│   └── <your-modules>/       # 依專案需求組織
-├── tests/                    # 測試檔案
-│   ├── unit/                 # 單元測試
-│   ├── integration/          # 整合測試
-│   ├── e2e/                  # 端到端測試
-│   └── conftest.py           # Pytest fixtures
-├── docs/                     # 文檔
-├── pyproject.toml            # Python 專案配置(uv、ruff、mypy、pytest)
-├── .env                      # 環境變數(加入 .gitignore)
-├── .gitignore
-└── README.md                 # 專案說明
-```
+| 想知道 | 看哪裡 |
+|--------|--------|
+| 系統現在長什麼樣(架構 / Tech Stack / 目錄) | [architecture.md](docs/architecture.md) |
+| 專案該做什麼(需求 / 驗收) | [SPEC.md](SPEC.md) |
+| 為什麼這樣決定(決策史 / ADR) | [docs/journal/journal.md](docs/journal/journal.md) |
 
 ---
 
@@ -140,7 +106,7 @@
 完整動態清單執行 `/agent-cheatsheet` command。以下為最核心入口:
 
 - **`tdd-feature-workflow` skill** — 開發編排器(任何 feature / bug / refactor 起點)
-- **`maintaining-spec-md` / `maintaining-claude-md` / `maintaining-readme-md` skills** — 專案文檔維護,依情境自動觸發
+- **`maintaining-spec-md` / `maintaining-architecture-md` / `maintaining-claude-md` / `maintaining-readme-md` / `maintaining-journal-md` skills** — 專案文檔維護(需求 / 現行架構 / 規範 / 對外文檔 / 決策史),依情境自動觸發
 - **`/pre-dev-check` / `/pre-pr-check` commands** — 開發前 / PR 前檢查
 - **`context7` MCP** — 查最新 library 文檔
 
