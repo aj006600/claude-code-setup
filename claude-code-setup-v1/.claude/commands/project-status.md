@@ -23,13 +23,13 @@ git log --oneline -5 # recent commits
 
 ### File versions
 
-讀 footer 取 `Version` 與 `Last Updated`:
-- `.claude/SPEC.md`
-- `.claude/docs/architecture.md`
-- `.claude/CLAUDE.md`
+讀 footer:
+- `.claude/SPEC.md` — `Version` + `Last Updated`
+- `.claude/docs/architecture.md` — `Version` + `Last Updated`
+- `.claude/CLAUDE.md` — 只有 `Last Updated`(無 SemVer)
 
 **Edge cases**:
-- 三檔皆以 placeholder 形式 ship;footer `Version` 仍是字面 `<vX.Y.Z>`(或頂端仍有 `<!-- TEMPLATE NOTICE -->`) → 顯示「not yet initialized — 執行對應 Workflow A」(SPEC → `maintaining-spec-md`、architecture → `maintaining-architecture-md`、CLAUDE → `maintaining-claude-md`)
+- 三檔皆以 placeholder 形式 ship;頂端仍有 `<!-- TEMPLATE NOTICE -->`(或 footer 仍是字面 `<...>`) → 顯示「not yet initialized — 執行對應 Workflow A」(SPEC → `maintaining-spec-md`、architecture → `maintaining-architecture-md`、CLAUDE → `maintaining-claude-md`)
 - 檔案實際不存在(極少見,被刪) → 顯示「missing」
 
 ### SPEC.md overview (if initialized)
@@ -50,7 +50,7 @@ SPEC.md: <version> (<date>) | not yet initialized
 
 architecture.md: <version> (<date>) | not yet initialized
 
-CLAUDE.md: <version> (<date>) | not yet initialized
+CLAUDE.md: <date> | not yet initialized
 
 Recent commits:
 - <hash> <subject>

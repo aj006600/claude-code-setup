@@ -19,6 +19,7 @@
 | [ADR-0007](#adr-0007-architecturemd-用獨立的-maintaining-architecture-md-skill) | architecture.md 用獨立的 maintaining-architecture-md skill | Accepted | 2026-05-27 | Architecture |
 | [ADR-0008](#adr-0008-決策史命名採-decisions非-journal) | 決策史命名採 decisions(非 journal) | Accepted | 2026-05-27 | Documentation |
 | [ADR-0009](#adr-0009-specmd-改為-ship-placeholder-檔對齊-claude-與-architecture) | SPEC.md 改為 ship placeholder 檔(對齊 CLAUDE 與 architecture) | Accepted | 2026-05-27 | Documentation |
+| [ADR-0010](#adr-0010-移除-claude-changelog-並停用-claudemd-semver) | 移除 CLAUDE-CHANGELOG 並停用 CLAUDE.md SemVer | Accepted | 2026-05-27 | Documentation |
 
 ---
 
@@ -211,6 +212,26 @@
 - 維持生成-on-use(對齊 spec-kit):被否決——v1 是 copy-`.claude/` 模型,shipped placeholder 才一致且可靠(user 選此)。
 - 保留 spec-template.md 當 reference + 也 ship placeholder:被否決——兩個來源會 drift,雙頭維護。
 
+### ADR-0010: 移除 CLAUDE-CHANGELOG 並停用 CLAUDE.md SemVer
+
+| 欄位 | 內容 |
+|------|------|
+| Status | Accepted |
+| Date | 2026-05-27 |
+| Refs | [ADR-0002](#adr-0002-軸分離不照搬-prd)(部分 supersede:changelog 軌)、[ADR-0001](#adr-0001-引入-decisions-決策層補-why-層缺口) |
+
+**Context** — 加入 decisions/ 後,CLAUDE.md 的「歷史 / 理由」版圖改變:`git log -- .claude/CLAUDE.md` 提供 what/when、decisions/ ADR 提供 why。CLAUDE-CHANGELOG 唯一還獨佔的只剩「人工 curate 的『改了什麼』摘要」,而 git log 幾乎能取代。CLAUDE.md 的 SemVer 版本號語意弱(規範非被消費的契約);Keep a Changelog 是為「被 user 消費的 release」設計,套在內部規範檔屬誤用;且每次規範變更要付「兩檔同 commit + 三處版本一致」的 ceremony。
+
+**Decision** — 移除 `.claude/CLAUDE-CHANGELOG.md`;CLAUDE.md footer 拿掉 SemVer `Version`、只留 `Last Updated`。演進史交給 `git log -- .claude/CLAUDE.md`、理由交給 decisions/。`maintaining-claude-md` Workflow A/B 移除版本基線 / bump 與 changelog 寫入。SPEC.md / architecture.md 的 SemVer **保留**(版本有契約 / 現況語意)。部分 supersede [ADR-0002](#adr-0002-軸分離不照搬-prd) 的「changelog 沿用既有兩軌」。
+
+**Consequences**
+- 正面:移除最 ceremonial、回報最低的一塊;規範變更只需改檔 + commit;與 lean 哲學一致。
+- 負面:無 curated 規範演進摘要(改靠 `git log -- .claude/CLAUDE.md`——對單一內部檔成本可接受);反轉先前刻意的兩-changelog 設計(連動改約十處)。
+
+**Alternatives Considered**
+- 保留 CLAUDE-CHANGELOG:被否決——decisions/ 出現後其獨佔價值所剩無幾,ceremony 不划算。
+- 把 Change Log 內嵌進 CLAUDE.md(如 SPEC):被否決——CLAUDE.md 每輪載入 context,內嵌會付 context 稅。
+
 ---
 
 ## 4. Lessons Learned
@@ -240,5 +261,5 @@
 - 與 user 多輪 brainstorming:對照 work-repo `.claude/docs` 概念、研究 GitHub spec-kit 與 oh-my-claudecode 的機制。
 - 確立方向:加 decisions(Why 層)、軸分離不照搬 prd、CLAUDE.md 抽出 Architecture+Tech Stack、SPEC 精簡升級、一致性用 command。產出 ADR-0001 ~ ADR-0007。
 - 在 `feat/decision-docs-system` 分支實作:ship 端(decisions 骨架 + architecture.md + 2 個新 maintaining skill + SPEC/pre-pr-check 升級)、連動修正既有 skill 路由、dogfood 本 decisions。
-- PR review 期間決議:移除 migration 指引(視為多餘);命名由 `journal` 改為標準術語 `decisions`(ADR-0008),連動改名約十餘處;SPEC.md 改為 ship placeholder 檔、移除 spec-template.md(ADR-0009)。
+- PR review 期間決議:移除 migration 指引(視為多餘);命名由 `journal` 改為標準術語 `decisions`(ADR-0008),連動改名約十餘處;SPEC.md 改為 ship placeholder 檔、移除 spec-template.md(ADR-0009);移除 CLAUDE-CHANGELOG.md 並停用 CLAUDE.md SemVer(ADR-0010)。
 - 對應 PR:`feat/decision-docs-system` → `main`(暫不 merge)。

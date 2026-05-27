@@ -205,7 +205,7 @@ SPEC.md 變更須獨立 commit。
 
 - **現行架構 / Tech Stack / 目錄變更**(新增 / 移除模組、換框架、加依賴、目錄重組)→ `maintaining-architecture-md` 更新 architecture.md
 - **架構決策**(2+ 方案 trade-off、引入新機制、推翻既有設計)→ `maintaining-decisions-md` 開 ADR(既有 ADR 被取代則改 Status + 開新 ADR)
-- **開發規範 / 流程**(新 coding convention、測試策略、Git / CI 流程、效能 / 安全 / 合規限制)→ `maintaining-claude-md`(+ CLAUDE-CHANGELOG.md)
+- **開發規範 / 流程**(新 coding convention、測試策略、Git / CI 流程、效能 / 安全 / 合規限制)→ `maintaining-claude-md`
 - **SPEC.md 連動**:Project Overview 變更帶來新開發原則時連動 CLAUDE.md
 
 皆不觸發(純功能新增)→ 跳過。

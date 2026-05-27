@@ -56,7 +56,7 @@ dev (development) ← feat/<feature-name>
 | Scope | 用途 | 由誰約定 |
 |-------|------|---------|
 | `(template)` | 採用 template 後的初次客製化、template 本體層級的調整 | `maintaining-claude-md` Workflow A |
-| `(claude)` | `.claude/CLAUDE.md` 與 `.claude/CLAUDE-CHANGELOG.md` 同步更新 | `maintaining-claude-md` Workflow B |
+| `(claude)` | `.claude/CLAUDE.md` 規範變更 | `maintaining-claude-md` Workflow B |
 | `(spec)` | `.claude/SPEC.md` 變更(亦可直接用 `spec` type) | `maintaining-spec-md` |
 | `(readme)` | `README.md` 與 `docs/` 內容變更 | `maintaining-readme-md` |
 | `(<module>)` | 一般功能 / 修復 / 重構針對特定模組 | 開發者依模組命名 |

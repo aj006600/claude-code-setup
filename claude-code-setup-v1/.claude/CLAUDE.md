@@ -113,4 +113,5 @@
 ---
 
 **Last Updated**: `<YYYY-MM-DD>`(由 maintaining-claude-md Workflow A 首次客製化時填入)
-**Version**: `<vX.Y.Z>`(由 maintaining-claude-md Workflow A 首次客製化時填入;預設 v1.0.0)
+
+> CLAUDE.md 不採 SemVer 版本號:規範不是被消費的契約,演進史由 `git log -- .claude/CLAUDE.md` 提供、決策理由由 `.claude/docs/decisions/` 提供。

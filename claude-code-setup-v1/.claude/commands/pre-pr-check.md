@@ -59,7 +59,7 @@ Findings 的處理流程(詳細呈現 → CLAUDE 標 [強烈建議] / [可選] /
 
 3. **Cross-ref 連結可解析**——SPEC / architecture / decisions 之間的 markdown 連結(檔案路徑 + 同檔錨點)是否指向實際存在的目標。斷鏈 → WARNING(列出來源與目標)。
 
-4. **Footer 版本一致**——對有 footer 的文件(architecture.md、SPEC.md、CLAUDE.md),`Last Updated` / `Version` 是否存在且與該檔 Change Log / CHANGELOG 最新條目對得上。不一致 → WARNING。
+4. **Footer 一致**——SPEC.md / architecture.md 的 `Version` + `Last Updated` 是否存在且與其 Change Log 對得上;CLAUDE.md 只需 `Last Updated`(無 SemVer)。不一致 → WARNING。
 
 皆通過 → 一行 pass。本層為 soft gate(warn but continue),提供文件健康度訊號,不阻擋 PR。
 
@@ -88,7 +88,7 @@ Read `.claude/docs/architecture.md`(若存在)。本次 branch 是否含**現行
 - 是,且尚未有對應 ADR → hint: 啟用 `maintaining-decisions-md` 補 ADR(記錄 Why)
 - 既有 ADR 因本次變更被取代 → hint: 更新該 ADR Status 為 Superseded + 開新 ADR
 
-### 3.5 CLAUDE.md / CLAUDE-CHANGELOG.md sync
+### 3.5 CLAUDE.md sync
 
 對照 `maintaining-claude-md` 觸發情境逐項 check;任一命中 → hint:
 
@@ -97,7 +97,7 @@ Read `.claude/docs/architecture.md`(若存在)。本次 branch 是否含**現行
 - **專案需求**:User 特殊習慣、效能 / 安全 / 合規限制
 - **SPEC.md 連動**:Project Overview 變更帶來新開發原則(技術棧 / 架構變更走 L3.3,不在此)
 
-任一命中 → hint: 啟用 `maintaining-claude-md` 同步 CLAUDE.md + CLAUDE-CHANGELOG.md。
+任一命中 → hint: 啟用 `maintaining-claude-md` 同步 CLAUDE.md。
 
 ## Final report
 
