@@ -1,9 +1,9 @@
-# Journal
+# Decisions
 
 > 決策脈絡（Why）+ 事件紀錄（What happened）。格式規範見 [CONVENTIONS.md](CONVENTIONS.md)。
 > 現行架構總覽見 [architecture.md](../architecture.md);需求 spec 見 [SPEC.md](../../SPEC.md)。
 
-> **本檔以空種子形式 ship。** 採用 template 後,由 `maintaining-journal-md` skill 在第一個架構決策發生時寫入 ADR-0001。在那之前保持空白即可。
+> **本檔以空種子形式 ship。** 採用 template 後,由 `maintaining-decisions-md` skill 在第一個架構決策發生時寫入 ADR-0001。在那之前保持空白即可。
 
 ---
 

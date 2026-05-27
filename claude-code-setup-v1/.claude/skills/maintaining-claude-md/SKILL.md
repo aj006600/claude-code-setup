@@ -295,7 +295,7 @@ git push origin <branch-name>
 |------|------|
 | `maintaining-architecture-md` | Tech Stack / 架構 / 目錄結構已移到 architecture.md;涉及這些的觸發改由它處理,各守各的 SoT |
 | `maintaining-spec-md` | SPEC.md 的 Overview 變更帶來新開發原則時連動本 skill |
-| `maintaining-journal-md` | 開發規範背後若有「為什麼這樣定」的決策(2+ 方案 trade-off)→ 連動開 ADR |
+| `maintaining-decisions-md` | 開發規範背後若有「為什麼這樣定」的決策(2+ 方案 trade-off)→ 連動開 ADR |
 | `maintaining-readme-md` | Step B6 在 User-facing 變更時建議啟用 readme skill |
 | `.claude/rules/git-rules.md` | Commit message 格式(`docs(claude):` 或 `chore(template):`)、分支命名 |
 | `tdd-feature-workflow` | 分支策略須協同,避免破壞功能 PR 的 commit 邏輯完整性 |
@@ -319,7 +319,7 @@ git push origin <branch-name>
 
     版本 v1.1.0 → v1.2.0,CHANGELOG 新增 Changed 條目。是否確認?
 
-**正確反應**(若觸發其實是架構):若 User 說的是「引入 RabbitMQ、把服務拆三組」,那是 **Tech Stack + 架構**變更 → 提示改用 `maintaining-architecture-md`(更新 architecture.md 的 Tech Stack + Code Structure)、`maintaining-journal-md`(開 ADR 記為什麼引入 / 怎麼拆),CLAUDE.md 僅在因此產生新規範時才動。
+**正確反應**(若觸發其實是架構):若 User 說的是「引入 RabbitMQ、把服務拆三組」,那是 **Tech Stack + 架構**變更 → 提示改用 `maintaining-architecture-md`(更新 architecture.md 的 Tech Stack + Code Structure)、`maintaining-decisions-md`(開 ADR 記為什麼引入 / 怎麼拆),CLAUDE.md 僅在因此產生新規範時才動。
 
 **錯誤反應**:把架構 / 技術棧變更硬塞進 CLAUDE.md → 與 architecture.md 雙頭維護。
 

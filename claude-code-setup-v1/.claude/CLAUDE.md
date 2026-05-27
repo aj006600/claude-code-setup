@@ -24,7 +24,7 @@
 |--------|--------|
 | 系統現在長什麼樣(架構 / Tech Stack / 目錄) | [architecture.md](docs/architecture.md) |
 | 專案該做什麼(需求 / 驗收) | [SPEC.md](SPEC.md) |
-| 為什麼這樣決定(決策史 / ADR) | [docs/journal/journal.md](docs/journal/journal.md) |
+| 為什麼這樣決定(決策史 / ADR) | [docs/decisions/decisions.md](docs/decisions/decisions.md) |
 
 ---
 
@@ -106,7 +106,7 @@
 完整動態清單執行 `/agent-cheatsheet` command。以下為最核心入口:
 
 - **`tdd-feature-workflow` skill** — 開發編排器(任何 feature / bug / refactor 起點)
-- **`maintaining-spec-md` / `maintaining-architecture-md` / `maintaining-claude-md` / `maintaining-readme-md` / `maintaining-journal-md` skills** — 專案文檔維護(需求 / 現行架構 / 規範 / 對外文檔 / 決策史),依情境自動觸發
+- **`maintaining-spec-md` / `maintaining-architecture-md` / `maintaining-claude-md` / `maintaining-readme-md` / `maintaining-decisions-md` skills** — 專案文檔維護(需求 / 現行架構 / 規範 / 對外文檔 / 決策史),依情境自動觸發
 - **`/pre-dev-check` / `/pre-pr-check` commands** — 開發前 / PR 前檢查
 - **`context7` MCP** — 查最新 library 文檔
 

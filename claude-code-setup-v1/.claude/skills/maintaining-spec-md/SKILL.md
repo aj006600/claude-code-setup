@@ -170,7 +170,7 @@ SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User
 - 影響 **Tech Stack / 架構 / 目錄結構** → 提示啟用 `maintaining-architecture-md` 同步 architecture.md
 - 影響 **開發原則 / 規範 / 流程** → 提示啟用 `maintaining-claude-md` 同步 CLAUDE.md
 - 影響 **user-facing**(新功能、API / CLI 變更、安裝步驟)→ 提示啟用 `maintaining-readme-md` 同步對外文檔
-- 有「為什麼這樣實現」的架構決策(2+ 方案 trade-off)→ 提示啟用 `maintaining-journal-md` 開 ADR
+- 有「為什麼這樣實現」的架構決策(2+ 方案 trade-off)→ 提示啟用 `maintaining-decisions-md` 開 ADR
 
 > 此次變更也影響 [architecture.md / CLAUDE.md / README.md] 的 [章節]。要接著啟用 [對應 skill] 同步更新嗎?
 
@@ -206,7 +206,7 @@ SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User
 |------|------|
 | `maintaining-architecture-md` | SPEC 需求變更帶來 Tech Stack / 架構調整時 Step B5 連動 hint |
 | `maintaining-claude-md` | SPEC.md 的 Overview 變更帶來新開發原則時 Step B5 連動 hint |
-| `maintaining-journal-md` | 需求的實現方式涉及 2+ 方案 trade-off 時連動開 ADR |
+| `maintaining-decisions-md` | 需求的實現方式涉及 2+ 方案 trade-off 時連動開 ADR |
 | `maintaining-readme-md` | SPEC.md 的 user-facing 變更(新功能 / API / 安裝步驟)時 Step B5 連動 hint |
 | `.claude/rules/git-rules.md` | Commit 格式(`spec:` type);SPEC 獨立 commit |
 | `tdd-feature-workflow` | 本 skill 是 TDD 流程的「需求確認階段」——先更新 SPEC,User 確認後才進入測試先行 |

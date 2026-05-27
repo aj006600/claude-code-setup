@@ -10,7 +10,7 @@
 <!-- TEMPLATE: Replace with a one-paragraph plain-language summary of what the system is and how its parts fit together. -->
 `<One paragraph: 系統做什麼、由哪些部分組成、如何協作>`
 
-本文是可讀的設計藍圖(onboarding 用):串起系統現行全貌、技術選型與資料流。**需求(What must do)見 [SPEC.md](../SPEC.md);決策理由(Why)見 [journal.md](journal/journal.md) 的對應 ADR。** 本文描述「現在長什麼樣」,不重述需求、不展開決策推理,只串全局並連結。
+本文是可讀的設計藍圖(onboarding 用):串起系統現行全貌、技術選型與資料流。**需求(What must do)見 [SPEC.md](../SPEC.md);決策理由(Why)見 [decisions.md](decisions/decisions.md) 的對應 ADR。** 本文描述「現在長什麼樣」,不重述需求、不展開決策推理,只串全局並連結。
 
 ---
 
@@ -34,11 +34,11 @@ graph TB
 
 每層/模組一句話 + 對應 ADR(若該設計有決策脈絡)。
 
-<!-- TEMPLATE: Replace rows with your actual modules. ADR 欄連到 journal 對應決策;尚無 ADR 留 — -->
+<!-- TEMPLATE: Replace rows with your actual modules. ADR 欄連到 decisions 對應決策;尚無 ADR 留 — -->
 
 | 層 / 模組 | 摘要 | 相關 ADR |
 |----------|------|---------|
-| `<module-a>` | `<一句話職責>` | [ADR-XXXX](journal/journal.md#adr-xxxx-...) |
+| `<module-a>` | `<一句話職責>` | [ADR-XXXX](decisions/decisions.md#adr-xxxx-...) |
 | `<module-b>` | `<一句話職責>` | — |
 
 ---
@@ -97,18 +97,18 @@ sequenceDiagram
 
 現行架構背後的關鍵決策索引。每條僅摘要,完整 Context / Alternatives 見對應 ADR。
 
-<!-- TEMPLATE: 每個影響架構走向的決策在 journal 開 ADR 後,於此加一列摘要 + cross-ref。 -->
+<!-- TEMPLATE: 每個影響架構走向的決策在 decisions 開 ADR 後,於此加一列摘要 + cross-ref。 -->
 
 | 決策 | 摘要 | ADR |
 |------|------|-----|
-| `<決策標題>` | `<1 行現行做法>` | [ADR-XXXX](journal/journal.md#adr-xxxx-...) |
+| `<決策標題>` | `<1 行現行做法>` | [ADR-XXXX](decisions/decisions.md#adr-xxxx-...) |
 
 ---
 
 ## Related Documents
 
 - [SPEC.md](../SPEC.md) — 需求與驗收(What must do)
-- [journal.md](journal/journal.md) — 決策史(Why)+ Lessons + Timeline
+- [decisions.md](decisions/decisions.md) — 決策史(Why)+ Lessons + Timeline
 - [CLAUDE.md](../CLAUDE.md) — 開發規範與原則(constitution)
 
 ---

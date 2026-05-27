@@ -31,7 +31,7 @@ Skill 把這些點串成**有執行順序、關鍵節點都有 hook、TDD 全程
 |------------|---------|
 | 需求設計討論 | `superpowers:brainstorming`(每次新需求都先走) |
 | SPEC 更新 | `maintaining-spec-md` skill |
-| 架構決策記錄(2+ 方案 trade-off) | `maintaining-journal-md` skill(開 ADR 記 Why) |
+| 架構決策記錄(2+ 方案 trade-off) | `maintaining-decisions-md` skill(開 ADR 記 Why) |
 | 寫 plan(bite-sized TDD tasks) | `superpowers:writing-plans`(plan 本身內建 TDD 循環) |
 | 執行 plan(批次 + checkpoint) | `superpowers:executing-plans` |
 | TDD 紀律參考 | `superpowers:test-driven-development`(查閱用,非獨立階段——詳見 2.4) |
@@ -127,7 +127,7 @@ git checkout -b feat/<feature-name>  # 或 fix/* refactor/* hotfix/* 依 git-rul
 
 **專案專屬提醒**:
 - 依 `.claude/docs/architecture.md` 的 Code Structure 將代碼放到對應模組
-- 新增模組通常意味新 FR → 啟用 `maintaining-spec-md` 處理需求面;同時連動現行架構 → 啟用 `maintaining-architecture-md` 處理架構面;若該設計有 2+ 方案 trade-off → `maintaining-journal-md` 開 ADR
+- 新增模組通常意味新 FR → 啟用 `maintaining-spec-md` 處理需求面;同時連動現行架構 → 啟用 `maintaining-architecture-md` 處理架構面;若該設計有 2+ 方案 trade-off → `maintaining-decisions-md` 開 ADR
 - 遵循 `.claude/rules/code-style.md`(命名、type hints、docstring)與 `.claude/rules/testing-rules.md`(pytest 慣例、fixture、mocking、parametrize)
 - 測試 / 覆蓋率指令依 architecture.md 的 Tech Stack 決定;coverage 目標 70%+ 由階段 3 的 `/pre-pr-check` 統一驗證
 - 技術疑問 → 使用 `context7` MCP 查最新 library 文檔
@@ -204,7 +204,7 @@ SPEC.md 變更須獨立 commit。
 逐項對照,命中即啟用對應 skill:
 
 - **現行架構 / Tech Stack / 目錄變更**(新增 / 移除模組、換框架、加依賴、目錄重組)→ `maintaining-architecture-md` 更新 architecture.md
-- **架構決策**(2+ 方案 trade-off、引入新機制、推翻既有設計)→ `maintaining-journal-md` 開 ADR(既有 ADR 被取代則改 Status + 開新 ADR)
+- **架構決策**(2+ 方案 trade-off、引入新機制、推翻既有設計)→ `maintaining-decisions-md` 開 ADR(既有 ADR 被取代則改 Status + 開新 ADR)
 - **開發規範 / 流程**(新 coding convention、測試策略、Git / CI 流程、效能 / 安全 / 合規限制)→ `maintaining-claude-md`(+ CLAUDE-CHANGELOG.md)
 - **SPEC.md 連動**:Project Overview 變更帶來新開發原則時連動 CLAUDE.md
 
@@ -231,7 +231,7 @@ git branch -d feat/<feature-name>
 
 - **Debug(bug 修復的完整流程)**:階段 1 的需求討論替換為 `superpowers:systematic-debugging`(hypothesis → test → refine 循環)定位 root cause;產出「可重現的 bug 描述 + reproducing 條件」後,之後完全走階段 2-4——`writing-plans` 產出 bite-sized plan(reproducing test 就是 plan 的第一個 task)→ `executing-plans` 執行 → 驗證 → PR → review → merge。**無論單點還是多模組 bug,都走同一條路徑**;避免「這個 bug 很小直接改」的 judgement 誤判(判斷錯了會跳過 plan → 修完才發現其實涉及多處)
 - **Hotfix**:流程同 Debug,差別只在分支基底與 PR target——從 `main` 建 `hotfix/<bug-name>`,PR 到 `main` 與 `dev` 雙分支,事後補 `maintaining-readme-md` 檢查
-- **Refactor 不增新功能**:仍走 `writing-plans → executing-plans`(既有測試通過 → 重構 → 測試仍通過);SPEC 通常不需更新;architecture.md 若涉現行架構改變則更新(連動 `maintaining-architecture-md`),有決策 trade-off 則 `maintaining-journal-md` 開 ADR
+- **Refactor 不增新功能**:仍走 `writing-plans → executing-plans`(既有測試通過 → 重構 → 測試仍通過);SPEC 通常不需更新;architecture.md 若涉現行架構改變則更新(連動 `maintaining-architecture-md`),有決策 trade-off 則 `maintaining-decisions-md` 開 ADR
 - **Spike / Prototype**:建 `spike/<name>` 分支,期間不強制 TDD;**採納必須重寫走正式階段 1-4**,不直接 merge spike 代碼
 
 ---
@@ -245,7 +245,7 @@ git branch -d feat/<feature-name>
 | 1 → 2 | `.claude/SPEC.md` 已含本次需求的 FR + Acceptance Criteria,User 確認 diff(新增 / 修訂或「完全照舊」明確判斷) |
 | 2 → 3 | 所有 plan tasks 完成(executing-plans Step 4 結束)+ 全測試綠 + 實作中產生的新需求 / 細節變化已回寫 SPEC(若有) |
 | 3 → 4 | `/pre-pr-check` 全通過(含 coverage 70%+)+ code-simplifier 建議已處理 + verification-before-completion 通過 + PR 已建立 + CI checks 通過 |
-| 4 完成 | 文檔同步(README / architecture / journal / CLAUDE 視情況)+ PR merged + 分支已清理(local + remote) |
+| 4 完成 | 文檔同步(README / architecture / decisions / CLAUDE 視情況)+ PR merged + 分支已清理(local + remote) |
 
 這比 TDD 更高層——**即使測試全綠,若本次改動產生的新需求 / 細節變化未寫回 SPEC,下次對話的 Claude 會失去 context 重複踩同樣的坑**。
 
