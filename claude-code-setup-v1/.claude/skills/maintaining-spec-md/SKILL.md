@@ -48,12 +48,13 @@ Read 或 Glob `.claude/SPEC.md` → 存在則改走 Workflow B。
 
 具體提問避免空白頁困境。可舉例引導:「例如:不處理批次匯入、不支援多語系」。
 
-> **不在本 workflow 收集的事項**:技術選型(語言版本、外部依賴、技術限制、架構)屬 CLAUDE.md 的 Tech Stack / Architecture 章節範疇——SPEC 建立後若需記錄,啟用 `maintaining-claude-md` skill 接手處理。職責切分清楚,規範鏈才不會重疊漂移。
+> **不在本 workflow 收集的事項**:技術選型(語言版本、外部依賴、技術限制、架構、目錄結構)屬 `.claude/docs/architecture.md` 的 Tech Stack / Code Structure 範疇——SPEC 建立後若需記錄,啟用 `maintaining-architecture-md` skill 接手處理。職責切分清楚,規範鏈才不會重疊漂移。
 
 ### Step A3:草擬初始 SPEC.md
 讀 `references/spec-template.md` 並依結構填寫:
-- 已知資訊填入對應欄位;未知標 `[待確認]`
+- 已知資訊填入對應欄位;未確定處標 `[NEEDS CLARIFICATION: <具體問題>]`(而非靜默假設)
 - Functional Requirements 至少 2-3 個,各含初步 Acceptance Criteria
+- Success Criteria 至少 1-2 條:可量化、technology-agnostic 的專案層級成功指標(避免「應正確運作」這類不可測描述)
 - Change Log 第一行:`Initial specification`
 - 版本號 `v1.0.0`、Last Updated 為當日
 
@@ -89,7 +90,7 @@ git commit -m "spec: initial specification"
 
 只是實作細節 → 不更新 SPEC,繼續實作。
 
-> 若變更涉及技術選型或架構(新依賴、tech stack 換)→ **這不是 SPEC 觸發點**,改啟用 `maintaining-claude-md` 更新 CLAUDE.md。
+> 若變更涉及技術選型或架構(新依賴、tech stack 換、目錄重組)→ **這不是 SPEC 觸發點**,改啟用 `maintaining-architecture-md` 更新 architecture.md。
 
 ### Step B2:展示更新建議並等待確認
 
@@ -166,12 +167,14 @@ git push origin spec/<topic>
 
 SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User:
 
-- 影響 **Project Overview / Tech Stack / Architecture** → 提示啟用 `maintaining-claude-md` 同步開發規範
-- 影響 **user-facing**(新功能、API / CLI 變更、安裝步驟、新依賴)→ 提示啟用 `maintaining-readme-md` 同步對外文檔
+- 影響 **Tech Stack / 架構 / 目錄結構** → 提示啟用 `maintaining-architecture-md` 同步 architecture.md
+- 影響 **開發原則 / 規範 / 流程** → 提示啟用 `maintaining-claude-md` 同步 CLAUDE.md
+- 影響 **user-facing**(新功能、API / CLI 變更、安裝步驟)→ 提示啟用 `maintaining-readme-md` 同步對外文檔
+- 有「為什麼這樣實現」的架構決策(2+ 方案 trade-off)→ 提示啟用 `maintaining-journal-md` 開 ADR
 
-> 此次變更也影響 [CLAUDE.md / README.md] 的 [章節]。要接著啟用 [對應 skill] 同步更新嗎?
+> 此次變更也影響 [architecture.md / CLAUDE.md / README.md] 的 [章節]。要接著啟用 [對應 skill] 同步更新嗎?
 
-兩者都不影響(純內部需求精修)→ 不需啟動下游 hook。
+皆不影響(純內部需求精修)→ 不需啟動下游 hook。
 
 ---
 
@@ -201,7 +204,9 @@ SPEC 是最上游,變動通常向下游傳播。依本次變更性質提示 User
 
 | 對象 | 關係 |
 |------|------|
-| `maintaining-claude-md` | SPEC.md 的 Overview / Functional Requirements 變更帶來新依賴或架構需求時 Step B5 連動 hint |
+| `maintaining-architecture-md` | SPEC 需求變更帶來 Tech Stack / 架構調整時 Step B5 連動 hint |
+| `maintaining-claude-md` | SPEC.md 的 Overview 變更帶來新開發原則時 Step B5 連動 hint |
+| `maintaining-journal-md` | 需求的實現方式涉及 2+ 方案 trade-off 時連動開 ADR |
 | `maintaining-readme-md` | SPEC.md 的 user-facing 變更(新功能 / API / 安裝步驟)時 Step B5 連動 hint |
 | `.claude/rules/git-rules.md` | Commit 格式(`spec:` type);SPEC 獨立 commit |
 | `tdd-feature-workflow` | 本 skill 是 TDD 流程的「需求確認階段」——先更新 SPEC,User 確認後才進入測試先行 |

@@ -1,5 +1,5 @@
 ---
-description: PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints）
+description: PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、跨文件一致性、SPEC / architecture / journal / README hints）
 ---
 
 Run pre-PR checks that complement CI. `.github/workflows/ci.yml` is the authoritative pre-merge gate for ruff / format / mypy / tests / coverage; this command does **not** repeat those tools. It runs:
@@ -45,6 +45,24 @@ Findings 的處理流程(詳細呈現 → CLAUDE 標 [強烈建議] / [可選] /
 
 若有外部 ref → WARNING,列出 finding 與所在檔;建議用 backticks 包或改寫(見 `git-rules.md` Cross-repo 引用安全格式)。不 block——hook 會在實際 `gh pr create --body-file` 時以命令文本層級擋下(若 body-file 路徑出現在 command,hook 至少能看到引用本身;但內容仍須此處掃描)。
 
+### 2.3 Cross-artifact consistency（文件一致性掃描）
+
+借 spec-kit `/analyze` 概念:以工具掃描取代手動 health check。對存在的文件(`.claude/SPEC.md`、`.claude/docs/architecture.md`、`.claude/docs/journal/journal.md`)逐項驗:
+
+1. **`[NEEDS CLARIFICATION]` 殘留**——SPEC 內未解的釐清標記不該帶進 PR:
+   ```bash
+   grep -rn 'NEEDS CLARIFICATION' .claude/SPEC.md 2>/dev/null
+   ```
+   命中 → WARNING:需求未收斂,建議 PR 前用 `maintaining-spec-md` 解決。
+
+2. **ADR Status 一致性**——`journal.md` 的 Decision Index 表所列 Status,須與對應 ADR 本體的 Status 欄一致。逐條比對,不一致 → WARNING(列出 ADR 編號)。
+
+3. **Cross-ref 連結可解析**——SPEC / architecture / journal 之間的 markdown 連結(檔案路徑 + 同檔錨點)是否指向實際存在的目標。斷鏈 → WARNING(列出來源與目標)。
+
+4. **Footer 版本一致**——對有 footer 的文件(architecture.md、SPEC.md、CLAUDE.md),`Last Updated` / `Version` 是否存在且與該檔 Change Log / CHANGELOG 最新條目對得上。不一致 → WARNING。
+
+皆通過 → 一行 pass。本層為 soft gate(warn but continue),提供文件健康度訊號,不阻擋 PR。
+
 ## Level 3: Hints (inform only, no gate)
 
 ### 3.1 SPEC.md 對應性
@@ -57,15 +75,27 @@ Read `.claude/SPEC.md`. 本次 branch 的變更是否已在 SPEC 中有對應的
 Inspect changed files in this branch. 是否包含 user-facing 變更(新功能、API 變動、安裝步驟變動、新環境變數、新依賴)?
 若是 → hint: 建議 PR 前啟用 `maintaining-readme-md` skill。
 
-### 3.3 CLAUDE.md / CLAUDE-CHANGELOG.md sync
+### 3.3 architecture.md sync
+Read `.claude/docs/architecture.md`(若存在)。本次 branch 是否含**現行架構**變更?
+- 新增 / 移除模組、服務、元件;目錄重組
+- Tech Stack 變更(新依賴於 `pyproject.toml`、換框架、加 DB / queue / SDK)
+- 核心資料流改變
 
-對照 `maintaining-claude-md` 5 類觸發情境逐項 check;任一命中 → hint:
+任一命中 → hint: 啟用 `maintaining-architecture-md` 同步 architecture.md。
+
+### 3.4 journal / ADR sync
+本次 branch 是否含**架構決策**(在 2+ 方案中選 1 且有 trade-off、引入新依賴 / 機制、推翻既有設計)?
+- 是,且尚未有對應 ADR → hint: 啟用 `maintaining-journal-md` 補 ADR(記錄 Why)
+- 既有 ADR 因本次變更被取代 → hint: 更新該 ADR Status 為 Superseded + 開新 ADR
+
+### 3.5 CLAUDE.md / CLAUDE-CHANGELOG.md sync
+
+對照 `maintaining-claude-md` 觸發情境逐項 check;任一命中 → hint:
 
 - **開發規範**:新 coding convention、新流程要求、新測試策略(覆蓋率、測試類型)
-- **專案結構**:新增 / 移除目錄、模組重組、新技術堆疊
 - **工作流程**:Git workflow / CI / CD / 文檔更新流程變更
 - **專案需求**:User 特殊習慣、效能 / 安全 / 合規限制
-- **SPEC.md 連動**:Project Overview / FR 變更帶來新依賴或架構需求(若 L3.1 已 hint SPEC 更新且涉此類則連動)
+- **SPEC.md 連動**:Project Overview 變更帶來新開發原則(技術棧 / 架構變更走 L3.3,不在此)
 
 任一命中 → hint: 啟用 `maintaining-claude-md` 同步 CLAUDE.md + CLAUDE-CHANGELOG.md。
 
@@ -80,9 +110,12 @@ Pre-PR Check Results
 [L1] FAILED — pytest exit non-zero (e.g., 2 tests failed / coverage 65% < 70%)
 [L2.1] code-simplifier: <N> suggestions (see above)
 [L2.2] external-ref scan: <N> cross-repo refs in pr-body.md
+[L2.3] consistency: 1 NEEDS CLARIFICATION 殘留 in SPEC.md; ADR-0003 Status 與 Index 不一致
 [L3.1] SPEC.md: branch changes not yet reflected
 [L3.2] README: user-facing changes detected → consider maintaining-readme-md
-[L3.3] CLAUDE.md: tech stack changed in pyproject.toml → consider maintaining-claude-md
+[L3.3] architecture.md: new dependency in pyproject.toml → consider maintaining-architecture-md
+[L3.4] journal: architecture decision detected, no ADR yet → consider maintaining-journal-md
+[L3.5] CLAUDE.md: new workflow rule → consider maintaining-claude-md
 
 Hard gate: FAILED → fix before PR
 Soft warnings: <N>; Hints: <N>

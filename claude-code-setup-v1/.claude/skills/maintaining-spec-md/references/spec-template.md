@@ -38,6 +38,17 @@ SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git
 
 ---
 
+## Success Criteria
+
+專案 / 產品**層級**的可量化成功指標(回答「整體做成什麼樣算成功」),與單一功能的 Acceptance Criteria 不同層級。每條須**可量化**(有閾值或 yes/no)且 **technology-agnostic**(描述使用者 / 業務結果,不綁實作技術)。
+
+- **SC-001**: [可量化結果,例如「user 能在 2 分鐘內完成註冊」]
+- **SC-002**: [可量化結果,例如「主要任務首次成功率 ≥ 90%」]
+
+反模式:`「系統應正確運作」`、`「速度要快」`——無閾值、不可測,不可寫。
+
+---
+
 ## Change Log
 | Date       | Version | Changes                          |
 |------------|---------|----------------------------------|
@@ -49,4 +60,15 @@ SPEC.md 描述「專案**是**什麼」的靜態契約;「做到哪了」由 git
 **Version**: v1.0.0
 ```
 
-> 技術選型(語言版本、外部依賴、技術限制、架構)屬 CLAUDE.md 的 Tech Stack / Architecture 章節範疇,**不寫在 SPEC.md**——避免規範鏈職責重疊。SPEC 建立後若需記錄技術上下文,啟用 `maintaining-claude-md` skill 處理。
+### 未確定項目用 `[NEEDS CLARIFICATION]` 標記
+
+草擬或更新 SPEC 時,尚未確定的細節一律標 `[NEEDS CLARIFICATION: <具體問題>]`,而非靜默假設一個值。範例:
+
+```markdown
+- **Acceptance Criteria**:
+  - [ ] 支援匯出格式 [NEEDS CLARIFICATION: CSV / Excel / 兩者皆要?]
+```
+
+這些標記是 `/pre-pr-check` 一致性檢查的掃描對象——殘留未解會被提示,確保需求在實作前收斂。
+
+> 技術選型(語言版本、外部依賴、技術限制、架構)屬 `.claude/docs/architecture.md` 的 Tech Stack / Code Structure 範疇,**不寫在 SPEC.md**——避免規範鏈職責重疊。SPEC 建立後若需記錄技術上下文,啟用 `maintaining-architecture-md` skill 處理。
