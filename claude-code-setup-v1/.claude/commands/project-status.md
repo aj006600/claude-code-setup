@@ -29,11 +29,11 @@ git log --oneline -5 # recent commits
 - `.claude/CLAUDE.md`
 
 **Edge cases**:
-- SPEC.md 不存在 → 顯示「not yet created — 描述專案需求以觸發 `maintaining-spec-md`」
-- Version 仍是字面 `<vX.Y.Z>`(template 未客製化) → 顯示「not yet initialized — 執行 `maintaining-claude-md` Workflow A」
+- 三檔皆以 placeholder 形式 ship;footer `Version` 仍是字面 `<vX.Y.Z>`(或頂端仍有 `<!-- TEMPLATE NOTICE -->`) → 顯示「not yet initialized — 執行對應 Workflow A」(SPEC → `maintaining-spec-md`、architecture → `maintaining-architecture-md`、CLAUDE → `maintaining-claude-md`)
+- 檔案實際不存在(極少見,被刪) → 顯示「missing」
 
-### SPEC.md overview (if exists)
-計算 `## Functional Requirements` 章節下 `### ` headings 數 → N_features。
+### SPEC.md overview (if initialized)
+若 SPEC.md 已客製化(無 NOTICE),計算 `## Functional Requirements` 章節下 `### ` headings 數 → N_features。仍是 placeholder(含範例骨架)→ 不報 FR 數,顯示 not yet initialized。
 
 SPEC 不追蹤進度(進度由 git branch / PR merge 反映);這裡只展示功能總數作為 baseline。
 
@@ -45,10 +45,10 @@ Project Status
 Branch: <branch-name> (<sync state>)
 Uncommitted: clean | <N> files changed
 
-SPEC.md: <version> (<date>) | not yet created
+SPEC.md: <version> (<date>) | not yet initialized
 - Functional Requirements: <N>
 
-architecture.md: <version> (<date>) | not yet created
+architecture.md: <version> (<date>) | not yet initialized
 
 CLAUDE.md: <version> (<date>) | not yet initialized
 

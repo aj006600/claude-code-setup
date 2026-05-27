@@ -144,8 +144,8 @@ git remote add origin https://github.com/<user>/<repo>.git
 
 Claude Code 會自動完成：
 
-1. **建立 SPEC.md**：`maintaining-spec-md` skill 偵測到無 SPEC.md → Workflow A 起草
-2. **客製 CLAUDE.md**：`maintaining-claude-md` skill 偵測到 `<!-- TEMPLATE NOTICE -->` 區塊 → Workflow A 依對話填入 Project Name / framework / Architecture 等 `<...>` placeholder、移除 NOTICE 區塊
+1. **客製 SPEC.md**：`maintaining-spec-md` skill 偵測到 SPEC.md 的 `<!-- TEMPLATE NOTICE -->` → Workflow A 經需求對話填入 placeholder、移除 NOTICE
+2. **客製 CLAUDE.md**：`maintaining-claude-md` skill 偵測到 `<!-- TEMPLATE NOTICE -->` 區塊 → Workflow A 依對話填入 Project Name 等 `<...>` placeholder、移除 NOTICE 區塊(架構 / Tech Stack 由 `maintaining-architecture-md` 處理 architecture.md)
 3. 展示 diff → 你確認 → 一次 commit
 
 若需求尚不明確，skill 會主動詢問；若對話尚未提供足夠資訊（例如 framework 尚未選定），對應 placeholder 暫不替換，由後續對話中的 Workflow B 補上。
@@ -166,6 +166,7 @@ claude-code-setup-v1/
 │   └── decisions/decisions.md        # Template 自身演進的決策史 ADR（對應 CHANGELOG 的 Why）
 ├── .claude/                      # User 複製此目錄到專案
 │   ├── CLAUDE.md                 # 開發原則 / constitution（需客製；Workflow A 自動處理）
+│   ├── SPEC.md                   # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）
 │   ├── CLAUDE-CHANGELOG.md       # 空種子——user 專案自己的 CLAUDE.md 變更歷史
 │   ├── settings.json             # Claude Code 設定（含 hook 註冊）
 │   ├── rules/                    # 開發規範
