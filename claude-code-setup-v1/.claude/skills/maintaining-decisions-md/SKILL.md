@@ -1,13 +1,13 @@
 ---
-name: maintaining-journal-md
-description: Use when an architecture or design decision is made with 2+ viable alternatives and a real trade-off, when reverting or adjusting a prior decision, when introducing a new dependency / communication mechanism / deployment mode, when an incident is resolved (root cause worth recording), when a tactical lesson surfaces (a pitfall worth not repeating), or at a milestone / version tag. Also use when the project has no journal yet and a decision is being captured for the first time. Trigger proactively even without explicit mention of "ADR" or "journal" — any conversation where you chose X over Y for a stated reason, or learned something the hard way, should invoke this skill, because the "why" behind decisions is the first thing lost as a project ages and the most expensive to reconstruct.
+name: maintaining-decisions-md
+description: Use when an architecture or design decision is made with 2+ viable alternatives and a real trade-off, when reverting or adjusting a prior decision, when introducing a new dependency / communication mechanism / deployment mode, when an incident is resolved (root cause worth recording), when a tactical lesson surfaces (a pitfall worth not repeating), or at a milestone / version tag. Also use when the project has no decisions yet and a decision is being captured for the first time. Trigger proactively even without explicit mention of "ADR" or "decisions" — any conversation where you chose X over Y for a stated reason, or learned something the hard way, should invoke this skill, because the "why" behind decisions is the first thing lost as a project ages and the most expensive to reconstruct.
 ---
 
-# Maintaining journal.md
+# Maintaining decisions.md
 
-這個 skill 讓 Claude Code 正確維護 `.claude/docs/journal/journal.md`——專案的「Why 層」決策史。它記錄**為什麼這樣決定**(ADR)、**出過什麼事**(Postmortem)、**學到什麼**(Lessons)、**何時發生**(Timeline)。
+這個 skill 讓 Claude Code 正確維護 `.claude/docs/decisions/decisions.md`——專案的「Why 層」決策史。它記錄**為什麼這樣決定**(ADR)、**出過什麼事**(Postmortem)、**學到什麼**(Lessons)、**何時發生**(Timeline)。
 
-完整格式規範見 `.claude/docs/journal/CONVENTIONS.md`(本 skill 的 bundled reference,撰寫前必讀對應段落)。
+完整格式規範見 `.claude/docs/decisions/CONVENTIONS.md`(本 skill 的 bundled reference,撰寫前必讀對應段落)。
 
 ---
 
@@ -39,10 +39,10 @@ description: Use when an architecture or design decision is made with 2+ viable 
 
 ---
 
-## Entry：偵測 journal 狀態
+## Entry：偵測 decisions 狀態
 
 ```bash
-grep -c '^### ADR-' .claude/docs/journal/journal.md
+grep -c '^### ADR-' .claude/docs/decisions/decisions.md
 ```
 
 - 回 0(空種子)→ 本次是第一條決策,寫 ADR-0001,並把空種子的「（尚無）」佔位列換成正式 Decision Index 條目。
@@ -60,7 +60,7 @@ grep -c '^### ADR-' .claude/docs/journal/journal.md
 
 **不直接寫檔。** 在對話中展示完整 ADR 草稿(依 CONVENTIONS §2.2 格式):
 
-    journal 新增建議
+    decisions 新增建議
 
     **編號**：ADR-NNNN（現有最大 +1）
 
@@ -84,13 +84,13 @@ grep -c '^### ADR-' .claude/docs/journal/journal.md
 
 ### Step A3：User 確認後寫入
 
-1. 在 `journal.md` §3 ADRs 新增該 ADR(編號順序)。
+1. 在 `decisions.md` §3 ADRs 新增該 ADR(編號順序)。
 2. 同步在 §1 Decision Index 新增一列(標題、Status、Date、領域標籤),Status 與本體一致。
 3. 視情況在 §5 Timeline 加一行(里程碑型決策)。
 
 ### Step A4：依分支策略 commit
 
-journal 變更**獨立成一個 commit**,不混入功能 code。commit message:`docs(journal): add ADR-NNNN <topic>`。分支策略比照 `maintaining-claude-md`(功能分支內就地 commit;主分支則開 `docs/journal-<topic>` 分支)。
+decisions 變更**獨立成一個 commit**,不混入功能 code。commit message:`docs(decisions): add ADR-NNNN <topic>`。分支策略比照 `maintaining-claude-md`(功能分支內就地 commit;主分支則開 `docs/decisions-<topic>` 分支)。
 
 ---
 
@@ -117,8 +117,8 @@ journal 變更**獨立成一個 commit**,不混入功能 code。commit message:`
 | `tdd-feature-workflow` | 階段 1(需求/設計)出現架構選擇時觸發本 skill 寫 ADR;階段 4(merge)里程碑更新 Timeline |
 | `maintaining-spec-md` | SPEC 的需求「怎麼實現」由某 ADR 決定時,SPEC 可 cross-ref 該 ADR;反向,ADR 的 Decision 影響需求時提示更新 SPEC |
 | `architecture.md` | architecture.md 的 Design Decisions 索引每條 cross-ref 對應 ADR;架構段落變動 → 對應 ADR 要存在 |
-| `.claude/docs/journal/CONVENTIONS.md` | 撰寫前必讀:ADR/Lesson/Postmortem/Timeline 格式、編號、Status 生命週期、引用協定 |
-| `.claude/rules/git-rules.md` | Commit 格式(`docs(journal):`);journal 獨立 commit |
+| `.claude/docs/decisions/CONVENTIONS.md` | 撰寫前必讀:ADR/Lesson/Postmortem/Timeline 格式、編號、Status 生命週期、引用協定 |
+| `.claude/rules/git-rules.md` | Commit 格式(`docs(decisions):`);decisions 獨立 commit |
 
 ---
 
@@ -128,7 +128,7 @@ journal 變更**獨立成一個 commit**,不混入功能 code。commit message:`
 
 **正確反應**(先記決策脈絡):
 
-    這是架構決策(Postgres vs 本地 SQLite,有 trade-off),啟用 maintaining-journal-md。
+    這是架構決策(Postgres vs 本地 SQLite,有 trade-off),啟用 maintaining-decisions-md。
 
     ADR-NNNN 草稿：
     **Context** — 多人並發服務,需跨 instance 共享 thread state...
@@ -144,7 +144,7 @@ journal 變更**獨立成一個 commit**,不混入功能 code。commit message:`
 
 ## Gotchas（容易忘記的關鍵點）
 
-- **journal 獨立 commit**:不跟 feature code 混在同一 commit,確保決策歷史可追。
+- **decisions 獨立 commit**:不跟 feature code 混在同一 commit,確保決策歷史可追。
 - **Decision Index 與 ADR 本體必須同步**:Status 兩處不一致即等於對讀者撒謊。
 - **ADR 永久保留**:被取代改 Status,不刪內容——刪除會破壞 cross-ref 與歷史。
 - **User 未確認前不寫檔**:展示草稿 → 確認 → 才動手(同其他 maintaining-* skill 的信任原則)。
@@ -152,4 +152,4 @@ journal 變更**獨立成一個 commit**,不混入功能 code。commit message:`
 
 ---
 
-> **Template 自身的 journal**:claude-code-setup-v1 template 維護自己的演進決策於 `docs/journal/`(repo 層、非 `.claude/` 下,不隨 adopter 複製),與不會 ship 的 `CHANGELOG.md` 同級。Adopter 採用後在自己的 `.claude/docs/journal/journal.md`(空種子)累積專案決策。兩者互不干擾,同 `CHANGELOG.md` 與 `.claude/CLAUDE-CHANGELOG.md` 的分工模式。
+> **Template 自身的 decisions**:claude-code-setup-v1 template 維護自己的演進決策於 `docs/decisions/`(repo 層、非 `.claude/` 下,不隨 adopter 複製),與不會 ship 的 `CHANGELOG.md` 同級。Adopter 採用後在自己的 `.claude/docs/decisions/decisions.md`(空種子)累積專案決策。兩者互不干擾,同 `CHANGELOG.md` 與 `.claude/CLAUDE-CHANGELOG.md` 的分工模式。

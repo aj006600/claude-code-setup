@@ -1,8 +1,8 @@
-# Journal — claude-code-setup-v1 (template 自身演進)
+# Decisions — claude-code-setup-v1 (template 自身演進)
 
 > 本檔記錄 **template 自身**的決策脈絡(Why),與 `CHANGELOG.md`(What changed)同級、**不隨 `.claude/` ship 給 adopter**。
-> 格式規範沿用 template 自己 ship 出去的 [`.claude/docs/journal/CONVENTIONS.md`](../../.claude/docs/journal/CONVENTIONS.md)(dogfood:用自己交付的規範維護自己)。
-> Adopter 採用後在自己的 `.claude/docs/journal/journal.md`(空種子)累積專案決策,與本檔互不干擾。
+> 格式規範沿用 template 自己 ship 出去的 [`.claude/docs/decisions/CONVENTIONS.md`](../../.claude/docs/decisions/CONVENTIONS.md)(dogfood:用自己交付的規範維護自己)。
+> Adopter 採用後在自己的 `.claude/docs/decisions/decisions.md`(空種子)累積專案決策,與本檔互不干擾。
 
 ---
 
@@ -10,13 +10,14 @@
 
 | ADR | 標題 | Status | Date | 領域 |
 |-----|------|--------|------|------|
-| [ADR-0001](#adr-0001-引入-journal-決策層補-why-層缺口) | 引入 journal 決策層,補 Why 層缺口 | Accepted | 2026-05-27 | Documentation |
+| [ADR-0001](#adr-0001-引入-decisions-決策層補-why-層缺口) | 引入 decisions 決策層,補 Why 層缺口 | Accepted | 2026-05-27 | Documentation |
 | [ADR-0002](#adr-0002-軸分離不照搬-prd) | 軸分離,不照搬 prd/ | Accepted | 2026-05-27 | Documentation |
 | [ADR-0003](#adr-0003-從-claudemd-抽出-architecture--tech-stack-到-architecturemd) | 從 CLAUDE.md 抽出 Architecture + Tech Stack 到 architecture.md | Accepted | 2026-05-27 | Architecture |
 | [ADR-0004](#adr-0004-specmd-走精簡升級needs-clarification--success-criteria) | SPEC.md 走精簡升級(NEEDS CLARIFICATION + Success Criteria) | Accepted | 2026-05-27 | Documentation |
 | [ADR-0005](#adr-0005-一致性治理用-pre-pr-check-command非手動-health-check) | 一致性治理用 /pre-pr-check command | Accepted | 2026-05-27 | Workflow |
 | [ADR-0006](#adr-0006-採精煉版而非照搬-work-repo-全套-conventions) | 採精煉版而非照搬 work-repo 全套 CONVENTIONS | Accepted | 2026-05-27 | Process |
 | [ADR-0007](#adr-0007-architecturemd-用獨立的-maintaining-architecture-md-skill) | architecture.md 用獨立的 maintaining-architecture-md skill | Accepted | 2026-05-27 | Architecture |
+| [ADR-0008](#adr-0008-決策史命名採-decisions非-journal) | 決策史命名採 decisions(非 journal) | Accepted | 2026-05-27 | Documentation |
 
 ---
 
@@ -30,17 +31,17 @@
 
 ## 3. ADRs
 
-### ADR-0001: 引入 journal 決策層,補 Why 層缺口
+### ADR-0001: 引入 decisions 決策層,補 Why 層缺口
 
 | 欄位 | 內容 |
 |------|------|
 | Status | Accepted |
 | Date | 2026-05-27 |
-| Refs | work-repo `.claude/docs/journal`、`.claude/docs/journal/CONVENTIONS.md` |
+| Refs | work-repo `.claude/docs/journal`、`.claude/docs/journal/CONVENTIONS.md`(該 repo 實際命名為 journal,見 ADR-0008) |
 
 **Context** — v1 原本涵蓋 What(SPEC)、規範(CLAUDE)、user-facing(README/docs)、實作計畫(plans),但完全沒有記錄「為什麼這樣決定」的一層。code 說 What/How、git log 說 When,Why 最容易隨人員流動蒸發、事後最難重建。研究 GitHub spec-kit 與 oh-my-claudecode 後確認:連 spec-kit 都只有 constitution(原則,向前看)與 per-feature ephemeral research,沒有持久跨專案的決策史;oh-my-claudecode 的「PRD」是自動迴圈用的執行狀態 JSON,非人讀決策文件。Why 層是業界工具普遍缺席、最具差異化的一塊。
 
-**Decision** — 引入 journal/ 系統(ADR + Lessons + Timeline,Postmortem 選配),做成 `maintaining-journal-md` skill,在決策點自動觸發。ADR 採 Nygard 格式,屬業界成熟最佳實踐。
+**Decision** — 引入 decisions/ 系統(ADR + Lessons + Timeline,Postmortem 選配),做成 `maintaining-decisions-md` skill,在決策點自動觸發。ADR 採 Nygard 格式,屬業界成熟最佳實踐。
 
 **Consequences**
 - 正面:補上決策史;與既有 maintaining-* skill 家族一致;adopter 拿到「為什麼」的持久紀錄。
@@ -60,7 +61,7 @@
 
 **Context** — 最初構想是把 work-repo 的 prd/(prd.md + prd_roadmap + prd_change_log)整套搬進來。但 prd.md 七成內容是「現行架構 + 設計決策摘要 + tech stack + risk」,與 v1 既有的 SPEC.md(需求)是**不同軸**;若並排會與 SPEC 重疊(雙頭維護),而這正是 work-repo 自己的 CONVENTIONS 列為頭號禁忌。changelog/roadmap 部分 v1 已有更工整的等價物(CLAUDE-CHANGELOG + SPEC Change Log + SemVer)。
 
-**Decision** — 不新增 prd.md。改採「按軸分離 + 單一真相 + 交叉連結」:需求留 SPEC.md、現行架構獨立成 architecture.md、Why 進 journal、changelog 沿用既有兩軌。prd.md 想要的「可讀現況總覽」由 architecture.md 承接。
+**Decision** — 不新增 prd.md。改採「按軸分離 + 單一真相 + 交叉連結」:需求留 SPEC.md、現行架構獨立成 architecture.md、Why 進 decisions、changelog 沿用既有兩軌。prd.md 想要的「可讀現況總覽」由 architecture.md 承接。
 
 **Consequences**
 - 正面:零雙頭維護;每軸單一 SoT;比照搬整套 prd/ 精煉。
@@ -80,7 +81,7 @@
 
 **Context** — v1 原本把 Architecture 樹與 Tech Stack 放在 CLAUDE.md(開發規範檔)裡,而「設計決策摘要」無家可歸。spec-kit 的切法給了乾淨範式:constitution(原則)/ spec(what+why)/ plan(how+tech)分離。CLAUDE.md 對應 constitution,不該混入 how/tech。
 
-**Decision** — 把 Architecture + Tech Stack + 目錄結構移到新檔 `.claude/docs/architecture.md`,CLAUDE.md 回歸純 constitution(原則/規範/workflow),只保留指向 architecture.md / SPEC / journal 的指標表。
+**Decision** — 把 Architecture + Tech Stack + 目錄結構移到新檔 `.claude/docs/architecture.md`,CLAUDE.md 回歸純 constitution(原則/規範/workflow),只保留指向 architecture.md / SPEC / decisions 的指標表。
 
 **Consequences**
 - 正面:CLAUDE.md 軸純淨;architecture.md 成為現行架構單一 SoT;對齊 spec-kit 範式。
@@ -140,7 +141,7 @@
 
 **Context** — work-repo 的 conventions 為一個 14-ADR、多階段、合規驅動的複雜產品量身打造,帶 Risk Register、Glossary、SMART Acceptance、Postmortem severity matrix、月度 health check 等。v1 是通用 lean template,全套搬入會違反其「避免過度設計」哲學(work-repo 自己的 ADR-0014 也以同理由選 Hexagonal 而非完整 DDD)。
 
-**Decision** — right-sizing:journal 取 ADR + Lessons + Timeline 為核心,Postmortem 列為選配;Risk/Glossary/SMART 等不強制納入。journal CONVENTIONS 精煉到約 240 行。
+**Decision** — right-sizing:decisions 取 ADR + Lessons + Timeline 為核心,Postmortem 列為選配;Risk/Glossary/SMART 等不強制納入。decisions CONVENTIONS 精煉到約 240 行。
 
 **Consequences**
 - 正面:符合 lean 哲學;adopter 認知負擔低;核心 80/20 價值保留。
@@ -160,7 +161,7 @@
 
 **Context** — Architecture + Tech Stack 從 CLAUDE.md 抽出後需要維護歸屬。可選 (a) 擴充 maintaining-claude-md 兼管,或 (b) 新增專責 skill。
 
-**Decision** — 新增專責的 `maintaining-architecture-md` skill,維持 v1 既有「一份 doc SoT 對一個 maintainer」的對稱(maintaining-spec/architecture/claude/readme/journal,共 5 個)。architecture.md 的觸發情境(新模組、換框架、目錄重組、data flow)與 CLAUDE.md 的規範觸發明顯不同,分開觸發更準。
+**Decision** — 新增專責的 `maintaining-architecture-md` skill,維持 v1 既有「一份 doc SoT 對一個 maintainer」的對稱(maintaining-spec/architecture/claude/readme/decisions,共 5 個)。architecture.md 的觸發情境(新模組、換框架、目錄重組、data flow)與 CLAUDE.md 的規範觸發明顯不同,分開觸發更準。
 
 **Consequences**
 - 正面:SoT-per-skill 一致;觸發語意清晰、不互相誤觸;maintaining-claude-md 名實相符。
@@ -168,6 +169,26 @@
 
 **Alternatives Considered**
 - 併入 maintaining-claude-md:被否決——讓 claude skill 名實不符,且架構/規範觸發語意混雜易誤觸。
+
+### ADR-0008: 決策史命名採 decisions(非 journal)
+
+| 欄位 | 內容 |
+|------|------|
+| Status | Accepted |
+| Date | 2026-05-27 |
+| Refs | [ADR-0001](#adr-0001-引入-decisions-決策層補-why-層缺口);MADR(`docs/decisions/`)、adr-tools(`doc/adr/`)命名慣例 |
+
+**Context** — 初版沿用 work-repo 的命名 `journal`(目錄 `.claude/docs/journal/`、skill `maintaining-journal-md`)。查證業界標準後確認:ADR 集合的慣例名是 `decisions`(MADR)或 `adr`(adr-tools),`journal` 並非標準術語,且字義籠統(可指 log 輸出 / 日記 / 會計分錄)。本檔以 ADR 為核心,標準命名利於評估者辨識、與工具鏈對齊。
+
+**Decision** — 改名為 `decisions`:目錄 `.claude/docs/decisions/`、主檔 `decisions.md`、skill `maintaining-decisions-md`;template 自身的決策史置於 `docs/decisions/`。Lessons / Timeline 仍併於同檔(本系統是複合體、非純 ADR,故沿用單檔)。
+
+**Consequences**
+- 正面:對齊 MADR / adr-tools 標準術語;名實相符;對外辨識度高。
+- 負面:一次性連動改名約十餘處(已完成);與來源 work-repo 的 `journal` 命名刻意分歧。
+
+**Alternatives Considered**
+- 保留 `journal`:被否決——非標準術語;標準名的紅利雖主要綁 one-file-per-ADR 結構,但「正式產品對外辨識度」仍值得對齊。
+- `decision-log`:被否決——較 journal 好,但仍非工具鏈標準名;`decisions`(MADR)最標準。
 
 ---
 
@@ -196,6 +217,7 @@
 ### 2026-05-27:決策文件系統優化
 
 - 與 user 多輪 brainstorming:對照 work-repo `.claude/docs` 概念、研究 GitHub spec-kit 與 oh-my-claudecode 的機制。
-- 確立方向:加 journal(Why 層)、軸分離不照搬 prd、CLAUDE.md 抽出 Architecture+Tech Stack、SPEC 精簡升級、一致性用 command。產出 ADR-0001 ~ ADR-0007。
-- 在 `feat/decision-docs-system` 分支實作:ship 端(journal 骨架 + architecture.md + 2 個新 maintaining skill + SPEC/pre-pr-check 升級)、連動修正既有 skill 路由、dogfood 本 journal。
+- 確立方向:加 decisions(Why 層)、軸分離不照搬 prd、CLAUDE.md 抽出 Architecture+Tech Stack、SPEC 精簡升級、一致性用 command。產出 ADR-0001 ~ ADR-0007。
+- 在 `feat/decision-docs-system` 分支實作:ship 端(decisions 骨架 + architecture.md + 2 個新 maintaining skill + SPEC/pre-pr-check 升級)、連動修正既有 skill 路由、dogfood 本 decisions。
+- PR review 期間決議:移除 migration 指引(視為多餘);命名由 `journal` 改為標準術語 `decisions`(ADR-0008),連動改名約十餘處。
 - 對應 PR:`feat/decision-docs-system` → `main`(暫不 merge)。

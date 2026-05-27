@@ -1,5 +1,5 @@
 ---
-description: PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、跨文件一致性、SPEC / architecture / journal / README hints）
+description: PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、跨文件一致性、SPEC / architecture / decisions / README hints）
 ---
 
 Run pre-PR checks that complement CI. `.github/workflows/ci.yml` is the authoritative pre-merge gate for ruff / format / mypy / tests / coverage; this command does **not** repeat those tools. It runs:
@@ -47,7 +47,7 @@ Findings 的處理流程(詳細呈現 → CLAUDE 標 [強烈建議] / [可選] /
 
 ### 2.3 Cross-artifact consistency（文件一致性掃描）
 
-借 spec-kit `/analyze` 概念:以工具掃描取代手動 health check。對存在的文件(`.claude/SPEC.md`、`.claude/docs/architecture.md`、`.claude/docs/journal/journal.md`)逐項驗:
+借 spec-kit `/analyze` 概念:以工具掃描取代手動 health check。對存在的文件(`.claude/SPEC.md`、`.claude/docs/architecture.md`、`.claude/docs/decisions/decisions.md`)逐項驗:
 
 1. **`[NEEDS CLARIFICATION]` 殘留**——SPEC 內未解的釐清標記不該帶進 PR:
    ```bash
@@ -55,9 +55,9 @@ Findings 的處理流程(詳細呈現 → CLAUDE 標 [強烈建議] / [可選] /
    ```
    命中 → WARNING:需求未收斂,建議 PR 前用 `maintaining-spec-md` 解決。
 
-2. **ADR Status 一致性**——`journal.md` 的 Decision Index 表所列 Status,須與對應 ADR 本體的 Status 欄一致。逐條比對,不一致 → WARNING(列出 ADR 編號)。
+2. **ADR Status 一致性**——`decisions.md` 的 Decision Index 表所列 Status,須與對應 ADR 本體的 Status 欄一致。逐條比對,不一致 → WARNING(列出 ADR 編號)。
 
-3. **Cross-ref 連結可解析**——SPEC / architecture / journal 之間的 markdown 連結(檔案路徑 + 同檔錨點)是否指向實際存在的目標。斷鏈 → WARNING(列出來源與目標)。
+3. **Cross-ref 連結可解析**——SPEC / architecture / decisions 之間的 markdown 連結(檔案路徑 + 同檔錨點)是否指向實際存在的目標。斷鏈 → WARNING(列出來源與目標)。
 
 4. **Footer 版本一致**——對有 footer 的文件(architecture.md、SPEC.md、CLAUDE.md),`Last Updated` / `Version` 是否存在且與該檔 Change Log / CHANGELOG 最新條目對得上。不一致 → WARNING。
 
@@ -83,9 +83,9 @@ Read `.claude/docs/architecture.md`(若存在)。本次 branch 是否含**現行
 
 任一命中 → hint: 啟用 `maintaining-architecture-md` 同步 architecture.md。
 
-### 3.4 journal / ADR sync
+### 3.4 decisions / ADR sync
 本次 branch 是否含**架構決策**(在 2+ 方案中選 1 且有 trade-off、引入新依賴 / 機制、推翻既有設計)?
-- 是,且尚未有對應 ADR → hint: 啟用 `maintaining-journal-md` 補 ADR(記錄 Why)
+- 是,且尚未有對應 ADR → hint: 啟用 `maintaining-decisions-md` 補 ADR(記錄 Why)
 - 既有 ADR 因本次變更被取代 → hint: 更新該 ADR Status 為 Superseded + 開新 ADR
 
 ### 3.5 CLAUDE.md / CLAUDE-CHANGELOG.md sync
@@ -114,7 +114,7 @@ Pre-PR Check Results
 [L3.1] SPEC.md: branch changes not yet reflected
 [L3.2] README: user-facing changes detected → consider maintaining-readme-md
 [L3.3] architecture.md: new dependency in pyproject.toml → consider maintaining-architecture-md
-[L3.4] journal: architecture decision detected, no ADR yet → consider maintaining-journal-md
+[L3.4] decisions: architecture decision detected, no ADR yet → consider maintaining-decisions-md
 [L3.5] CLAUDE.md: new workflow rule → consider maintaining-claude-md
 
 Hard gate: FAILED → fix before PR

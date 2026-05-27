@@ -1,13 +1,13 @@
 ---
 name: maintaining-architecture-md
-description: Use when the current system architecture changes — new module / component / service added or removed, directory structure reorganized, tech stack changes (new dependency, framework swap, database / queue / SDK added), data flow changes, or when a journal ADR is accepted that alters how the system is built. Also use when the project has no architecture.md yet and the architecture is taking shape. Trigger proactively even without explicit mention of "architecture" — any conversation about how the system is structured *now*, what it's built with, or how modules fit together should invoke this skill. architecture.md is the single source of truth for "what the system looks like now"; keeping it synced with the code prevents the onboarding blueprint from becoming fiction.
+description: Use when the current system architecture changes — new module / component / service added or removed, directory structure reorganized, tech stack changes (new dependency, framework swap, database / queue / SDK added), data flow changes, or when a decisions ADR is accepted that alters how the system is built. Also use when the project has no architecture.md yet and the architecture is taking shape. Trigger proactively even without explicit mention of "architecture" — any conversation about how the system is structured *now*, what it's built with, or how modules fit together should invoke this skill. architecture.md is the single source of truth for "what the system looks like now"; keeping it synced with the code prevents the onboarding blueprint from becoming fiction.
 ---
 
 # Maintaining architecture.md
 
 這個 skill 讓 Claude Code 正確維護 `.claude/docs/architecture.md`——專案「現行架構描述」的 single source of truth(系統現在長什麼樣、用什麼技術、模組如何協作)。
 
-architecture.md 回答 **What is now**;需求(What must do)在 [SPEC.md](../../SPEC.md)、決策理由(Why)在 [journal](../../docs/journal/journal.md)、開發規範(constitution)在 [CLAUDE.md](../../CLAUDE.md)。本 skill 守的邊界:architecture.md 描述現況、連結到 ADR 說明理由,不重述需求、不展開決策推理。
+architecture.md 回答 **What is now**;需求(What must do)在 [SPEC.md](../../SPEC.md)、決策理由(Why)在 [decisions](../../docs/decisions/decisions.md)、開發規範(constitution)在 [CLAUDE.md](../../CLAUDE.md)。本 skill 守的邊界:architecture.md 描述現況、連結到 ADR 說明理由,不重述需求、不展開決策推理。
 
 ---
 
@@ -30,7 +30,7 @@ architecture.md 回答 **What is now**;需求(What must do)在 [SPEC.md](../../S
 | 結構變更 | 新增 / 移除模組、服務、元件;目錄重組 |
 | Tech Stack | 新依賴、換框架、加 DB / queue / SDK、語言版本變更 |
 | 資料流 | 核心請求 / 處理流程改變 |
-| 決策連動 | journal 新 ADR 改變了現行架構 → 同步 architecture.md 對應段落 + Design Decisions 索引 |
+| 決策連動 | decisions 新 ADR 改變了現行架構 → 同步 architecture.md 對應段落 + Design Decisions 索引 |
 | 專案無 architecture.md | 走 Workflow A 首次建立 |
 
 純內部實作細節(函式重構、變數命名)不觸發。
@@ -107,7 +107,7 @@ git commit -m "docs(architecture): initial architecture description"
 
 | 變更含 | 連動 |
 |--------|------|
-| 改變了「為什麼這樣設計」 | 啟用 `maintaining-journal-md` 開 / 更新 ADR |
+| 改變了「為什麼這樣設計」 | 啟用 `maintaining-decisions-md` 開 / 更新 ADR |
 | 影響 User 安裝 / 使用(新依賴、新入口) | 啟用 `maintaining-readme-md` |
 | 對應需求也變了 | 啟用 `maintaining-spec-md` |
 
@@ -130,7 +130,7 @@ footer 三處(`Last Updated`、`Version`)與內容一致。
 | 對象 | 關係 |
 |------|------|
 | `maintaining-claude-md` | Tech Stack / Architecture 已從 CLAUDE.md 移入本檔;CLAUDE.md 只留指標連結。涉及二者時各改各的 SoT |
-| `maintaining-journal-md` | architecture.md 的 Design Decisions 每條 cross-ref 一條 ADR;架構決策先開 ADR(Why),再更新 architecture.md(What is now) |
+| `maintaining-decisions-md` | architecture.md 的 Design Decisions 每條 cross-ref 一條 ADR;架構決策先開 ADR(Why),再更新 architecture.md(What is now) |
 | `maintaining-spec-md` | SPEC 需求變更帶來架構調整時連動本 skill |
 | `maintaining-readme-md` | 架構變更影響 User 安裝 / 使用時連動 |
 | `.claude/rules/documentation-style.md` | 章節英文 / 內文繁中 / Mermaid 圖表慣例;footer 格式 |
@@ -141,6 +141,6 @@ footer 三處(`Last Updated`、`Version`)與內容一致。
 ## Gotchas（容易忘記的關鍵點）
 
 - **architecture.md 是 Tech Stack 的唯一 SoT**:抽出後別又寫回 CLAUDE.md,否則雙頭維護。
-- **Design Decisions 只放摘要 + ADR 連結**:完整 Context / Alternatives 在 journal,不在此複製。
+- **Design Decisions 只放摘要 + ADR 連結**:完整 Context / Alternatives 在 decisions,不在此複製。
 - **圖優先 Mermaid**:可版控、AI 可讀、GitHub / Claude Code 可渲染。
 - **User 未確認前不寫檔**:展示 diff → 確認 → 才動手。

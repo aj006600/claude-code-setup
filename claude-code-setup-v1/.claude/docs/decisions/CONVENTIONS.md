@@ -1,9 +1,9 @@
-# Journal Conventions (journal 撰寫規範)
+# Decisions Conventions (decisions 撰寫規範)
 
-> **適用範圍**：`.claude/docs/journal/journal.md` 及其衍生紀錄
-> **精神**：`journal.md` 只放資料（決策、事件、時序）；「怎麼寫」的規格集中在本檔。
+> **適用範圍**：`.claude/docs/decisions/decisions.md` 及其衍生紀錄
+> **精神**：`decisions.md` 只放資料（決策、事件、時序）；「怎麼寫」的規格集中在本檔。
 
-journal 是專案的「Why 層」——記錄**為什麼這樣決定**(ADR)、**出過什麼事**(Postmortem)、**學到什麼**(Lessons)、**何時發生**(Timeline)。code 說明 What 與 How、git log 說明 When,而 Why 最容易隨人員流動蒸發,本系統就是補這層。
+decisions 是專案的「Why 層」——記錄**為什麼這樣決定**(ADR)、**出過什麼事**(Postmortem)、**學到什麼**(Lessons)、**何時發生**(Timeline)。code 說明 What 與 How、git log 說明 When,而 Why 最容易隨人員流動蒸發,本系統就是補這層。
 
 ---
 
@@ -26,9 +26,9 @@ journal 是專案的「Why 層」——記錄**為什麼這樣決定**(ADR)、**
 
 | 檔案 | 回答 | 軸 |
 |------|------|----|
-| `journal.md` ADR | 為什麼選 X 不選 Y | Why（decision） |
-| `journal.md` Postmortem | 出事了,根因是什麼 | Why（incident） |
-| `journal.md` Lessons | 下次怎麼避免 | Why（tactical） |
+| `decisions.md` ADR | 為什麼選 X 不選 Y | Why（decision） |
+| `decisions.md` Postmortem | 出事了,根因是什麼 | Why（incident） |
+| `decisions.md` Lessons | 下次怎麼避免 | Why（tactical） |
 | `.claude/docs/architecture.md` | 現在系統長什麼樣 | What is now |
 | `.claude/SPEC.md` | 專案該做什麼(需求/驗收) | What must do |
 | `CHANGELOG` 類 | 改了什麼 | What changed |
@@ -115,7 +115,7 @@ ADR 一旦寫入即永久保留:被取代時改 Status 並保留編號與內容,
 
 ### 2.5 Decision Index 維護
 
-每次新增或變更 ADR,同步更新 `journal.md` 的 Decision Index 表(標題、Status、Date、領域標籤)。Status 須與 ADR 本體一致。
+每次新增或變更 ADR,同步更新 `decisions.md` 的 Decision Index 表(標題、Status、Date、領域標籤)。Status 須與 ADR 本體一致。
 
 ---
 
@@ -195,19 +195,19 @@ Medium 以上嚴重度建議寫 Postmortem,Low 用 Lesson 代替即可。
 
 ## 6. 跨文件引用協定
 
-journal 在 `.claude/docs/journal/`,architecture 在 `.claude/docs/`,SPEC 在 `.claude/`。引用語法:
+decisions 在 `.claude/docs/decisions/`,architecture 在 `.claude/docs/`,SPEC 在 `.claude/`。引用語法:
 
 | 從 | 到 | 寫法 |
 |----|----|------|
-| journal ADR | architecture.md | `[architecture.md](../architecture.md)` |
-| journal ADR | SPEC.md | `[SPEC.md](../../SPEC.md)` |
-| architecture.md | journal ADR | `見 [ADR-XXXX](journal/journal.md#adr-xxxx-...)` |
+| decisions ADR | architecture.md | `[architecture.md](../architecture.md)` |
+| decisions ADR | SPEC.md | `[SPEC.md](../../SPEC.md)` |
+| architecture.md | decisions ADR | `見 [ADR-XXXX](decisions/decisions.md#adr-xxxx-...)` |
 | 同檔錨點 | 同檔錨點 | `[ADR-0001](#adr-0001-...)` |
 | ADR | Postmortem | `見 [PM-XXXX](#pm-xxxx-...)` |
 
 交叉責任:
 
-- architecture.md 新增/修改設計決策 → journal 要有對應 ADR 解釋為什麼。
+- architecture.md 新增/修改設計決策 → decisions 要有對應 ADR 解釋為什麼。
 - ADR Status 改 Superseded → architecture.md 對應段落改連到新 ADR。
 - 重大 Postmortem 改變了架構 → 連結相關 ADR(新開或 supersede 舊的)。
 
