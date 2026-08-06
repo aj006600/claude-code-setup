@@ -1,38 +1,40 @@
-# teams-agent
+<!-- TEMPLATE NOTICE
+本檔是 claude-code-setup-v2 的 CLAUDE.md 骨架。採用到專案時:
+1. 替換所有 <...> 佔位符(專案名、架構一句話、指令表)
+2. Conventions 為通用預設,依專案技術棧微調(標註「範例」處尤其)
+3. 移除本 NOTICE 區塊
+-->
 
-React(Vite)前端 + FastAPI 後端,用 docker compose 兜起來。dev / qas / prod 三個環境跑**同一顆 image**,差別只在載入哪份 `env/.env.<env>`。
+# <專案名>
 
-瀏覽器只打 frontend;`/api/*` 由 frontend 的 nginx 反向代理到 backend(同源、免 CORS),backend 不對外開埠。
+<一句話:這個專案是什麼、用什麼技術棧兜起來。>
+
+<第二句(可選):最關鍵的架構事實——請求怎麼流、部署形態等 code 不易一眼看出的。>
 
 ## Commands
 
 | 指令 | 用途 |
 |---|---|
-| `make dev` | 本機開發,前端 3000 / 後端 8000,後端熱重載 |
-| `make test` | 跑後端測試(在 dev stage 容器裡) |
-| `make lint` / `make format` | ruff 檢查 / 格式化 |
-| `make dev-down` | 停止並清理開發容器 |
+| `<make dev>` | <本機開發> |
+| `<make test>` | <跑測試> |
+| `<make lint>` / `<make format>` | <檢查 / 格式化> |
 
-`make up-*`(本機預覽各環境設定與 topology)和 `make deploy`(在目標主機拉 CI 測過的 image)見 `README.md`。
-
-Dockerfile 是多階段的:`dev` stage 含測試工具、只在本機用;最後的 `runtime` stage 才是出貨用、三個環境共用的那一顆。
+<低頻指令與部署方式:指向 README 或對應文檔,不在此展開。>
 
 ## Development workflow
 
-Trunk-based:`main` 是唯一長期分支,**不直接 commit 到 `main`**(跑 `/implement` 時也一樣)。所有改動走短命 feature branch → PR → squash merge,分支命名 `feat/xxx`、`fix/xxx`。
+Trunk-based:`main` 是唯一長期分支,**不直接 commit 到 `main`**(跑 `/implement` 時也一樣)。所有改動走短命 feature branch → PR → squash merge,分支命名 `feat/xxx`、`fix/xxx`。push main 由 `.claude/hooks/block-push-main.sh` 硬擋,不只是約定。
 
-一段工作完成後可自行 push feature branch(不觸發任何 CI),但**開 PR 前要先問過我**——PR 是 CI 測試的觸發點。merge 進 `main` 才部署 dev/qas,打 `v*` tag 才上 prod。完整流程見 `docs/cicd.md`。
+一段工作完成後可自行 push feature branch,但**開 PR 前要先問過我**——PR 是 CI 的觸發點。<merge 之後的部署節奏:依專案補一句,例如「merge 進 main 部署 dev/qas,打 v* tag 才上 prod」。>
 
-## Agent skills
+## Conventions
 
-### Issue tracker
-
-Issues are tracked in this repo's GitHub Issues (`ytc-wistron/teams-agent`), operated via the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-The five canonical triage labels are used as-is: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context layout — one `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+- **Commit 前先跑 lint**(本專案:`<make lint>`)。CI 也會把關,本機先跑省一輪紅燈。
+- **Commit message**:輕量 Conventional Commits,英文——`<type>: <description>`,type 取 `feat/fix/docs/test/refactor/chore`,scope 選用(`feat(api): ...` 也可)。
+- **PR 標題與內文**:英文,**不用 emoji**(commit message 同樣不用)。標題即 Conventional Commit(squash 後成為 main 的 commit)。body 只有兩節:`## Summary`(為什麼+做了什麼,1-3 個 bullet)、`## Testing`(怎麼驗證的)——**十行內**,不重述 diff,審計報告與過程敘事留在對話與 commit message。
+- **文件語言**:章節標題英文(`## Quick Start`)、內文繁體中文、技術術語保留英文(fixture、endpoint 不翻譯)。
+- **文檔同步**:user-facing 變更(指令、架構、安裝步驟)在**同一個 PR** 內同步 README/docs——文檔更新是變更的一部分,不是事後待辦。
+- **程式碼註釋**:繁體中文(術語英文),**不用 emoji**。只寫 code 讀不出來的**約束、陷阱、非顯然理由**(why not what);不敘述下一行做什麼;概念解說住 `docs/`,註釋需要時用一行連結指向,不重述。
+- **規則提議**:同類糾正或卡關**第二次**發生(或一次但代價高:不可逆操作、部署事故級),主動提議把教訓寫進來——先展示擬新增的那一行與觸發原因,我同意才寫。歸位優先序:能用工具強制的進工具/CI → 綁定單檔的進該檔註釋 → 概念進 `docs/` → 決策進 `docs/adr/` → 都不是且每個 session 都適用,才進 CLAUDE.md。
+- **測試品質**(pytest 範例,依測試框架調整):單元測試目錄鏡射原始碼模組結構;fixture 先用 conftest 既有的,重複自建即違規;測試名稱與 docstring 必須與實際行為一致;每個測試驗證一個真實行為——斷言偶然字串(使用者可見的契約訊息除外)、恆真斷言、與既有測試重複覆蓋的,一律刪除。
+- **技術調研**:用到不熟悉或版本敏感的 API/框架時,**先查證再寫**——context7 查 library 文檔、WebSearch/WebFetch 查一手來源、`gh search` 找官方範例與成熟專案;大題目啟用 `/research`(背景 agent、只認一手來源、產出帶引用的 Markdown 進 repo)。外部資訊一律**驗證(實測或對照官方文檔)後才採用**。
