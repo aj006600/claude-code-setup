@@ -119,7 +119,9 @@ if [ "$verdict" = "block" ]; then
     echo "[block-push-main] BLOCKED — 這個 push 會寫入遠端 main。" >&2
     echo "[block-push-main] 本 repo 是 trunk-based:所有變更走 feature branch -> PR -> squash merge(見 CLAUDE.md)。" >&2
     echo "[block-push-main] 此 hook 是「不直接 push main」的強制層(見 CLAUDE.md Development workflow)。" >&2
-    echo "[block-push-main] 請改推 feature branch,例如:git push -u origin feat/xxx" >&2
+    echo "[block-push-main] 尚未 commit:git switch -c feat/xxx,再 git push -u origin feat/xxx" >&2
+    echo "[block-push-main] commit 已落在本地 main:git branch feat/xxx && git reset --keep origin/main" >&2
+    echo "[block-push-main]   (--keep 保留未提交的改動,會衝突時中止)然後 git switch feat/xxx 再推。" >&2
     exit 1
 fi
 
