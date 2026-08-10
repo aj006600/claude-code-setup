@@ -10,7 +10,7 @@ v2 走相反的路——**能用工具強制的不寫成文件,能一行講完�
 
 - **工具優先漏斗**:教訓的歸位順序是 工具/CI → 該檔註釋 → `docs/` → `docs/adr/` → 最後才進 CLAUDE.md。style 交給 linter(如 ruff 的 `E/F/I/UP/N/B/PT`),CLAUDE.md 只留工具做不到的慣例。
 - **註釋 why not what**:只寫 code 讀不出來的約束、陷阱、非顯然理由。
-- **確定性強制**:紀律性規則(不推 main、防跨 repo 引用外洩)用 PreToolUse hooks 硬擋,不靠自律。
+- **確定性強制**:紀律性規則(不推 main、防跨 repo 引用外洩)用 PreToolUse hooks 擋在執行前,不靠自律。強制力有邊界:hook 需要 python3,指令解析不了時一律放行(fail open),寧可漏擋也不卡住工作;「不在 `main` 上 commit」則工具表達不了(新 repo 的首個 commit、`git revert`、解衝突都合法站在 main 上),留給自律,由 push 那關兜底。
 - **第二次法則**:同類教訓第二次出現才提議入規,防 CLAUDE.md 肥大。
 
 ## What's inside

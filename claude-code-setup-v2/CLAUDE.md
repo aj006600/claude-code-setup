@@ -12,7 +12,7 @@
 
 ## Development workflow
 
-Trunk-based:`main` 是唯一長期分支,**不直接 commit 到 `main`**(跑 `/implement` 時也一樣)。所有改動走短命 feature branch → PR → squash merge,分支命名 `feat/xxx`、`fix/xxx`。push main 由 `.claude/hooks/block-push-main.sh` 硬擋,不只是約定。
+Trunk-based:`main` 是唯一長期分支,所有改動走短命 feature branch → PR → squash merge,分支命名 `feat/xxx`、`fix/xxx`。**開工前先切分支**——commit 落在 `main` 上不會被攔,但 push 會(`.claude/hooks/block-push-main.sh` 在 python3 可用時硬擋),屆時得把 commit 搬到分支才走得下去。
 
 一段工作完成後可自行 push feature branch,但**開 PR 前要先問過我**——PR 是 CI 的觸發點。<merge 之後的部署節奏:依專案補一句,例如「merge 進 main 部署 dev/qas,打 v* tag 才上 prod」。>
 
