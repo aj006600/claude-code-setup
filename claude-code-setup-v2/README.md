@@ -50,6 +50,12 @@ printf '{"tool_input":{"command":"git push origin main"}}' \
 
 三個 hook 開頭都有一段前置快速放行(`case "$input" in ...`),用 shell 內建瞄一眼原始 JSON,讓無關指令不必啟動 python3——三個 hook 各省約 120ms,對每一次 Bash 呼叫都有感。動到它時要確認新條件仍是下方精確判斷的**超集合**,否則會靜默漏放。
 
+## Known gaps
+
+- **PostToolUse 自動格式化**:Claude 改完檔案後自動對那一個檔案跑 formatter / linter,把 Conventions 第 1 條「Commit 前先跑 lint」從文字叮嚀換成機制,並讓錯誤在 Claude 還記得該檔脈絡時就浮現。按本套件的界線這屬於 Claude 專屬黏合層(linter 本身仍由專案提供),尚未實作。設計方向:用 `if: "Edit(*.py)"` 這類條件按副檔名分開註冊,採用者只留用得到的;檔案路徑取自 `tool_input.file_path`;格式化 exit 0 靜默收拾,檢查 exit 2 把錯誤餵回給 Claude。
+
+累積到第三項再拆成獨立的 ROADMAP.md——一兩項用一節裝得下。
+
 ## Pairs well with
 
 - **技術棧模板**:[fullstack-docker-template-multienv](https://github.com/aj006600/fullstack-docker-template-multienv)——先用它初始化專案,再疊上本套件
