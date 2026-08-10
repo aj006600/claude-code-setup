@@ -1,25 +1,14 @@
-<!-- TEMPLATE NOTICE
-本檔是 claude-code-setup-v2 的 CLAUDE.md 骨架。採用到專案時:
-1. 替換所有 <...> 佔位符(專案名、架構一句話、指令表)
-2. Conventions 為通用預設,依專案技術棧微調(標註「範例」處尤其)
-3. 移除本 NOTICE 區塊
--->
-
-# <專案名>
-
-<一句話:這個專案是什麼、用什麼技術棧兜起來。>
-
-<第二句(可選):最關鍵的架構事實——請求怎麼流、部署形態等 code 不易一眼看出的。>
-
 ## Commands
+
+下列是本專案的 canonical 入口,測試與檢查一律走這裡(與 CI 同一套):
 
 | 指令 | 用途 |
 |---|---|
-| `<make dev>` | <本機開發> |
-| `<make test>` | <跑測試> |
-| `<make lint>` / `<make format>` | <檢查 / 格式化> |
+| `<本機開發,例:make dev / docker compose up / npm run dev>` | 起本機環境 |
+| `<測試,例:make test / uv run pytest / npm test>` | 跑測試 |
+| `<檢查>` / `<格式化>` | lint / format |
 
-<低頻指令與部署方式:指向 README 或對應文檔,不在此展開。>
+<其餘指令:`make help`(或 `npm run`、`just --list`,依專案填)。>
 
 ## Development workflow
 
