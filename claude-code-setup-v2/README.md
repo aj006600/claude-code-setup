@@ -16,7 +16,7 @@ v2 走相反的路——**能用工具強制的不寫成文件,能一行講完�
 ## What's inside
 
 ```
-CLAUDE.md                          # 骨架:workflow + 11 條通用 conventions,<...> 佔位符待填
+CLAUDE.md                          # 骨架:workflow + 9 條通用 conventions,<...> 佔位符待填
 .claude/settings.json              # hooks 註冊 + permissions 白名單(make 指令為範例,依專案調整)
 .claude/hooks/
 ├── block-push-main.sh             # 硬擋任何寫入遠端 main 的 push(放行 feature branch 與 tag)
@@ -27,8 +27,8 @@ CLAUDE.md                          # 骨架:workflow + 11 條通用 conventions,
 ## Adoption
 
 1. 複製 `CLAUDE.md` 與 `.claude/` 到專案根目錄,`chmod +x .claude/hooks/*.sh`
-2. 填 `CLAUDE.md` 的 `<...>` 佔位符,移除 TEMPLATE NOTICE 區塊
-3. 依專案調整:`settings.json` 的 permissions 清單、secrets hook 的豁免清單
+2. 填 `CLAUDE.md` 的 `<...>` 佔位符(指令表、`<make lint>` 等)
+3. 依專案調整:`CLAUDE.md` 的 Conventions 為通用預設,依技術棧微調(標註「範例」處尤其,如測試品質那條是 pytest 寫法);`settings.json` 的 permissions 清單;secrets hook 的豁免清單
 4. Hooks 於下個 session 生效(settings 在 session 啟動時載入)
 
 改動 hooks 後請以模擬輸入驗證,例如:
