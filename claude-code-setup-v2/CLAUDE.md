@@ -6,7 +6,7 @@
 |---|---|
 | `<本機開發,例:make dev / docker compose up / npm run dev>` | 起本機環境 |
 | `<測試,例:make test / uv run pytest / npm test>` | 跑測試 |
-| `<檢查>` / `<格式化>` | lint / format |
+| `<檢查,例:make lint / ruff check / npm run lint>` / `<格式化>` | lint / format |
 
 <其餘指令:`make help`(或 `npm run`、`just --list`,依專案填)。>
 
@@ -18,7 +18,7 @@ Trunk-based:`main` 是唯一長期分支,所有改動走短命 feature branch �
 
 ## Conventions
 
-- **Commit 前先跑 lint**(本專案:`<make lint>`)。CI 也會把關,本機先跑省一輪紅燈。
+- **Commit 前先跑 lint**(本專案:`<檢查指令>`)。CI 也會把關,本機先跑省一輪紅燈。
 - **Commit message**:輕量 Conventional Commits,英文——`<type>: <description>`,type 取 `feat/fix/docs/test/refactor/chore`,scope 選用(`feat(api): ...` 也可)。
 - **PR 標題與內文**:英文,**不用 emoji**(commit message 同樣不用)。標題即 Conventional Commit(squash 後成為 main 的 commit)。body 只有兩節:`## Summary`(為什麼+做了什麼,1-3 個 bullet)、`## Testing`(怎麼驗證的)——**十行內**,不重述 diff,審計報告與過程敘事留在對話與 commit message。
 - **文件語言**:章節標題英文(`## Quick Start`)、內文繁體中文、技術術語保留英文(fixture、endpoint 不翻譯)。
