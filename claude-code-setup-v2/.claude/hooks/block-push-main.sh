@@ -17,6 +17,16 @@ command -v git >/dev/null 2>&1 || exit 0
 
 input=$(cat)
 
+# 前置快速放行:先用 shell 內建瞄一眼原始 JSON,與本 hook 無關的指令不必啟動 python3
+# (python3 啟動約 120ms,而絕大多數 Bash 呼叫都與 push 無關)。
+# 條件是下方 `git +push` 精確判斷的超集合,不改變放行/擋下的結果。
+# 限制:比對的是尚未解碼的 JSON,指令若把 push 寫成 JSON unicode 轉義形式會在此漏放
+# (Claude Code 不會產生這種轉義;本 hook 防的是 agent 誤操作,非對抗攻擊者)。
+case "$input" in
+    *push*) ;;
+    *) exit 0 ;;
+esac
+
 command=$(echo "$input" | python3 -c 'import json, sys
 try:
     data = json.load(sys.stdin)
