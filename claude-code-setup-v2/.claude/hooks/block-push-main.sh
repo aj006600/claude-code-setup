@@ -1,27 +1,18 @@
 #!/usr/bin/env bash
-# Guard hook：擋下任何會寫入遠端 main 的 git push。
+# Guard hook:擋下任何會寫入遠端 main 的 git push。
+# Claude Code PreToolUse hook(註冊於 .claude/settings.json),不是 git pre-push hook。
 #
-# 為什麼用 hook:trunk-based 流程(見 CLAUDE.md)需要「不直接 push main」有強制力——
-# 尤其在用不了 branch protection 的 repo(如 GitHub Free 私有 repo)。這個 hook 是
-# Claude session 端的強制層;人工在 Claude Code 之外的 push 不在管轄範圍。
-#
-# 注意:這是 Claude Code 的 PreToolUse hook(註冊於 .claude/settings.json),
-# 在 Claude 執行 Bash tool 前觸發,不是 git pre-push hook。
-#
-# 行為:exit 1 = 擋下,exit 0 = 放行。指令解析失敗時 fail open(exit 0),
-# 與其他 hooks 的 graceful degradation 一致。
-# 臨時停用:從 .claude/settings.json 移除本 hook 的註冊。
+# 為什麼是硬擋:trunk-based 的「不直接 push main」需要強制力,尤其在用不了 branch
+# protection 的 repo(如 GitHub Free 私有 repo)。管轄範圍只到 Claude session 內,
+# 人工在 Claude Code 之外的 push 擋不到。
 
+# 缺依賴時 fail open:本 hook 防的是誤操作,不該讓環境問題卡死 session
 command -v python3 >/dev/null 2>&1 || exit 0
 command -v git >/dev/null 2>&1 || exit 0
 
 input=$(cat)
 
-# 前置快速放行:先用 shell 內建瞄一眼原始 JSON,與本 hook 無關的指令不必啟動 python3
-# (python3 啟動約 120ms,而絕大多數 Bash 呼叫都與 push 無關)。
-# 條件是下方 `git +push` 精確判斷的超集合,不改變放行/擋下的結果。
-# 限制:比對的是尚未解碼的 JSON,指令若把 push 寫成 JSON unicode 轉義形式會在此漏放
-# (Claude Code 不會產生這種轉義;本 hook 防的是 agent 誤操作,非對抗攻擊者)。
+# 快速放行:條件是下方精確判斷的超集合,不改變結果,只為省下 python3 啟動成本
 case "$input" in
     *push*) ;;
     *) exit 0 ;;
@@ -37,7 +28,7 @@ except Exception:
 
 [ -z "$command" ] && exit 0
 
-# 快速路徑:指令文字裡沒有 git push 就直接放行
+# 只在 git push 時觸發(word-boundary 避免誤判)
 echo "$command" | grep -qE '(^|[^a-zA-Z])git +push([^a-zA-Z]|$)' || exit 0
 
 cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
@@ -117,11 +108,9 @@ PYEOF
 
 if [ "$verdict" = "block" ]; then
     echo "[block-push-main] BLOCKED — 這個 push 會寫入遠端 main。" >&2
-    echo "[block-push-main] 本 repo 是 trunk-based:所有變更走 feature branch -> PR -> squash merge(見 CLAUDE.md)。" >&2
-    echo "[block-push-main] 此 hook 是「不直接 push main」的強制層(見 CLAUDE.md Development workflow)。" >&2
+    echo "[block-push-main] 本 repo 是 trunk-based,所有變更走 feature branch -> PR -> squash merge(見 CLAUDE.md Development workflow)。" >&2
     echo "[block-push-main] 尚未 commit:git switch -c feat/xxx,再 git push -u origin feat/xxx" >&2
-    echo "[block-push-main] commit 已落在本地 main:git branch feat/xxx && git reset --keep origin/main" >&2
-    echo "[block-push-main]   (--keep 保留未提交的改動,會衝突時中止)然後 git switch feat/xxx 再推。" >&2
+    echo "[block-push-main] commit 已落在本地 main:git branch feat/xxx && git reset --keep origin/main(保留未提交的改動,會衝突時中止),再 git switch feat/xxx 推送。" >&2
     exit 1
 fi
 

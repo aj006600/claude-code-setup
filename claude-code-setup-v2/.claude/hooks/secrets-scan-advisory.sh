@@ -1,28 +1,18 @@
 #!/usr/bin/env bash
 # Advisory hook:`git commit` / `git add` 時,掃描 staged 檔案與內容是否有
 # 疑似密鑰(可疑檔名、已知 token pattern),有就警告。
+# Claude Code PreToolUse hook(註冊於 .claude/settings.json),不是 git pre-commit hook。
 #
-# 豁免清單依 repo 慣例調整:下方預設豁免 env/.env.{dev,qas,prod}——
-# 這是 fullstack-docker-template-multienv 的慣例(非機密環境設定刻意進版控,
-# 真密鑰放 env/*.local 或 secrets manager)。你的 repo 慣例不同就改掉。
-#
-# 注意:這是 Claude Code 的 PreToolUse hook(註冊於 .claude/settings.json),
-# 在 Claude 執行 Bash tool 前觸發,不是 git pre-commit hook。
-#
-# 行為:永遠 exit 0(僅警告、不擋)。要改為強制,把警告分支最後的 exit 0 改成 exit 1。
-#
-# Graceful degradation:python3 或 git 不存在時靜默放行。
+# 兩個依 repo 調整的點:豁免清單(下方預設豁免的 env/.env.{dev,qas,prod} 是
+# fullstack-docker-template-multienv 的慣例——非機密環境設定刻意進版控,真密鑰放
+# env/*.local 或 secrets manager),以及改成強制擋下(檔尾警告分支的 exit 0 改 exit 1)。
 
 command -v python3 >/dev/null 2>&1 || exit 0
 command -v git >/dev/null 2>&1 || exit 0
 
 input=$(cat)
 
-# 前置快速放行:先用 shell 內建瞄一眼原始 JSON,與本 hook 無關的指令不必啟動 python3
-# (python3 啟動約 120ms,而絕大多數 Bash 呼叫都不是 git commit / git add)。
-# 條件是下方精確判斷的超集合,不改變警告與否的結果。
-# 限制:比對的是尚未解碼的 JSON,指令若寫成 JSON unicode 轉義形式會在此漏掃
-# (Claude Code 不會產生這種轉義;本 hook 防的是 agent 誤操作,非對抗攻擊者)。
+# 快速放行:條件是下方精確判斷的超集合,不改變結果,只為省下 python3 啟動成本
 case "$input" in
     *commit*|*add*) ;;
     *) exit 0 ;;
