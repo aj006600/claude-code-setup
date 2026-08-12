@@ -1,34 +1,19 @@
 #!/usr/bin/env bash
-# Guard hook:當 `git commit`、`gh pr create/edit/comment`、`gh issue create/edit/comment`
-# 的指令文字含有指向「其他 GitHub repo」的引用時擋下。這類引用會在對方 issue 觸發
-# 不可逆的跨 repo "mentioned in ..." backlink——對方 watcher 先收到通知,事後編輯
-# 也收不回來,所以這是硬性關卡,不是建議。
+# Guard hook:擋下 `git commit`、`gh pr|issue create/edit/comment` 的指令文字中指向
+# 其他 GitHub repo 的引用。
+# Claude Code PreToolUse hook(註冊於 .claude/settings.json),不是 git pre-commit hook。
 #
-# 注意:這是 Claude Code 的 PreToolUse hook(註冊於 .claude/settings.json),
-# 在 Claude 執行 Bash tool 前觸發,不是 git pre-commit hook。
+# 為什麼是硬擋而非警告:這類引用會在對方 issue 觸發跨 repo "mentioned in" backlink,
+# 對方 watcher 立刻收到通知,事後編輯也收不回來。
 #
-# 偵測:
-# - `owner/repo#N` 縮寫(inline code span 內的除外)
-# - `https://github.com/owner/repo/(issues|pull)/N` 完整 URL
-# backtick 內的引用跳過:GitHub 對 code span 不做 reference parsing。
-#
-# 限制:看不到 `--body-file <path>` 的檔案內容(只掃指令文字)。
-#
-# 行為:發現外部引用 exit 1(擋下),否則 exit 0。
-# 臨時停用:從 .claude/settings.json 移除本 hook 的註冊。
-#
-# Graceful degradation:python3 或 git 不存在時靜默放行。
+# 限制:只掃指令文字,看不到 `--body-file <path>` 的檔案內容。
 
 command -v python3 >/dev/null 2>&1 || exit 0
 command -v git >/dev/null 2>&1 || exit 0
 
 input=$(cat)
 
-# 前置快速放行:先用 shell 內建瞄一眼原始 JSON,與本 hook 無關的指令不必啟動 python3
-# (python3 啟動約 120ms,而絕大多數 Bash 呼叫都不是 commit / PR / issue 寫入)。
-# 條件是下方精確判斷的超集合,不改變放行/擋下的結果。
-# 限制:比對的是尚未解碼的 JSON,指令若寫成 JSON unicode 轉義形式會在此漏放
-# (Claude Code 不會產生這種轉義;本 hook 防的是 agent 誤操作,非對抗攻擊者)。
+# 快速放行:條件是下方精確判斷的超集合,不改變結果,只為省下 python3 啟動成本
 case "$input" in
     *commit*|*"gh pr "*|*"gh issue "*) ;;
     *) exit 0 ;;
@@ -70,7 +55,8 @@ BACKTICK = chr(96)  # $(...) 內不能出現字面 backtick,用 chr(96) 迂迴
 
 
 def in_code_span(s, pos):
-    """pos 是否位於該行的 backtick code span 內。"""
+    """pos 是否位於該行的 backtick code span 內——GitHub 對 code span 不做 reference
+    parsing,包在 backtick 裡的引用不會觸發 backlink,可以放行。"""
     line_start = s.rfind("\n", 0, pos) + 1
     return s[line_start:pos].count(BACKTICK) % 2 == 1
 
@@ -107,14 +93,13 @@ PYEOF
 )
 
 if [ -n "$findings" ]; then
-    echo "[external-ref-guard] BLOCKED — 偵測到指向外部 GitHub repo 的引用。這會建立不可逆的跨 repo 'mentioned in' backlink,並把內容推播給對方 issue 的 watchers:" >&2
+    echo "[external-ref-guard] BLOCKED — 偵測到指向外部 GitHub repo 的引用:" >&2
     while IFS= read -r f; do
         [ -z "$f" ] && continue
         echo "  - $f" >&2
     done <<< "$findings"
-    echo "[external-ref-guard] 本 repo:$current_owner_repo" >&2
+    echo "[external-ref-guard] 這會建立不可逆的跨 repo 'mentioned in' backlink,並推播給對方 issue 的 watchers。本 repo:$current_owner_repo" >&2
     echo "[external-ref-guard] 安全寫法:用 backtick 包住(\`owner/repo#N\`)或改寫(例:「上游 issue 在 owner/repo,編號 N」)。" >&2
-    echo "[external-ref-guard] 臨時停用:從 .claude/settings.json 的 PreToolUse 移除本 hook。" >&2
     exit 1
 fi
 
