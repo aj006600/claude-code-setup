@@ -52,3 +52,4 @@ CLAUDE.md                          # 骨架:workflow + 9 條通用 conventions,<
 2. 填 `CLAUDE.md` 的 `<...>` 佔位符(Commands 表、Conventions 第 1 條的 `<檢查指令>`、部署節奏)
 3. 依專案調整:Conventions 標註「範例」處、`.claude/settings.json` 的 permissions 清單(`make` 換成你的建置工具)、secrets hook 的豁免清單
 4. 重啟 Claude Code session,hooks 生效(settings 在 session 啟動時載入)
+5. 在 session 內打 `/setup-matt-pocock-skills`(per-repo 初始化,一個 repo 一次):回答 issue tracker / triage labels / domain docs 三題,產出 `docs/agents/` 與 CLAUDE.md 末尾的 `## Agent skills`,供 `/triage`、`/to-tickets`、`/wayfinder` 等讀取
