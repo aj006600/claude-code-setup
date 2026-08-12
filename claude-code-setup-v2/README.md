@@ -18,6 +18,18 @@ mkdir -p ~/.claude/skills/doc-coauthoring
 curl -fsSL https://raw.githubusercontent.com/anthropics/skills/main/skills/doc-coauthoring/SKILL.md -o ~/.claude/skills/doc-coauthoring/SKILL.md
 ```
 
+另外一項 user 層級設定:關閉 Claude Code 在 commit / PR 自動附加的署名(`attribution` 設空字串即隱藏,安全合併進 `~/.claude/settings.json`,既有設定不受影響;重啟 session 生效):
+
+```bash
+python3 - <<'EOF'
+import json, pathlib
+p = pathlib.Path.home() / ".claude" / "settings.json"
+d = json.loads(p.read_text()) if p.exists() else {}
+d["attribution"] = {"commit": "", "pr": ""}
+p.write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n")
+EOF
+```
+
 ## What's inside
 
 ```
