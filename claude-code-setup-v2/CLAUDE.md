@@ -21,6 +21,7 @@ Trunk-based:`main` 是唯一長期分支,所有改動走短命 feature branch �
 - **Commit 前先跑 lint**(本專案:`<檢查指令>`)。CI 也會把關,本機先跑省一輪紅燈。
 - **Commit message**:輕量 Conventional Commits,英文——`<type>: <description>`,type 取 `feat/fix/docs/test/refactor/chore`,scope 選用(`feat(api): ...` 也可)。
 - **PR 標題與內文**:英文,**不用 emoji**(commit message 同樣不用)。標題即 Conventional Commit(squash 後成為 main 的 commit)。body 只有兩節:`## Summary`(為什麼+做了什麼,1-3 個 bullet)、`## Testing`(怎麼驗證的)——**十行內**,不重述 diff,審計報告與過程敘事留在對話與 commit message。
+- **GitLab 操作**:remote 指向 GitLab 時,MR、issue、pipeline 等 API 操作以 remote URL 內嵌的 token 為唯一憑證來源,API base URL 同樣取自該 remote 的 host(self-hosted 常見)——`git remote get-url origin` 現取、存進 shell 變數後當場帶入呼叫。
 - **文件語言**:章節標題英文(`## Quick Start`)、內文繁體中文、技術術語保留英文(fixture、endpoint 不翻譯)。
 - **文檔同步**:user-facing 變更(指令、架構、安裝步驟)在**同一個 PR** 內同步 README/docs——文檔更新是變更的一部分,不是事後待辦。
 - **程式碼註釋**:繁體中文(術語英文),**不用 emoji**。只寫 code 讀不出來的**約束、陷阱、非顯然理由**(why not what),**一行為預設——多行只留給壓一行就不清楚的約束**;不敘述下一行做什麼;概念解說住 `docs/`,註釋需要時用一行連結指向,不重述。
