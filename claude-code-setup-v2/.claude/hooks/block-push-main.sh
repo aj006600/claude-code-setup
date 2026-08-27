@@ -67,6 +67,9 @@ def check_push(args):
         if tok in ("--tags", "--follow-tags"):
             tags_only = True
             continue
+        # 這兩個選項會推所有分支,必然含 main
+        if tok in ("--mirror", "--all"):
+            return True
         if tok in OPTS_WITH_VALUE:
             skip_next = True
             continue
@@ -86,7 +89,9 @@ def check_push(args):
 
     for spec in refspecs:
         dst = spec.split(":", 1)[1] if ":" in spec else spec
-        if dst == "main":
+        dst = dst.lstrip("+").removeprefix("refs/heads/")
+        # glob 目的端(refs/heads/*)可能涵蓋 main,一律視為命中
+        if dst == "main" or "*" in dst:
             return True
     return False
 
