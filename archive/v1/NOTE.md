@@ -111,33 +111,3 @@ Phase 2.2 預期從 origin/dev pull，但 remote 還沒任何 branch。推薦先
 | 2. Parallel Session（另開 session） | 另開 session 用 `superpowers:executing-plans` 批次跑，有 checkpoint review | 想釋放本 session 做別的事 |
 
 `tdd-feature-workflow` Phase 2.4 預設指向 executing-plans（選項 2 的形式）。想留在當前 session 看進度也可以選 1。
-
-## 其他專案筆記（非 setup 本身）
-
-### work project Langfuse -- 不在此 PR 範圍
-
-未來可整合的方向：
-- Langfuse Prompt Management（prompt 版本控制）
-- Langfuse Scoring（自動品質評分）
-- Langfuse Datasets & Evaluation（benchmark）
-- OpenTelemetry 整合（Langfuse v3 支援但目前不需要）
-- Langfuse Cloud（選用 self-hosted 部署）
-
-### Docker Compose 對 CI/CD 的影響
-
-**不會有問題的部分：**
-- 分支策略清楚（main -> PRD、qas -> QAS），CI/CD pipeline 可以根據分支名決定用哪個 docker-compose 檔案
-- 各環境有獨立的 network、volume、container name，不會互相干擾
-
-**需要注意的部分：**
-1. **.env 檔案管理** -- 兩個環境都 `env_file: .env`，但 PRD 和 QAS 需要不同的環境變數。CI/CD pipeline 需要在部署時注入正確的 .env，或改成 `env_file: .env.prd` / `.env.qas` 明確區分
-2. **Image tag** -- 目前兩個環境用同一個 base image，程式碼靠 volume mount 進去。如果未來想做 rollback 或版本鎖定，建議改成 build image with code baked in，用 image tag 區分版本
-3. **Port 寫死** -- 如果同機器多環境，CI/CD 需要知道哪個環境用哪組 port
-
-### Langfuse 元件使用狀態
-
-| 元件 | 狀態 |
-|------|------|
-| Langfuse Web UI | 目前有用 |
-| Langfuse PostgreSQL | 目前沒用 |
-| ClickHouse HTTP | 目前沒用 |
