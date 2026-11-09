@@ -9,9 +9,9 @@ Claude Code 配置集合:一份現行的專案 setup template、一份 global �
 | 資料夾 | 內容 |
 |------|------|
 | [`template/`](./template/) | 專案層 setup template — 一份 CLAUDE.md 骨架 + 三個 guard hooks + 共享 settings。原則是「能用工具強制的不寫成文件」,搭配 mattpocock skills 與 trunk-based development |
-| [`global/`](./global/) | Global 配置(`~/.claude/CLAUDE.md`)snapshot — 所有專案共用的基礎行為設定 |
+| [`global/`](./global/) | Global 配置 snapshot — 對應 `~/.claude/`,所有專案共用的基礎行為設定 |
 
-`template/` 裡只有會複製進專案的檔案,資料夾邊界就是複製範圍。它是唯一持續演進的 template,改動直接在原地進行,歷史由 git log 記錄,無版本號。
+兩個資料夾裡都只有會複製到目的地的檔案,資料夾邊界就是複製範圍:`template/` 複製進專案根目錄,`global/` 複製進 `~/.claude/`。`template/` 是唯一持續演進的 template,改動直接在原地進行,歷史由 git log 記錄,無版本號。
 
 紀律性規則(不推 main、防跨 repo 引用外洩)用 PreToolUse hooks 擋在執行前,CLAUDE.md 只留工具做不到的慣例。整套設計搭配 mattpocock skills 與 trunk-based development 運作(`main` 為唯一長期分支,改動走短命 feature branch → PR → squash merge,打 tag 發版)。
 
@@ -69,6 +69,26 @@ EOF
 
 ---
 
+## Global
+
+`~/.claude/CLAUDE.md` 是 Claude Code 在任何專案都會載入的指令,優先級低於專案層級的 CLAUDE.md。適合放在 global 的內容:
+
+- User 身份與語言偏好
+- Context window 管理策略
+- 通用行為指令(default to action、parallel tool calls、investigate before answering)
+- 跨專案適用的 coding 原則(avoid overengineering、clean up temp files)
+- Global skills 註冊(如 `/graphify`)
+
+`global/` 目前只有 `CLAUDE.md` 一個檔,是 `~/.claude/CLAUDE.md` 的 snapshot。套用到一台新機器(在本 repo 根目錄執行;同名檔案會被覆蓋):
+
+```bash
+cp -R global/. ~/.claude/
+```
+
+這包是雙向 snapshot:在機器上修改 `~/.claude/` 的檔案後,同步回本 repo 以保持一致。
+
+---
+
 ## Archive
 
 歷代 template 保留於 `archive/`,維持當時的資料夾名稱,內容可直接取用,僅移除 template 自身的紀錄檔,演進史由 git log 承載;新專案一律從 `template/` 出發。每一版的 `template/` 同樣只放會複製進專案的檔案,說明與 prompt 模板放在它旁邊。
@@ -86,12 +106,11 @@ EOF
 
 ```
 claude-code-setup/
-├── README.md                ← 本檔案(含 template 的 Prerequisites 與 Setup)
+├── README.md                ← 本檔案(含 template 與 global 的說明和安裝步驟)
 ├── template/                ← 現行 template,整個資料夾複製到目標專案
 │   ├── CLAUDE.md
 │   └── .claude/
-├── global/                  ← Global 配置 snapshot
-│   ├── README.md
+├── global/                  ← Global 配置 snapshot,整個資料夾複製到 ~/.claude/
 │   └── CLAUDE.md
 └── archive/                 ← 封存版本
     ├── v0/
