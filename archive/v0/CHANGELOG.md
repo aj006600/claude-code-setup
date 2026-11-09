@@ -15,7 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## Archived - 2026-11-09
+
+此 template 停在 v0.2.0 封存,保留供參考與整理;現行 template 見 repo 根目錄 `template/`,其演進由 git log 記錄。
 
 ---
 

@@ -1,5 +1,7 @@
 # claude-code-setup-v1
 
+> **封存版本**(2026-11-09)。原名 `claude-code-setup-v1`,skill-driven 的 Python 專案 setup,保留供參考與整理;新專案請用 [`template/`](../../template/)。
+
 Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼業界最佳實踐的 lean setup。
 
 ---

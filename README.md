@@ -1,26 +1,35 @@
 # oh-my-claude-setup
 
-Claude Code 專案配置模板集合。每個版本獨立存放於平行資料夾，舊版保留不刪。
+Claude Code 配置集合:一份現行的專案 setup template、一份 global 配置 snapshot,以及歷代封存版本。
 
 ---
 
-## Available Versions
+## Current
 
-| 版本 | 定位 | 狀態 |
-|------|------|------|
-| [`global`](./global/) | Global Claude Code 配置（`~/.claude/CLAUDE.md`）— 所有專案共用的基礎行為設定 | **Active** |
-| [`claude-code-setup-v1`](./claude-code-setup-v1/) | 通用 Python 專案 setup — 3 maintaining skills + 1 workflow orchestrator skill、4 slash commands、1 advisory hook + 1 guard hook、CI workflow | **Active** |
-| [`claude-code-setup-v0`](./claude-code-setup-v0/) | Rule-driven 設計 — 透過 CLAUDE.md + rules 被動讀取規範,無 skill / command / hook / CI 自動化層 | **Maintained** |
+| 資料夾 | 內容 |
+|------|------|
+| [`template/`](./template/) | 專案層 setup template — 一份 CLAUDE.md 骨架 + 三個 guard hooks + 共享 settings。原則是「能用工具強制的不寫成文件」,搭配 mattpocock skills 與 trunk-based development |
+| [`global/`](./global/) | Global 配置(`~/.claude/CLAUDE.md`)snapshot — 所有專案共用的基礎行為設定 |
 
-未來版本會以 `claude-code-setup-v2`、`claude-code-setup-v3`... 平行資料夾存在。
-
----
+`template/` 是唯一持續演進的 template,改動直接在原地進行,歷史由 git log 記錄,無版本號。
 
 ## How to Adopt
 
-1. 選擇想用的版本(各版本定位見上表)
-2. 進入該資料夾閱讀其 README.md
-3. 依 README 的 Quick Start 步驟執行
+1. 進入 `template/` 閱讀 README.md
+2. 依 README 的 Setup 步驟複製檔案到目標專案並填入佔位符
+
+---
+
+## Archive
+
+歷代 template 保留於 `archive/`,維持當時的資料夾名稱與內容,供參考與整理;新專案一律從 `template/` 出發。
+
+| 資料夾 | 定位 | 封存時間 |
+|------|------|------|
+| [`archive/v1/`](./archive/v1/) | Skill-driven 的通用 Python 專案 setup — maintaining skills、slash commands、hooks、rules、CI workflow,以文件體系(SPEC / architecture / decisions)維持規範一致性 | 2026-11-09,停在 v1.26.0 |
+| [`archive/v0/`](./archive/v0/) | Rule-driven 的最初版 — 透過 CLAUDE.md + rules 被動讀取規範,無 skill / command / hook / CI 自動化層 | 2026-11-09,停在 v0.2.0 |
+
+封存的原因:v0 → v1 → v2 每一代都是設計哲學的轉向而非增補,v2(現 `template/`)以 hook 強制取代 v1 的文件體系後,v1 就停止演進;三代平行並列會讓根目錄索引與共用 hook 的修正不斷漂移,因此改為單一現行版 + 封存區。
 
 ---
 
@@ -28,23 +37,15 @@ Claude Code 專案配置模板集合。每個版本獨立存放於平行資料�
 
 ```
 oh-my-claude-setup/
-├── README.md                    ← 本檔案
-├── global/                      ← Global 配置(~/.claude/CLAUDE.md)
-│   ├── README.md                ← 說明與使用方式
-│   └── CLAUDE.md                ← Global 配置 snapshot
-├── claude-code-setup-v1/        ← 第一版 template(Active)
-│   ├── README.md                ← Template 完整說明與 adoption 指南
-│   ├── CHANGELOG.md             ← Template 自身演進史
-│   ├── ROADMAP.md               ← V2 演進方向
-│   ├── .claude/                 ← 實際採用時複製此目錄
-│   └── .github/                 ← 實際採用時複製此目錄(CI workflow)
-├── claude-code-setup-v0/        ← 第零版 template(Rule-driven)
-│   ├── README.md                ← V0 簡介與使用指南
-│   ├── CHANGELOG.md             ← V0 演進紀錄
-│   ├── ROADMAP.md               ← V0 改進方向
-│   └── .claude/                 ← 實際採用時複製此目錄
+├── README.md                ← 本檔案
+├── template/                ← 現行 template(複製到目標專案)
+│   ├── README.md
+│   ├── CLAUDE.md
+│   └── .claude/
+├── global/                  ← Global 配置 snapshot
+│   ├── README.md
+│   └── CLAUDE.md
+└── archive/                 ← 封存版本
+    ├── v0/
+    └── v1/
 ```
-
----
-
-**Last Updated**: 2026-05-16
