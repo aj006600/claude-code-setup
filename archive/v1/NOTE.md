@@ -60,36 +60,40 @@
 | `/code-review` | 只能對已建立的 PR 操作 | 5 個 Sonnet agents 平行跑 5 面向（CLAUDE.md 合規 / 淺層 bug / git blame / 歷史 PR comments / 代碼註解），每個 issue 經 Haiku 評分過濾（<80 丟掉），用 `gh pr comment` 寫回 PR |
 | `superpowers:code-reviewer` agent | 對 BASE_SHA..HEAD_SHA 範圍 | 結果直接返回對話，不寫 PR |
 
-## TODO / 待確認事項
+## 使用 v1 時發現的問題
 
-### Setup 功能
+v1 封存時留下的觀察,依主題整理;原始條目是當時的隨手筆記。
 
-- [ ] `pre-pr-check` 流程再釐清（好像很複雜？再說明一遍？）
-- [ ] 再次確認 `project-status`、`pre-pr-check` 這兩個 command
-- [ ] `claude.md` 變成可添加專案特定的 memory 功能
-- [ ] 確認幾個常用的 prompt 詞彙測試啟用的 skill
-- [ ] 技術疑問 -> 使用 `context7` MCP 查最新 library 文檔 -> 少了 github mcp，未來會增加 `/graphify`
-- [ ] global CLAUDE.md 也提到不要 emoji
-- [ ] Memory 存哪？可不可以 by project？（Memory 存了兩條：「不用負面描述提及禁用做法」與「CHANGELOG 授權代寫」，下次對話自動帶入）
-- [ ] 是不是有重複的 plugin
+### Skills 與 commands 沒有如設計般運作
 
-### 開發流程
+- `tdd-feature-workflow` 有時不會被觸發,開發直接繞過 TDD 流程。
+- 維護 skills 沒有自動接手:實際專案裡 SPEC.md 沒被寫、CLAUDE.md 沒被客製。
+- 哪些常用 prompt 詞彙會啟用哪些 skill,從未系統性測過。
+- `/pre-pr-check` 流程複雜到使用者自己都要重讀才懂;它與 `/project-status` 的實際行為需要再驗證。
+- 安裝的 plugin 疑似有重複。
 
-- [ ] README.md 要講要怎麼連結到 repo
-- [ ] 暫時拿掉 workflow 檔案（CI 有問題）
-- [ ] 好像不會自己創 main、dev、qas，且一切以 dev 為主
-- [ ] 沒有寫 SPEC
-- [ ] 現在是不是只是在 worktree 裡面創分支，而不是真的平行在 worktree 裡面創多個分支平行進行
-- [ ] CLAUDE.md 也沒改
-- [ ] 平行搬到 v2 去處理，然後要一個 to-be 清單上面說未來想要什麼功能（CI、平行）
-- [ ] mypy strict + ruff 是什麼？還有哪些 test 或 CI？
-- [ ] 對 main 操作
-- [ ] 有時候會沒有進 tdd skill 裡面
-- [ ] `docs/plan` 有沒有辦法改到 `.claude/docs/plan/` 或跟 claude 本身一樣放到 `/tmp`
+### Git workflow 與 CI 落差
 
-### Bug
+- `.github/workflows/ci.yml` 在 GitHub 上一律失敗,曾考慮暫時移除;mypy strict 與 ruff 到底檢查什麼、還需要哪些測試或 CI 關卡,都沒釐清。
+- 分支策略沒落實:不會自動建立 main / dev / qas,一切以 dev 為主,而且 Claude 會直接對 main 操作。
+- 平行開發只是在同一個 worktree 裡開分支,不是真的在多個 worktree 平行進行。
+- README 沒有說明如何把新專案連上 remote repo。
 
-- [ ] GitHub CI 都會失敗
+### 文件與工具位置
+
+- `docs/plans/` 放在專案根目錄不理想,想改到 `.claude/docs/plans/`,或像 Claude 自身一樣放到 `/tmp`。
+- 希望 CLAUDE.md 能承載專案特定的 memory。
+- 技術疑問走 context7,但少了 github MCP;計畫加入 `/graphify`。
+- global CLAUDE.md 需加上「不用 emoji」。
+- Memory 存在哪、能不能 by project,當時不確定(已存兩條:「不用負面描述提及禁用做法」「CHANGELOG 授權代寫」)。
+
+### 當時的結論
+
+平行開發、CI 等需求搬到下一版處理,並列一份 to-be 清單。
+
+### 後續
+
+其中幾項在現行 `template/` 已有答案:對 main 操作改由 `block-push-main.sh` hook 硬擋;「不用 emoji」寫進 template CLAUDE.md 的 conventions;`/graphify` 已註冊在 global CLAUDE.md;memory 確認可 by project。SPEC / CI / docs 體系則整個不再隨 template 出貨。
 
 ## Session 筆記
 
