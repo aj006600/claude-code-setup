@@ -67,7 +67,7 @@ uv init
 ### Step 2:複製 template setup
 
 ```bash
-cp -r path/to/claude-code-setup-v0/.claude .
+cp -r path/to/claude-code-setup/archive/v0/template/. .
 ```
 
 ### Step 3:啟動 Claude Code 並提出第一個需求
@@ -83,21 +83,22 @@ cp -r path/to/claude-code-setup-v0/.claude .
 ## Template 結構
 
 ```
-claude-code-setup-v0/
+archive/v0/
 ├── README.md                  # 本檔
 ├── PROMPT.md                  # 使用 V0 時的常用 prompt 模板
-└── .claude/
-    ├── CLAUDE.md              # 主規範入口
-    ├── SPEC.md                # 專案規格空白模板
-    └── rules/
-        ├── claude-update-rules.md
-        ├── code-style.md
-        ├── development-workflow-details.md
-        ├── documentation-style.md
-        ├── git-rules.md
-        ├── readme-update-rules.md
-        ├── spec-update-rules.md
-        └── testing-rules.md
+└── template/                  # 整個資料夾的內容複製到專案根目錄
+    └── .claude/
+        ├── CLAUDE.md          # 主規範入口
+        ├── SPEC.md            # 專案規格空白模板
+        └── rules/
+            ├── claude-update-rules.md
+            ├── code-style.md
+            ├── development-workflow-details.md
+            ├── documentation-style.md
+            ├── git-rules.md
+            ├── readme-update-rules.md
+            ├── spec-update-rules.md
+            └── testing-rules.md
 ```
 
 ---

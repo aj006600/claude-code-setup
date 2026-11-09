@@ -104,8 +104,7 @@ uv init
 將 `.claude/`、`.github/` 複製到你的專案根目錄：
 
 ```bash
-cp -r path/to/claude-code-setup-v1/.claude .
-cp -r path/to/claude-code-setup-v1/.github .
+cp -r path/to/claude-code-setup/archive/v1/template/. .
 ```
 
 ### Step 3：Merge 推薦工具配置
@@ -161,40 +160,41 @@ Claude Code 會自動完成：
 ## Template 結構
 
 ```
-claude-code-setup-v1/
+archive/v1/
 ├── README.md                     # Template 使用說明（本檔）
 ├── PROMPT.md                     # 使用 V1 時的常用 prompt 模板
 ├── NOTE.md                       # V1 開發筆記
-├── .claude/                      # User 複製此目錄到專案
-│   ├── CLAUDE.md                 # 開發原則 / constitution（需客製；Workflow A 自動處理）
-│   ├── SPEC.md                   # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）
-│   ├── settings.json             # Claude Code 設定（含 hook 註冊）
-│   ├── rules/                    # 開發規範
-│   │   ├── code-style.md
-│   │   ├── testing-rules.md
-│   │   ├── git-rules.md
-│   │   └── documentation-style.md
-│   ├── references/               # 跨領域 reference
-│   │   └── pyproject-tooling.example.toml   # ruff/mypy/pytest/coverage [tool.*] 配置
-│   ├── skills/                   # 專案專屬 skills
-│   │   ├── maintaining-spec-md/
-│   │   ├── maintaining-architecture-md/
-│   │   ├── maintaining-claude-md/
-│   │   ├── maintaining-readme-md/
-│   │   │   └── references/       # 3 份 doc templates
-│   │   ├── maintaining-decisions-md/
-│   │   └── tdd-feature-workflow/
-│   ├── commands/                 # Slash commands
-│   ├── hooks/
-│   │   ├── secrets-scan-advisory.sh
-│   │   └── external-ref-guard.sh
-│   └── docs/
-│       ├── architecture.md       # 現行架構描述（template；maintaining-architecture-md 維護）
-│       ├── decisions/              # 決策史:CONVENTIONS.md（規範）+ decisions.md（空種子）
-│       └── plans/                # Claude TDD 工作 plan（superpowers:writing-plans 產出，非 user-facing）
-└── .github/                      # User 同時複製此目錄
-    └── workflows/
-        └── ci.yml                # GitHub Actions CI
+└── template/                     # 整個資料夾的內容複製到專案根目錄
+    ├── .claude/
+    │   ├── CLAUDE.md             # 開發原則 / constitution（需客製；Workflow A 自動處理）
+    │   ├── SPEC.md               # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）
+    │   ├── settings.json         # Claude Code 設定（含 hook 註冊）
+    │   ├── rules/                # 開發規範
+    │   │   ├── code-style.md
+    │   │   ├── testing-rules.md
+    │   │   ├── git-rules.md
+    │   │   └── documentation-style.md
+    │   ├── references/           # 跨領域 reference
+    │   │   └── pyproject-tooling.example.toml   # ruff/mypy/pytest/coverage [tool.*] 配置
+    │   ├── skills/               # 專案專屬 skills
+    │   │   ├── maintaining-spec-md/
+    │   │   ├── maintaining-architecture-md/
+    │   │   ├── maintaining-claude-md/
+    │   │   ├── maintaining-readme-md/
+    │   │   │   └── references/   # 3 份 doc templates
+    │   │   ├── maintaining-decisions-md/
+    │   │   └── tdd-feature-workflow/
+    │   ├── commands/             # Slash commands
+    │   ├── hooks/
+    │   │   ├── secrets-scan-advisory.sh
+    │   │   └── external-ref-guard.sh
+    │   └── docs/
+    │       ├── architecture.md   # 現行架構描述（template；maintaining-architecture-md 維護）
+    │       ├── decisions/        # 決策史:CONVENTIONS.md（規範）+ decisions.md（空種子）
+    │       └── plans/            # Claude TDD 工作 plan（superpowers:writing-plans 產出，非 user-facing）
+    └── .github/
+        └── workflows/
+            └── ci.yml            # GitHub Actions CI
 ```
 
 ---
