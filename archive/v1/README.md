@@ -2,65 +2,7 @@
 
 > **封存版本**(2026-11-09)。原名 `claude-code-setup-v1`,skill-driven 的 Python 專案 setup,保留供參考與整理,演進史見 `git log`;新專案請用 [`template/`](../../template/)。
 
-Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼業界最佳實踐的 lean setup。
-
----
-
-## Overview
-
-這是給 Claude Code 使用的專案 setup template。它提供一組經過設計的 skills、commands、rules、agents 與 hooks，讓 Claude Code 在開發 Python 專案時：
-
-- **自動維護規範一致性**：SPEC.md、architecture.md、CLAUDE.md、README / docs、decisions 各有專責 skill 自動同步
-- **強制 TDD 紀律**：4 階段 workflow 編排，委派 superpowers skills
-- **提供最佳實踐預設**：code style、testing、git、documentation 規範內建
-- **降低認知負擔**：commands 減少重複操作，advisory hook 提供安全網
-
-## Design Philosophy
-
-- **Procedural → Skill**：有步驟的流程（如更新 CLAUDE.md）做成 skill，由 description 觸發
-- **Reference → Rule**：查閱類規範（如 coding style）留在 rule 檔案
-- **Single source of truth**：規範不重複；skill / rule / agent 各司其職
-- **Progressive disclosure**：Skill bundled references 只在需要時載入
-- **Template-friendly**：CLAUDE.md 有明確 `<Placeholder>` 標記，Architecture 可客製
-
----
-
-## What's Included
-
-### 5 Maintenance Skills（一份 doc SoT 對一個 maintainer）
-- `maintaining-spec-md` — SPEC.md 建立 / 維護（需求 + 可量化 Success Criteria + `[NEEDS CLARIFICATION]` 標記）
-- `maintaining-architecture-md` — `.claude/docs/architecture.md` 維護（現行架構 + Tech Stack + 目錄結構 + 設計決策索引）
-- `maintaining-claude-md` — CLAUDE.md（開發原則 / constitution）更新（演進靠 git log + decisions/）
-- `maintaining-readme-md` — README.md + docs/ 更新（含 3 種文檔 templates）
-- `maintaining-decisions-md` — `.claude/docs/decisions/decisions.md` 決策史維護（ADR + Lessons + Timeline，Postmortem 選配）
-
-文件軸分離:SPEC = What must do、architecture = What is now、CLAUDE = 開發原則、decisions = Why decided、README/docs = 怎麼用。每個事實單一真相,彼此交叉連結。
-
-### 1 Workflow Orchestrator Skill
-- `tdd-feature-workflow` — 4 階段 TDD 開發編排（需求 → 實作 → PR → Review & Merge），於關鍵節點委派給 superpowers / code-review / maintaining-* 等 skills
-
-### 4 Slash Commands
-- `/project-status` — 快速狀態快照
-- `/pre-dev-check` — 開發前檢查
-- `/pre-pr-check` — PR 前 workflow-aware 檢查（測試+coverage、code-simplifier、external-ref body scan、SPEC / README hints）
-- `/agent-cheatsheet` — 可用資源速查
-
-### 1 Advisory Hook + 1 Guard Hook
-- `secrets-scan-advisory.sh` — PreToolUse hook：`git commit` / `git add` 前掃 staged 檔名（`.env`、`*.pem`、`*.key`、`credentials.json` 等）與 staged diff 中的已知 secret pattern（AWS key、GitHub token、OpenAI key、Slack token、私鑰 header）（advisory）
-- `external-ref-guard.sh` — PreToolUse hook：`git commit` / `gh pr create|edit|comment` / `gh issue create|edit|comment` 前掃 command text，偵測到指向外部 repo 的裸 reference（`owner/repo#N`、`https://github.com/owner/repo/(issues|pull)/N`）即**直接阻擋**，防止 GitHub cross-repo "mentioned in ..." backlink 外洩內容。反引號包起來的引用視為安全、放行
-
-`secrets-scan-advisory.sh` 為 `exit 0` 不阻擋；`external-ref-guard.sh` 為 `exit 1` 阻擋（leak 不可逆、逃生門只需反引號包即可）。
-
-### 1 CI Workflow
-- `.github/workflows/ci.yml` — GitHub Actions，PR 與 push 觸發 `ruff check` + `ruff format --check` + `mypy` + `pytest --cov --cov-fail-under=70`。CI 為 ruff / format / mypy / 測試+coverage 的權威 pre-merge gate；`/pre-pr-check` 不重複跑這些工具，只補位 CI 做不到的 workflow-aware 項目（code-simplifier agent、PR body external-ref scan、SPEC / README hints）
-
-### 4 Reference Rules
-- `code-style.md` — Python 代碼風格（Required Standards + Recommended Tools 分層）
-- `testing-rules.md` — pytest 測試慣例 + 完整範例（parametrize、async fixtures、mocking、coverage config）
-- `git-rules.md` — Git workflow + commit convention
-- `documentation-style.md` — 文檔撰寫風格
-
----
+Claude Code 專案配置模板 — 第一版:通用 Python 專案的 **skill-driven** setup。一組 skills、commands、rules 與 hooks 讓 Claude Code 在開發 Python 專案時自動維護規範一致性(SPEC / architecture / CLAUDE / README / decisions 各有專責 skill 同步)、以 4 階段 workflow 執行 TDD 紀律、內建 code style / testing / git / documentation 最佳實踐,並用 commands 與 hooks 減少重複操作、提供安全網。設計理念與理由見 [NOTE.md](./NOTE.md)。
 
 ## Prerequisites
 
@@ -88,7 +30,52 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 
 ---
 
-## Quick Start（5 步驟）
+## What's inside
+
+```
+archive/v1/
+├── README.md                     # 本檔
+├── PROMPT.md                     # 使用 V1 時的常用 prompt 模板
+├── NOTE.md                       # V1 設計理念與開發筆記
+└── template/                     # 整個資料夾的內容複製到專案根目錄
+    ├── .claude/
+    │   ├── CLAUDE.md             # 開發原則 / constitution,<...> 佔位符由 maintaining-claude-md 首次對話填入
+    │   ├── SPEC.md               # 需求規格 placeholder,由 maintaining-spec-md 首次對話填入
+    │   ├── settings.json         # hooks 註冊
+    │   ├── rules/
+    │   │   ├── code-style.md             # Python 代碼風格(Required Standards + Recommended Tools 分層)
+    │   │   ├── testing-rules.md          # pytest 慣例與範例(parametrize、async fixtures、mocking、coverage)
+    │   │   ├── git-rules.md              # Git workflow + commit convention
+    │   │   └── documentation-style.md    # 文檔撰寫風格
+    │   ├── references/
+    │   │   └── pyproject-tooling.example.toml   # ruff / mypy / pytest / coverage 的 [tool.*] 配置
+    │   ├── skills/                       # 一份文件對一個 maintainer:SPEC = 該做什麼、architecture = 現在長怎樣、CLAUDE = 開發原則、decisions = 為何這樣決定、README/docs = 怎麼用
+    │   │   ├── maintaining-spec-md/          # SPEC.md:需求 + 可量化 Success Criteria + [NEEDS CLARIFICATION] 標記
+    │   │   ├── maintaining-architecture-md/  # architecture.md:現行架構 + Tech Stack + 目錄結構
+    │   │   ├── maintaining-claude-md/        # CLAUDE.md:開發原則,演進靠 git log + decisions
+    │   │   ├── maintaining-readme-md/        # README + docs/,含 3 份 doc templates(references/)
+    │   │   ├── maintaining-decisions-md/     # decisions.md:ADR + Lessons + Timeline
+    │   │   └── tdd-feature-workflow/         # 4 階段 TDD 編排(需求 → 實作 → PR → Review & Merge),關鍵節點委派 superpowers / code-review / maintaining-*
+    │   ├── commands/
+    │   │   ├── project-status.md     # /project-status:分支、未追蹤變更、SPEC / CLAUDE 版本、最近 commits
+    │   │   ├── pre-dev-check.md      # /pre-dev-check:開發前 git 狀態與同步檢查
+    │   │   ├── pre-pr-check.md       # /pre-pr-check:PR 前補 CI 做不到的檢查(code-simplifier、PR body external-ref scan、文件 hints)
+    │   │   └── agent-cheatsheet.md   # /agent-cheatsheet:可用 agents / skills / commands / MCPs 速查
+    │   ├── hooks/
+    │   │   ├── secrets-scan-advisory.sh  # git add / commit 前掃 staged 檔名與 diff 中的 secret pattern,僅警告(exit 0)
+    │   │   └── external-ref-guard.sh     # commit / PR / issue 文字含跨 repo 裸 reference 即阻擋(exit 1),反引號包起來放行
+    │   └── docs/
+    │       ├── architecture.md       # 現行架構描述,maintaining-architecture-md 維護
+    │       ├── decisions/            # CONVENTIONS.md(規範)+ decisions.md(空種子)
+    │       └── plans/                # TDD 工作 plan(superpowers:writing-plans 產出,非 user-facing)
+    └── .github/
+        └── workflows/
+            └── ci.yml                # PR 與 push 跑 ruff check + ruff format --check + mypy + pytest --cov(fail-under 70),為 pre-merge 的權威 gate
+```
+
+---
+
+## Setup
 
 ### Step 1：初始化 Python 專案
 
@@ -133,7 +120,7 @@ git remote add origin https://github.com/<user>/<repo>.git
 
 `uv init` 已自動跑 `git init`，本 step 只負責設定 remote、不 push。實際 push 在 Step 5 完成首次客製化 commit 後執行。
 
-> 用 Personal Access Token (PAT) 認證的 user 注意：本 template 含 `.github/workflows/ci.yml`，首次 push 可能因 PAT 缺 `workflow` scope 被 GitHub 擋。詳見 [Troubleshooting](#troubleshooting)。
+> 用 Personal Access Token (PAT) 認證的 user 注意：本 template 含 `.github/workflows/ci.yml`，首次 push 可能因 PAT 缺 `workflow` scope 被 GitHub 擋。詳見 FAQ 最後一題。
 
 ### Step 5：啟動 Claude Code 並提出第一個需求
 
@@ -151,51 +138,13 @@ Claude Code 會自動完成：
 
 若需求尚不明確，skill 會主動詢問；若對話尚未提供足夠資訊（例如 framework 尚未選定），對應 placeholder 暫不替換，由後續對話中的 Workflow B 補上。
 
-### 完成：開始開發
+### Step 6:依團隊調整 rules
+
+`.claude/rules/` 可客製:`code-style.md` 的 formatter / linter / type checker 與 docstring 格式、`testing-rules.md` 的 markers 與 coverage 目標、`git-rules.md` 的 commit convention 細節、`documentation-style.md` 的模板結構;工具配置改 `.claude/references/pyproject-tooling.example.toml` 後 merge 進 `pyproject.toml`。
+
+### 完成:開始開發
 
 輸入「我想實作 X 功能」即觸發 `tdd-feature-workflow` skill 啟動 TDD 流程。
-
----
-
-## Template 結構
-
-```
-archive/v1/
-├── README.md                     # Template 使用說明（本檔）
-├── PROMPT.md                     # 使用 V1 時的常用 prompt 模板
-├── NOTE.md                       # V1 開發筆記
-└── template/                     # 整個資料夾的內容複製到專案根目錄
-    ├── .claude/
-    │   ├── CLAUDE.md             # 開發原則 / constitution（需客製；Workflow A 自動處理）
-    │   ├── SPEC.md               # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）
-    │   ├── settings.json         # Claude Code 設定（含 hook 註冊）
-    │   ├── rules/                # 開發規範
-    │   │   ├── code-style.md
-    │   │   ├── testing-rules.md
-    │   │   ├── git-rules.md
-    │   │   └── documentation-style.md
-    │   ├── references/           # 跨領域 reference
-    │   │   └── pyproject-tooling.example.toml   # ruff/mypy/pytest/coverage [tool.*] 配置
-    │   ├── skills/               # 專案專屬 skills
-    │   │   ├── maintaining-spec-md/
-    │   │   ├── maintaining-architecture-md/
-    │   │   ├── maintaining-claude-md/
-    │   │   ├── maintaining-readme-md/
-    │   │   │   └── references/   # 3 份 doc templates
-    │   │   ├── maintaining-decisions-md/
-    │   │   └── tdd-feature-workflow/
-    │   ├── commands/             # Slash commands
-    │   ├── hooks/
-    │   │   ├── secrets-scan-advisory.sh
-    │   │   └── external-ref-guard.sh
-    │   └── docs/
-    │       ├── architecture.md   # 現行架構描述（template；maintaining-architecture-md 維護）
-    │       ├── decisions/        # 決策史:CONVENTIONS.md（規範）+ decisions.md（空種子）
-    │       └── plans/            # Claude TDD 工作 plan（superpowers:writing-plans 產出，非 user-facing）
-    └── .github/
-        └── workflows/
-            └── ci.yml            # GitHub Actions CI
-```
 
 ---
 
@@ -206,9 +155,6 @@ A: 大部分結構通用，但 rules（code-style、testing-rules）預設 Pytho
 - 重寫 `code-style.md` 為該語言規範
 - 重寫 `testing-rules.md` 為該語言測試框架範例
 - 其他檔案幾乎不需改
-
-### Q: 我已經有 CLAUDE.md 了，如何整合？
-A: 保留你的內容，將本 template 的結構（Available Agents & Skills 章節、Development Checklist）作為 reference 融合進去。
 
 ### Q: 不想用 superpowers skills 怎麼辦？
 A: `tdd-feature-workflow` skill 大量引用 superpowers。若不用：
@@ -237,14 +183,7 @@ A: 編輯 `.claude/settings.json`：
 ### Q: Skill 沒有自動觸發？
 A: Skill 的 description 欄位決定何時觸發。若語境不在 description 涵蓋範圍內，可手動啟用：使用 Claude Code 的 Skill tool，傳入 `skill: "maintaining-spec-md"` 等。
 
-### Q: CLAUDE.md 沒有版本號？
-A: 是，刻意如此。開發規範不是被消費的契約（不像 SPEC 是需求契約），套用 SemVer 的 ceremony 無回報。CLAUDE.md 的演進由 `git log -- .claude/CLAUDE.md` 追蹤、決策理由由 `.claude/docs/decisions/`（ADR）承載，footer 只保留 `Last Updated`。（SPEC.md / architecture.md 仍保留 SemVer——它們的版本有契約 / 現況語意。）
-
----
-
-## Troubleshooting
-
-### Push 被拒：`refusing to allow a Personal Access Token to create or update workflow ...`
+### Q: Push 被拒：`refusing to allow a Personal Access Token to create or update workflow ...`
 
 **症狀**：首次 `git push` 時 GitHub 回覆：
 
@@ -264,75 +203,3 @@ A: 是，刻意如此。開發規範不是被消費的契約（不像 SPEC 是�
   SSH 認證無 scope 概念，直接通
 - **修補既有 PAT**：GitHub Settings → Developer settings → Personal access tokens → 編輯該 token → 加勾 `workflow` scope → 儲存
 
----
-
-## Advanced Customization
-
-### 調整 Rules（視團隊需求）
-
-檢視 `.claude/rules/` 並依團隊調整：
-
-| Rule | 可客製項目 |
-|------|-----------|
-| `code-style.md` | Formatter / Linter / Type Checker 選擇、docstring 格式 |
-| `testing-rules.md` | Markers、Coverage 目標、factory 選擇 |
-| `git-rules.md` | Commit convention 其他細節 |
-| `documentation-style.md` | 模板結構細節 |
-
-工具配置（`[tool.*]`）若需調整，編輯 `.claude/references/pyproject-tooling.example.toml`，再 merge 進 user 專案的 `pyproject.toml`。
-
-### 新增 skill
-參考 `.claude/skills/` 現有 skill 作為結構範例。或在 Claude Code 啟用 `skill-creator:skill-creator` skill 引導建立。
-
-### 新增 command
-於 `.claude/commands/` 建立 `.md` 檔，含 YAML frontmatter `description` 欄位。
-
-### 新增 hook
-於 `.claude/hooks/` 建立 shell script，並在 `.claude/settings.json` 的 `hooks` 區塊註冊。
-
-Hook 類型（依 lifecycle 順序）：
-- `SessionStart` — Claude Code session 開始時
-- `UserPromptSubmit` — User 提交 prompt 時
-- `PreToolUse` — tool 執行前觸發（可阻擋）
-- `PostToolUse` — tool 執行後觸發
-- `Notification` — 通知事件（如 Claude Code idle 等）
-- `PreCompact` — context 壓縮前
-- `SubagentStop` — subagent 完成時
-- `Stop` — Claude 回覆完成後
-- `SessionEnd` — session 結束時
-
----
-
-## Design Rationale
-
-本 template 在 v1.2.0 將原「rule 檔案 + Claude 被動讀取」的設計，全面改為「skill 主動觸發」。選擇 skill 而非 markdown rule 的 5 個理由：
-
-**1. 主動觸發 vs 被動等讀取**
-Skill description 是 Claude Code 的觸發關鍵——語意匹配時自動載入，不必仰賴 CLAUDE.md 提示或使用者明確要求。
-
-**2. Workflow 結構比純文字規範更可遵循**
-Skill 可內建多步驟 workflow、分支判斷（如 `maintaining-claude-md` 的 Workflow A/B）、輸入輸出樣板。Markdown rule 只能文字敘述，Claude 在臨場判斷上較易漏步驟。
-
-**3. 跨 skill 協作鏈**
-`maintaining-spec-md` → `maintaining-claude-md` → `maintaining-readme-md` 在關鍵節點互相 hook，形成規範同步鏈；rule 之間沒有這種機制。
-
-**4. 領域知識隨 skill 一併載入**
-Semantic Versioning、TDD 紀律等最佳實踐寫進 skill body，觸發時自動進入 context。Rule 形式需 Claude 主動 Read 才知道細節。
-
-**5. 智慧延後執行時機**（`maintaining-readme-md` 獨有）
-依實作狀態（實作中 / 完成未 PR / PR 中 / 已 merge）決定執行時機，避免 TDD 中途干擾也避免文檔遺忘補上。原 rule 只有單一「pre-merge」觸發點。
-
-若想對比原始 rule-driven 設計，可參考 repo 內保留的 v0 snapshot。
-
----
-
-## 相關資源
-
-- [Claude Code 官方文件](https://docs.claude.com/en/docs/claude-code)
-- [Semantic Versioning](https://semver.org/)
-- [superpowers skills](https://github.com/obra/superpowers)
-
----
-
-**Template Version**: v1.26.0
-**Last Updated**: 2026-05-27
