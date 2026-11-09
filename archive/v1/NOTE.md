@@ -76,7 +76,9 @@ v1 封存時留下的觀察,依主題整理;原始條目是當時的隨手筆記
 
 - `.github/workflows/ci.yml` 在 GitHub 上一律失敗,曾考慮暫時移除;mypy strict 與 ruff 到底檢查什麼、還需要哪些測試或 CI 關卡,都沒釐清。
 - 分支策略沒落實:不會自動建立 main / dev / qas,一切以 dev 為主,而且 Claude 會直接對 main 操作。
+- `/pre-dev-check` 與 TDD workflow Phase 2.2 假設 origin/dev 已存在,新專案 remote 一條分支都還沒有就會卡住,得先手動 `git push -u origin main dev qas` 讓 remote 與 local 對齊。
 - 平行開發只是在同一個 worktree 裡開分支,不是真的在多個 worktree 平行進行。
+- Plan 執行有兩種模式:本 session 每個 task 開 subagent 實作並穿插 review,或另開 session 用 `superpowers:executing-plans` 批次跑;skill 的 Phase 2.4 預設後者,但該選哪個的判斷沒寫進 skill,每次都要現場重想。
 - README 沒有說明如何把新專案連上 remote repo。
 
 ### 文件與工具位置
@@ -94,24 +96,3 @@ v1 封存時留下的觀察,依主題整理;原始條目是當時的隨手筆記
 ### 後續
 
 其中幾項在現行 `template/` 已有答案:對 main 操作改由 `block-push-main.sh` hook 硬擋;「不用 emoji」寫進 template CLAUDE.md 的 conventions;`/graphify` 已註冊在 global CLAUDE.md;memory 確認可 by project。SPEC / CI / docs 體系則整個不再隨 template 出貨。
-
-## Session 筆記
-
-### Pre-dev 檢查結果（某次 session）
-
-```
-Branch:        dev (d76cd52 spec: initial specification)
-Uncommitted:   clean
-origin/dev:    not exist（尚未 push 到 remote）
-```
-
-Phase 2.2 預期從 origin/dev pull，但 remote 還沒任何 branch。推薦先 push 三條 branch：`git push -u origin main dev qas`，remote 與 local 對齊，之後 PR 才能正常建。
-
-### Plan 執行選項
-
-| 選項 | 說明 | 適用情境 |
-|------|------|----------|
-| 1. Subagent-Driven（本 session） | 每個 task 開一個 fresh subagent 實作，task 之間做 code review，快速迭代 | 想看每個 task 的進展、即時 feedback |
-| 2. Parallel Session（另開 session） | 另開 session 用 `superpowers:executing-plans` 批次跑，有 checkpoint review | 想釋放本 session 做別的事 |
-
-`tdd-feature-workflow` Phase 2.4 預設指向 executing-plans（選項 2 的形式）。想留在當前 session 看進度也可以選 1。
