@@ -2,7 +2,7 @@
 
 > **封存版本**(2026-11-09)。原名 `claude-code-setup-v1`,skill-driven 的 Python 專案 setup,保留供參考與整理,演進史見 `git log`;新專案請用 [`template/`](../../template/)。
 
-Claude Code 專案配置模板 — 第一版:通用 Python 專案的 **skill-driven** setup。一組 skills、commands、rules 與 hooks 讓 Claude Code 在開發 Python 專案時自動維護規範一致性(SPEC / architecture / CLAUDE / README / decisions 各有專責 skill 同步)、以 4 階段 workflow 執行 TDD 紀律、內建 code style / testing / git / documentation 最佳實踐,並用 commands 與 hooks 減少重複操作、提供安全網。設計理念與理由見 [NOTE.md](./NOTE.md)。
+Claude Code 專案配置模板 — 第一版:通用 Python 專案的 **skill-driven** setup。一組 skills、commands、rules 與 hooks 讓 Claude Code 在開發 Python 專案時自動維護規範一致性(SPEC / architecture / CLAUDE / README / decisions 各有專責 skill 同步)、以 4 階段 workflow 執行 TDD 紀律、內建 code style / testing / git / documentation 最佳實踐,並用 commands 與 hooks 減少重複操作、提供安全網。
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ Claude Code 專案配置模板 — 第一版:通用 Python 專案的 **skill-dri
 archive/v1/
 ├── README.md                     # 本檔
 ├── PROMPT.md                     # 使用 V1 時的常用 prompt 模板
-├── NOTE.md                       # V1 設計理念與開發筆記
+├── NOTE.md                       # V1 開發筆記
 └── template/                     # 整個資料夾的內容複製到專案根目錄
     ├── .claude/
     │   ├── CLAUDE.md             # 開發原則 / constitution,<...> 佔位符由 maintaining-claude-md 首次對話填入

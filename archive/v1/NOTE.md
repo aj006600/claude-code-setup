@@ -1,39 +1,6 @@
 # V1 Setup Development Notes
 
-claude-code-setup-v1 的設計理念、設計理由,以及開發過程中的筆記、Q&A、待辦事項。
-
-## 設計理念
-
-- **Procedural → Skill**：有步驟的流程（如更新 CLAUDE.md）做成 skill，由 description 觸發
-- **Reference → Rule**：查閱類規範（如 coding style）留在 rule 檔案
-- **Single source of truth**：規範不重複；skill / rule / agent 各司其職
-- **Progressive disclosure**：Skill bundled references 只在需要時載入
-- **Template-friendly**：CLAUDE.md 有明確 `<Placeholder>` 標記，Architecture 可客製
-
-## 為何選 skill 而非 rule
-
-本 template 在 v1.2.0 將原「rule 檔案 + Claude 被動讀取」的設計，全面改為「skill 主動觸發」。選擇 skill 而非 markdown rule 的 5 個理由：
-
-**1. 主動觸發 vs 被動等讀取**
-Skill description 是 Claude Code 的觸發關鍵——語意匹配時自動載入，不必仰賴 CLAUDE.md 提示或使用者明確要求。
-
-**2. Workflow 結構比純文字規範更可遵循**
-Skill 可內建多步驟 workflow、分支判斷（如 `maintaining-claude-md` 的 Workflow A/B）、輸入輸出樣板。Markdown rule 只能文字敘述，Claude 在臨場判斷上較易漏步驟。
-
-**3. 跨 skill 協作鏈**
-`maintaining-spec-md` → `maintaining-claude-md` → `maintaining-readme-md` 在關鍵節點互相 hook，形成規範同步鏈；rule 之間沒有這種機制。
-
-**4. 領域知識隨 skill 一併載入**
-Semantic Versioning、TDD 紀律等最佳實踐寫進 skill body，觸發時自動進入 context。Rule 形式需 Claude 主動 Read 才知道細節。
-
-**5. 智慧延後執行時機**（`maintaining-readme-md` 獨有）
-依實作狀態（實作中 / 完成未 PR / PR 中 / 已 merge）決定執行時機，避免 TDD 中途干擾也避免文檔遺忘補上。原 rule 只有單一「pre-merge」觸發點。
-
-## 為何 CLAUDE.md 沒有版本號
-
-刻意如此。開發規範不是被消費的契約（不像 SPEC 是需求契約），套用 SemVer 的 ceremony 無回報。CLAUDE.md 的演進由 `git log -- .claude/CLAUDE.md` 追蹤、決策理由由 `.claude/docs/decisions/`（ADR）承載，footer 只保留 `Last Updated`。（SPEC.md / architecture.md 仍保留 SemVer——它們的版本有契約 / 現況語意。）
-
----
+開發 claude-code-setup-v1 過程中的筆記、Q&A、待辦事項。
 
 ## Skills & Plugins 分析
 
