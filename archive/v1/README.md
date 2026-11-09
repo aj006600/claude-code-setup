@@ -163,6 +163,8 @@ Claude Code 會自動完成：
 ```
 claude-code-setup-v1/
 ├── README.md                     # Template 使用說明（本檔）
+├── PROMPT.md                     # 維護 / 使用 V1 時的常用 prompt 模板
+├── NOTE.md                       # V1 開發筆記
 ├── .claude/                      # User 複製此目錄到專案
 │   ├── CLAUDE.md                 # 開發原則 / constitution（需客製；Workflow A 自動處理）
 │   ├── SPEC.md                   # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）

@@ -85,6 +85,7 @@ cp -r path/to/claude-code-setup-v0/.claude .
 ```
 claude-code-setup-v0/
 ├── README.md                  # 本檔
+├── PROMPT.md                  # 使用 V0 時的常用 prompt 模板
 └── .claude/
     ├── CLAUDE.md              # 主規範入口
     ├── SPEC.md                # 專案規格空白模板
