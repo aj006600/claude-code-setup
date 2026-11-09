@@ -120,7 +120,7 @@ git remote add origin https://github.com/<user>/<repo>.git
 
 `uv init` 已自動跑 `git init`，本 step 只負責設定 remote、不 push。實際 push 在 Step 5 完成首次客製化 commit 後執行。
 
-> 用 Personal Access Token (PAT) 認證的 user 注意：本 template 含 `.github/workflows/ci.yml`，首次 push 可能因 PAT 缺 `workflow` scope 被 GitHub 擋。詳見 FAQ 最後一題。
+> 用 Personal Access Token (PAT) 認證的話,本 template 含 `.github/workflows/ci.yml`,首次 push 會因 PAT 缺 `workflow` scope 被 GitHub 擋;`gh auth login` 重登或改用 SSH remote 即可。
 
 ### Step 5：啟動 Claude Code 並提出第一個需求
 
@@ -145,61 +145,4 @@ Claude Code 會自動完成：
 ### 完成:開始開發
 
 輸入「我想實作 X 功能」即觸發 `tdd-feature-workflow` skill 啟動 TDD 流程。
-
----
-
-## FAQ
-
-### Q: Template 不是 Python 專案可以用嗎？
-A: 大部分結構通用，但 rules（code-style、testing-rules）預設 Python。若改為其他語言：
-- 重寫 `code-style.md` 為該語言規範
-- 重寫 `testing-rules.md` 為該語言測試框架範例
-- 其他檔案幾乎不需改
-
-### Q: 不想用 superpowers skills 怎麼辦？
-A: `tdd-feature-workflow` skill 大量引用 superpowers。若不用：
-1. 編輯 `.claude/skills/tdd-feature-workflow/SKILL.md` 各階段委派對象
-2. 將「啟用 `superpowers:xxx` skill」改為具體指令
-
-### Q: Hooks 會擋住我的 commit 嗎？
-A: 分兩類：
-
-| 類別 | Hook | 行為 |
-|------|------|------|
-| Advisory | `secrets-scan-advisory.sh` | `exit 0`，只在 stderr 輸出警告，不阻擋 |
-| Guard | `external-ref-guard.sh` | `exit 1`，偵測到外部 repo 裸 reference 直接阻擋 |
-
-Guard hook 設計為阻擋是因為 GitHub cross-repo backlink 一旦建立即不可逆（watcher 已收到通知），且逃生門極簡——只需把引用用反引號 `` ` `` 包起來即可通過（GitHub 對 code span 不做 reference parsing）。
-
-若想把 advisory 升級為阻擋，編輯對應檔案將警告分支的 `exit 0` 改為 `exit 1`；若想把 guard 降為 advisory 或臨時 bypass，見下題。
-
-### Q: 如何關閉或 bypass hook？
-A: 編輯 `.claude/settings.json`：
-
-- **全部關閉**：清空 `hooks` 區塊 `{ "hooks": {} }`
-- **只關閉某一個**：從 `PreToolUse[].hooks[]` 陣列移除對應 entry
-- **臨時 bypass `external-ref-guard`**：移除該 entry、完成操作、再加回來（或用反引號包引用，無須改 settings）
-
-### Q: Skill 沒有自動觸發？
-A: Skill 的 description 欄位決定何時觸發。若語境不在 description 涵蓋範圍內，可手動啟用：使用 Claude Code 的 Skill tool，傳入 `skill: "maintaining-spec-md"` 等。
-
-### Q: Push 被拒：`refusing to allow a Personal Access Token to create or update workflow ...`
-
-**症狀**：首次 `git push` 時 GitHub 回覆：
-
-```
-! [remote rejected] main -> main (refusing to allow a Personal Access Token to create or update workflow ".github/workflows/ci.yml" without "workflow" scope)
-```
-
-**原因**：用 Personal Access Token (PAT) 認證但 token 缺 `workflow` scope。GitHub 對「修改 `.github/workflows/` 內容」的 push 強制要求此 scope，即使是 repo owner 也擋。HTTPS remote 配 git credential helper 儲存 PAT 是最常踩的情境。
-
-**三個解法**（任選）：
-
-- **`gh auth login` 重登**（推薦）：web flow 會發完整 scope 的 token，之後 git CLI 透過 gh 的 credential helper 認證
-- **改用 SSH key**：
-  ```bash
-  git remote set-url origin git@github.com:<user>/<repo>.git
-  ```
-  SSH 認證無 scope 概念，直接通
-- **修補既有 PAT**：GitHub Settings → Developer settings → Personal access tokens → 編輯該 token → 加勾 `workflow` scope → 儲存
 
