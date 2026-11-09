@@ -1,10 +1,10 @@
 # claude-code-setup-v0
 
-> **封存版本**(2026-11-09)。原名 `claude-code-setup-v0`,rule-driven 設計的最初版,保留供參考與整理;新專案請用 [`template/`](../../template/)。
+> **封存版本**(2026-11-09)。原名 `claude-code-setup-v0`,rule-driven 設計的最初版,保留供參考與整理,演進史見 `git log`;新專案請用 [`template/`](../../template/)。
 
 Claude Code 專案配置模板 — 第零版:**rule-driven 設計**,透過 CLAUDE.md + rules 被動讀取規範,不含 skill / command / hook / CI 自動化層。
 
-> Rule-driven 模式:Claude Code 依 CLAUDE.md 引用 rules 目錄下的規範檔進行 TDD 開發。所有開發流程、文檔維護規範皆以 markdown prose 表達。改進方向見 [ROADMAP.md](./ROADMAP.md)。
+> Rule-driven 模式:Claude Code 依 CLAUDE.md 引用 rules 目錄下的規範檔進行 TDD 開發。所有開發流程、文檔維護規範皆以 markdown prose 表達。
 
 ---
 
@@ -85,8 +85,6 @@ cp -r path/to/claude-code-setup-v0/.claude .
 ```
 claude-code-setup-v0/
 ├── README.md                  # 本檔
-├── CHANGELOG.md               # V0 自身演進史
-├── ROADMAP.md                 # 改進方向
 └── .claude/
     ├── CLAUDE.md              # 主規範入口
     ├── SPEC.md                # 專案規格空白模板

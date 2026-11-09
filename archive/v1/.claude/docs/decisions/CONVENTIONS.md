@@ -31,7 +31,6 @@ decisions 是專案的「Why 層」——記錄**為什麼這樣決定**(ADR)、
 | `decisions.md` Lessons | 下次怎麼避免 | Why（tactical） |
 | `.claude/docs/architecture.md` | 現在系統長什麼樣 | What is now |
 | `.claude/SPEC.md` | 專案該做什麼(需求/驗收) | What must do |
-| `CHANGELOG` 類 | 改了什麼 | What changed |
 
 判別:一個內容該放哪,先問它回答上表哪個問題。回答「為什麼決定」就進 ADR;回答「現在長怎樣」就進 architecture.md。
 

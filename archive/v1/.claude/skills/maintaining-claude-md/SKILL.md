@@ -7,7 +7,7 @@ description: Use when the user proposes new coding conventions, workflow adjustm
 
 這個 skill 讓 Claude Code 正確維護 `.claude/CLAUDE.md`(專案開發規範的真實來源)。規範變動經「展示 diff → User 確認 → commit」流程,避免漂移。
 
-CLAUDE.md **不採 SemVer 版本號、不配 changelog 檔**:規範不是被消費的契約。演進史由 `git log -- .claude/CLAUDE.md` 提供、決策理由由 `.claude/docs/decisions/`(`maintaining-decisions-md`)提供;footer 只保留 `Last Updated`。
+CLAUDE.md **不採 SemVer 版本號**:規範不是被消費的契約。演進史由 `git log -- .claude/CLAUDE.md` 提供、決策理由由 `.claude/docs/decisions/`(`maintaining-decisions-md`)提供;footer 只保留 `Last Updated`。
 
 ---
 
@@ -93,7 +93,7 @@ grep -n '<[a-zA-Z][^>]*>\|<!-- TEMPLATE NOTICE' .claude/CLAUDE.md
 - **dry-run 結果**:每個匹配的 `<檔案>:<行號>:<片段>`,讓 user 確認替換範圍正確
 - **替換對照表**:placeholder → 實際值(用 Step A2 收集)
 - **NOTICE 區塊清理計畫**:CLAUDE.md 頂端的 `<!-- TEMPLATE NOTICE -->` 連同前後空行刪除
-- **footer**:Workflow A 把 CLAUDE.md footer 的 `Last Updated` 填為今日(無 SemVer 版本號、無 changelog)
+- **footer**:Workflow A 把 CLAUDE.md footer 的 `Last Updated` 填為今日(無 SemVer 版本號)
 
 請 User 確認後再進 Step A4 執行。User 若只想試跑 template、尚未決定方向 → 尊重並 skip 本 workflow。
 
@@ -108,7 +108,7 @@ placeholder 數量少(CLAUDE.md 內僅此二處),Edit tool 逐處改可控且每
 
 ### Step A5:填入 footer
 
-填 CLAUDE.md footer 的 `Last Updated` → 今日。CLAUDE.md 無 SemVer、無 changelog 檔——首次客製化的紀錄就是這個 commit 本身(git log)。
+填 CLAUDE.md footer 的 `Last Updated` → 今日。CLAUDE.md 無 SemVer——首次客製化的紀錄就是這個 commit 本身(git log)。
 
 ### Step A6:Commit
 
@@ -202,7 +202,7 @@ git push origin <branch-name>
 1. 修改 CLAUDE.md 內容章節
 2. 更新 footer:`Last Updated` → 當日
 
-無版本號要 bump、無 changelog 要寫——commit 本身就是歷史紀錄。變更理由若涉 trade-off,連動 `maintaining-decisions-md` 開 ADR(見 Step B6)。
+無版本號要 bump——commit 本身就是歷史紀錄。變更理由若涉 trade-off,連動 `maintaining-decisions-md` 開 ADR(見 Step B6)。
 
 ### Step B5:向 User 確認結果
 
@@ -218,15 +218,13 @@ git push origin <branch-name>
 
 ---
 
-## 歷史與理由(取代 SemVer + changelog)
+## 歷史與理由(取代 SemVer)
 
-CLAUDE.md 不採 SemVer 版本號、不配 changelog 檔——規範不是被消費的契約,套用 release-changelog 的 ceremony 無回報。三條分工:
+CLAUDE.md 不採 SemVer 版本號——規範不是被消費的契約,套用 SemVer 的 ceremony 無回報。三條分工:
 
 - **改了什麼、何時改** → `git log -- .claude/CLAUDE.md`(原生、免維護;commit message 描述規範變了什麼)
 - **為什麼這樣改**(有 2+ 方案 trade-off 的規範決策)→ `.claude/docs/decisions/` ADR(連動 `maintaining-decisions-md`)
 - footer 只保留 `Last Updated`(無 `Version`)
-
-**與 template 自身 CHANGELOG 的區分**:`CHANGELOG.md`(template 根目錄)記錄 claude-code-setup-v1 template 自身的演進史,**不隨 `.claude/` 複製到 user 專案**,本 skill **不寫入**。
 
 ---
 
@@ -275,5 +273,5 @@ CLAUDE.md 不採 SemVer 版本號、不配 changelog 檔——規範不是被消
 ## Gotchas(容易忘記的關鍵點)
 
 - **CLAUDE.md 規範變更獨立 commit**:不混入 feature code(規範 commit 只動 .claude/),保持 git log 可追——git log 就是 CLAUDE.md 的演進史
-- **footer 只更新 `Last Updated`**:CLAUDE.md 無 SemVer、無 changelog 檔;別再寫版本號或找 CLAUDE-CHANGELOG
+- **footer 只更新 `Last Updated`**:CLAUDE.md 無 SemVer;別再寫版本號
 - **User 未確認前絕不直接改檔**:展示 diff → 等確認 → 才動手;這是 load-bearing 信任原則,違反一次 user 就不再相信本 skill 的 diff preview

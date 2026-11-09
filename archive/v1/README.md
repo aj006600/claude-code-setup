@@ -1,6 +1,6 @@
 # claude-code-setup-v1
 
-> **封存版本**(2026-11-09)。原名 `claude-code-setup-v1`,skill-driven 的 Python 專案 setup,保留供參考與整理;新專案請用 [`template/`](../../template/)。
+> **封存版本**(2026-11-09)。原名 `claude-code-setup-v1`,skill-driven 的 Python 專案 setup,保留供參考與整理,演進史見 `git log`;新專案請用 [`template/`](../../template/)。
 
 Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼業界最佳實踐的 lean setup。
 
@@ -30,7 +30,7 @@ Claude Code 專案配置模板 — 第一版：**通用 Python 專案**、編碼
 ### 5 Maintenance Skills（一份 doc SoT 對一個 maintainer）
 - `maintaining-spec-md` — SPEC.md 建立 / 維護（需求 + 可量化 Success Criteria + `[NEEDS CLARIFICATION]` 標記）
 - `maintaining-architecture-md` — `.claude/docs/architecture.md` 維護（現行架構 + Tech Stack + 目錄結構 + 設計決策索引）
-- `maintaining-claude-md` — CLAUDE.md（開發原則 / constitution）更新（演進靠 git log + decisions/，不配 changelog 檔）
+- `maintaining-claude-md` — CLAUDE.md（開發原則 / constitution）更新（演進靠 git log + decisions/）
 - `maintaining-readme-md` — README.md + docs/ 更新（含 3 種文檔 templates）
 - `maintaining-decisions-md` — `.claude/docs/decisions/decisions.md` 決策史維護（ADR + Lessons + Timeline，Postmortem 選配）
 
@@ -163,9 +163,6 @@ Claude Code 會自動完成：
 ```
 claude-code-setup-v1/
 ├── README.md                     # Template 使用說明（本檔）
-├── CHANGELOG.md                  # Template 自身演進史（不複製到 user 專案）
-├── docs/                         # Template 自身文檔（不複製到 user 專案）
-│   └── decisions/decisions.md        # Template 自身演進的決策史 ADR（對應 CHANGELOG 的 Why）
 ├── .claude/                      # User 複製此目錄到專案
 │   ├── CLAUDE.md                 # 開發原則 / constitution（需客製；Workflow A 自動處理）
 │   ├── SPEC.md                   # 需求規格 placeholder（maintaining-spec-md Workflow A 客製）
@@ -209,7 +206,7 @@ A: 大部分結構通用，但 rules（code-style、testing-rules）預設 Pytho
 - 其他檔案幾乎不需改
 
 ### Q: 我已經有 CLAUDE.md 了，如何整合？
-A: 保留你的內容，將本 template 的結構（Available Agents & Skills 章節、Development Checklist、CHANGELOG 配對模式）作為 reference 融合進去。
+A: 保留你的內容，將本 template 的結構（Available Agents & Skills 章節、Development Checklist）作為 reference 融合進去。
 
 ### Q: 不想用 superpowers skills 怎麼辦？
 A: `tdd-feature-workflow` skill 大量引用 superpowers。若不用：
@@ -238,11 +235,8 @@ A: 編輯 `.claude/settings.json`：
 ### Q: Skill 沒有自動觸發？
 A: Skill 的 description 欄位決定何時觸發。若語境不在 description 涵蓋範圍內，可手動啟用：使用 Claude Code 的 Skill tool，傳入 `skill: "maintaining-spec-md"` 等。
 
-### Q: CLAUDE.md 沒有版本號 / changelog？
-A: 是，刻意如此。開發規範不是被消費的契約（不像 SPEC 是需求契約），套用 SemVer 與 release-changelog 的 ceremony 無回報。CLAUDE.md 的演進由 `git log -- .claude/CLAUDE.md` 追蹤、決策理由由 `.claude/docs/decisions/`（ADR）承載，footer 只保留 `Last Updated`。（SPEC.md / architecture.md 仍保留 SemVer——它們的版本有契約 / 現況語意。）
-
-### Q: 那 `CHANGELOG.md` 是什麼？
-A: `claude-code-setup-v1/CHANGELOG.md` 只追蹤 **template 自身**的演進（skill / command / hook / rule / README 等），給 template 評估者 / 升級者看，**不隨 `.claude/` 複製到 user 專案**。User 專案不需維護任何 changelog 檔。
+### Q: CLAUDE.md 沒有版本號？
+A: 是，刻意如此。開發規範不是被消費的契約（不像 SPEC 是需求契約），套用 SemVer 的 ceremony 無回報。CLAUDE.md 的演進由 `git log -- .claude/CLAUDE.md` 追蹤、決策理由由 `.claude/docs/decisions/`（ADR）承載，footer 只保留 `Last Updated`。（SPEC.md / architecture.md 仍保留 SemVer——它們的版本有契約 / 現況語意。）
 
 ---
 
@@ -321,7 +315,7 @@ Skill 可內建多步驟 workflow、分支判斷（如 `maintaining-claude-md` �
 `maintaining-spec-md` → `maintaining-claude-md` → `maintaining-readme-md` 在關鍵節點互相 hook，形成規範同步鏈；rule 之間沒有這種機制。
 
 **4. 領域知識隨 skill 一併載入**
-Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill body，觸發時自動進入 context。Rule 形式需 Claude 主動 Read 才知道細節。
+Semantic Versioning、TDD 紀律等最佳實踐寫進 skill body，觸發時自動進入 context。Rule 形式需 Claude 主動 Read 才知道細節。
 
 **5. 智慧延後執行時機**（`maintaining-readme-md` 獨有）
 依實作狀態（實作中 / 完成未 PR / PR 中 / 已 merge）決定執行時機，避免 TDD 中途干擾也避免文檔遺忘補上。原 rule 只有單一「pre-merge」觸發點。
@@ -333,7 +327,6 @@ Semantic Versioning、Keep a Changelog、TDD 紀律等最佳實踐寫進 skill b
 ## 相關資源
 
 - [Claude Code 官方文件](https://docs.claude.com/en/docs/claude-code)
-- [Keep a Changelog](https://keepachangelog.com/)
 - [Semantic Versioning](https://semver.org/)
 - [superpowers skills](https://github.com/obra/superpowers)
 

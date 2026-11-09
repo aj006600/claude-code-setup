@@ -22,12 +22,12 @@ Claude Code 配置集合:一份現行的專案 setup template、一份 global �
 
 ## Archive
 
-歷代 template 保留於 `archive/`,維持當時的資料夾名稱與內容,供參考與整理;新專案一律從 `template/` 出發。
+歷代 template 保留於 `archive/`,維持當時的資料夾名稱,內容可直接取用,僅移除 template 自身的紀錄檔,演進史由 git log 承載;新專案一律從 `template/` 出發。
 
 | 資料夾 | 定位 | 封存時間 |
 |------|------|------|
-| [`archive/v1/`](./archive/v1/) | Skill-driven 的通用 Python 專案 setup — maintaining skills、slash commands、hooks、rules、CI workflow,以文件體系(SPEC / architecture / decisions)維持規範一致性 | 2026-11-09,停在 v1.26.0 |
-| [`archive/v0/`](./archive/v0/) | Rule-driven 的最初版 — 透過 CLAUDE.md + rules 被動讀取規範,無 skill / command / hook / CI 自動化層 | 2026-11-09,停在 v0.2.0 |
+| [`archive/v1/`](./archive/v1/) | Skill-driven 的通用 Python 專案 setup — maintaining skills、slash commands、hooks、rules、CI workflow,以文件體系(SPEC / architecture / decisions)維持規範一致性 | 2026-11-09 |
+| [`archive/v0/`](./archive/v0/) | Rule-driven 的最初版 — 透過 CLAUDE.md + rules 被動讀取規範,無 skill / command / hook / CI 自動化層 | 2026-11-09 |
 
 封存的原因:v0 → v1 → v2 每一代都是設計哲學的轉向而非增補,v2(現 `template/`)以 hook 強制取代 v1 的文件體系後,v1 就停止演進;三代平行並列會讓根目錄索引與共用 hook 的修正不斷漂移,因此改為單一現行版 + 封存區。
 

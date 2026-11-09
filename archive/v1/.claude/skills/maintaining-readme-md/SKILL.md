@@ -165,7 +165,7 @@ git push origin docs/update-readme-<feature>
 
 - **小型修正(錯字、格式)**:累積多個後一次委派 agent;commit:`docs(readme): fix typos and formatting`
 - **功能延後或取消**:已寫入 README 的 → 移除 + deprecation notice;草稿 → 標 `[Coming Soon]` 或暫移除
-- **破壞性變更**:強制新增 `MIGRATION.md` 或 CHANGELOG 條目;README 顯著位置標註;保留舊版 + deprecated 標記 + 指向新版
+- **破壞性變更**:強制新增 `MIGRATION.md`;README 顯著位置標註;保留舊版 + deprecated 標記 + 指向新版
 
 ---
 

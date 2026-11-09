@@ -13,7 +13,7 @@ description: Use when an architecture or design decision is made with 2+ viable 
 
 ## 為何需要這層保護
 
-`SPEC.md` 說明專案**該做什麼**、`architecture.md` 說明現在**長什麼樣**、`CHANGELOG` 說明**改了什麼**、git log 說明**何時改**。沒有任何一處記錄**為什麼當初這樣決定**——而這正是最容易隨人員流動蒸發、事後最難重建的資訊。
+`SPEC.md` 說明專案**該做什麼**、`architecture.md` 說明現在**長什麼樣**、git log 說明**何時改**。沒有任何一處記錄**為什麼當初這樣決定**——而這正是最容易隨人員流動蒸發、事後最難重建的資訊。
 
 實務痛點:
 
@@ -149,7 +149,3 @@ decisions 變更**獨立成一個 commit**,不混入功能 code。commit message
 - **ADR 永久保留**:被取代改 Status,不刪內容——刪除會破壞 cross-ref 與歷史。
 - **User 未確認前不寫檔**:展示草稿 → 確認 → 才動手(同其他 maintaining-* skill 的信任原則)。
 - **ADR 與 Lesson 別搞混**:沒有 2+ 方案 trade-off 的就是 Lesson,不要硬湊成 ADR 稀釋訊噪比。
-
----
-
-> **Template 自身的 decisions**:claude-code-setup-v1 template 維護自己的演進決策於 `docs/decisions/`(repo 層、非 `.claude/` 下,不隨 adopter 複製),與不會 ship 的 `CHANGELOG.md` 同級。Adopter 採用後在自己的 `.claude/docs/decisions/decisions.md`(空種子)累積專案決策。兩者互不干擾——同 `CHANGELOG.md`(template 自身、不 ship)與 adopter 各自檔案的分工。
