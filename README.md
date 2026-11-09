@@ -1,4 +1,4 @@
-# oh-my-claude-setup
+# claude-code-setup
 
 Claude Code 配置集合:一份現行的專案 setup template、一份 global 配置 snapshot,以及歷代封存版本。
 
@@ -36,7 +36,7 @@ Claude Code 配置集合:一份現行的專案 setup template、一份 global �
 ## Repo Structure
 
 ```
-oh-my-claude-setup/
+claude-code-setup/
 ├── README.md                ← 本檔案
 ├── template/                ← 現行 template(複製到目標專案)
 │   ├── README.md
