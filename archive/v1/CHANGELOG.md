@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## Archived - 2026-11-09
 
-<!-- 尚未發布的變更累積於此。發版時改為 `## [vX.Y.Z] - YYYY-MM-DD` 並新增一個新的 Unreleased 區塊。 -->
+此 template 停在 v1.26.0 封存,保留供參考與整理;現行 template 見 repo 根目錄 `template/`,其演進由 git log 記錄。
 
 ---
 

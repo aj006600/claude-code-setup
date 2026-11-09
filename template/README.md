@@ -1,4 +1,4 @@
-# claude-code-setup-v2
+# template
 
 Claude Code 協作套件:一份 CLAUDE.md 骨架 + 三個 guard hooks + 共享 settings。原則是「能用工具強制的不寫成文件」——紀律性規則(不推 main、防跨 repo 引用外洩)用 PreToolUse hooks 擋在執行前,CLAUDE.md 只留工具做不到的慣例。整套設計搭配 mattpocock skills 與 trunk-based development 運作(`main` 為唯一長期分支,改動走短命 feature branch → PR → squash merge,打 tag 發版)。
 
@@ -43,7 +43,7 @@ CLAUDE.md                          # 骨架:workflow + 9 條通用 conventions,<
 
 ## Setup
 
-1. 複製檔案到專案根目錄(在本目錄 `claude-code-setup-v2/` 下執行,`<project>` 換成目標專案路徑;目標若已有同名檔案會被覆蓋):
+1. 複製檔案到專案根目錄(在本目錄 `template/` 下執行,`<project>` 換成目標專案路徑;目標若已有同名檔案會被覆蓋):
 
    ```bash
    cp -R CLAUDE.md .claude <project>/
