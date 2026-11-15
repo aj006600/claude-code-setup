@@ -114,7 +114,7 @@ claude-code-setup/
 │   └── .claude/
 ├── global/                  ← Global 配置 snapshot,整個資料夾複製到 ~/.claude/
 │   └── CLAUDE.md
-├── optional/              ← 按條件單檔取用,不整份複製
+├── optional/                ← 按條件單檔取用,不整份複製
 │   └── issue-tracker-gitlab-curl.md
 └── archive/                 ← 封存版本
     ├── v0/
