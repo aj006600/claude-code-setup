@@ -8,7 +8,7 @@ Claude Code 配置集合:一份現行的專案 setup template、一份 global �
 
 | 資料夾 | 內容 |
 |------|------|
-| [`template/`](./template/) | 專案層 setup template — 一份 CLAUDE.md 骨架 + 三個 guard hooks + 共享 settings。原則是「能用工具強制的不寫成文件」,搭配 mattpocock skills 與 trunk-based development |
+| [`template/`](./template/) | 專案層 setup template — 一份 CLAUDE.md 骨架 + 四個 guard hooks + 共享 settings。原則是「能用工具強制的不寫成文件」,搭配 mattpocock skills 與 trunk-based development |
 | [`global/`](./global/) | Global 配置 snapshot — 對應 `~/.claude/`,所有專案共用的基礎行為設定 |
 
 兩個資料夾裡都只有會複製到目的地的檔案,資料夾邊界就是複製範圍:`template/` 複製進專案根目錄,`global/` 複製進 `~/.claude/`。`template/` 是唯一持續演進的 template,改動直接在原地進行,歷史由 git log 記錄,無版本號。
@@ -17,12 +17,13 @@ Claude Code 配置集合:一份現行的專案 setup template、一份 global �
 
 ```
 template/
-├── CLAUDE.md                          # 骨架:workflow + 9 條通用 conventions,<...> 佔位符待填
+├── CLAUDE.md                          # 骨架:workflow + 13 條通用 conventions,<...> 佔位符待填
 └── .claude/
     ├── settings.json                  # hooks 註冊 + permissions 白名單(對應 CLAUDE.md Commands 表,make 為範例)
     └── hooks/
         ├── block-push-main.sh         # 硬擋任何寫入遠端 main 的 push(放行 feature branch 與 tag)
         ├── external-ref-guard.sh      # 硬擋 commit/PR/issue 中的跨 repo 引用(防不可逆 backlink 通知)
+        ├── ai-credit-guard.sh         # 硬擋 commit/PR/MR/issue 指令文字中的 AI 工具署名
         └── secrets-scan-advisory.sh   # git add/commit 前掃疑似密鑰(僅警告;豁免清單依 repo 調整)
 ```
 
@@ -65,7 +66,7 @@ EOF
 2. 填 `CLAUDE.md` 的 `<...>` 佔位符(Commands 表、Conventions 第 1 條的 `<檢查指令>`、部署節奏)
 3. 依專案調整:Conventions 標註「範例」處、`.claude/settings.json` 的 permissions 清單(`make` 換成你的建置工具)、secrets hook 的豁免清單
 4. 重啟 Claude Code session,hooks 生效(settings 在 session 啟動時載入)
-5. 在 session 內打 `/setup-matt-pocock-skills`(per-repo 初始化,一個 repo 一次):回答 issue tracker / triage labels / domain docs 三題,產出 `docs/agents/` 與 CLAUDE.md 末尾的 `## Agent skills`,供 `/triage`、`/to-tickets`、`/wayfinder` 等讀取
+5. 在 session 內打 `/setup-matt-pocock-skills`(per-repo 初始化,一個 repo 一次):回答 issue tracker / triage labels / domain docs 三題,產出 `docs/agents/` 與 CLAUDE.md 末尾的 `## Agent skills`,供 `/triage`、`/to-tickets`、`/wayfinder` 等讀取。GitLab host 裝不了 `glab` 時,用 [`references/issue-tracker-gitlab-curl.md`](./references/issue-tracker-gitlab-curl.md) 取代產出的 `docs/agents/issue-tracker.md`
 
 ---
 
@@ -112,6 +113,8 @@ claude-code-setup/
 │   └── .claude/
 ├── global/                  ← Global 配置 snapshot,整個資料夾複製到 ~/.claude/
 │   └── CLAUDE.md
+├── references/              ← 不複製、按需取用的參考檔
+│   └── issue-tracker-gitlab-curl.md
 └── archive/                 ← 封存版本
     ├── v0/
     │   ├── README.md
