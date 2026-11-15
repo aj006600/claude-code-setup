@@ -10,9 +10,9 @@ Claude Code 配置集合:一份現行的專案 setup template、一份 global �
 |------|------|
 | [`template/`](./template/) | 專案層 setup template — 一份 CLAUDE.md 骨架 + 四個 guard hooks + 共享 settings。原則是「能用工具強制的不寫成文件」,搭配 mattpocock skills 與 trunk-based development |
 | [`global/`](./global/) | Global 配置 snapshot — 對應 `~/.claude/`,所有專案共用的基礎行為設定 |
-| [`references/`](./references/) | 按條件取用的單檔 — 只在特定情況下複製進專案,Setup 步驟會說何時用。目前一份:沒有 `glab` 的 GitLab 專案用的 issue-tracker 說明書 |
+| [`optional/`](./optional/) | 按條件取用的單檔 — 只在特定情況下複製進專案,Setup 步驟會說何時用。目前一份:沒有 `glab` 的 GitLab 專案用的 issue-tracker 說明書 |
 
-`template/` 和 `global/` 裡都只有會複製到目的地的檔案,資料夾邊界就是複製範圍:`template/` 複製進專案根目錄,`global/` 複製進 `~/.claude/`。`references/` 不整份複製,裡面每個檔各自有適用條件。`template/` 是唯一持續演進的 template,改動直接在原地進行,歷史由 git log 記錄,無版本號。
+`template/` 和 `global/` 裡都只有會複製到目的地的檔案,資料夾邊界就是複製範圍:`template/` 複製進專案根目錄,`global/` 複製進 `~/.claude/`。`optional/` 不整份複製,裡面每個檔各自有適用條件。`template/` 是唯一持續演進的 template,改動直接在原地進行,歷史由 git log 記錄,無版本號。
 
 紀律性規則(不推 main、防跨 repo 引用外洩)用 PreToolUse hooks 擋在執行前,CLAUDE.md 只留工具做不到的慣例。整套設計搭配 mattpocock skills 與 trunk-based development 運作(`main` 為唯一長期分支,改動走短命 feature branch → PR → squash merge,打 tag 發版)。
 
@@ -67,7 +67,7 @@ EOF
 2. 填 `CLAUDE.md` 的 `<...>` 佔位符(Commands 表、Conventions 第 1 條的 `<檢查指令>`、部署節奏)
 3. 依專案調整:Conventions 標註「範例」處、`.claude/settings.json` 的 permissions 清單(`make` 換成你的建置工具)、secrets hook 的豁免清單
 4. 重啟 Claude Code session,hooks 生效(settings 在 session 啟動時載入)
-5. 在 session 內打 `/setup-matt-pocock-skills`(per-repo 初始化,一個 repo 一次):回答 issue tracker / triage labels / domain docs 三題,產出 `docs/agents/` 與 CLAUDE.md 末尾的 `## Agent skills`,供 `/triage`、`/to-tickets`、`/wayfinder` 等讀取。GitLab host 裝不了 `glab` 時,用 [`references/issue-tracker-gitlab-curl.md`](./references/issue-tracker-gitlab-curl.md) 取代產出的 `docs/agents/issue-tracker.md`
+5. 在 session 內打 `/setup-matt-pocock-skills`(per-repo 初始化,一個 repo 一次):回答 issue tracker / triage labels / domain docs 三題,產出 `docs/agents/` 與 CLAUDE.md 末尾的 `## Agent skills`,供 `/triage`、`/to-tickets`、`/wayfinder` 等讀取。GitLab host 裝不了 `glab` 時,用 [`optional/issue-tracker-gitlab-curl.md`](./optional/issue-tracker-gitlab-curl.md) 取代產出的 `docs/agents/issue-tracker.md`
 
 ---
 
@@ -114,7 +114,7 @@ claude-code-setup/
 │   └── .claude/
 ├── global/                  ← Global 配置 snapshot,整個資料夾複製到 ~/.claude/
 │   └── CLAUDE.md
-├── references/              ← 按條件單檔取用,不整份複製
+├── optional/              ← 按條件單檔取用,不整份複製
 │   └── issue-tracker-gitlab-curl.md
 └── archive/                 ← 封存版本
     ├── v0/
