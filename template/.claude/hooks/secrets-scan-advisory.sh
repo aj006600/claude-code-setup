@@ -3,9 +3,9 @@
 # 疑似密鑰(可疑檔名、已知 token pattern),有就警告。
 # Claude Code PreToolUse hook(註冊於 .claude/settings.json),不是 git pre-commit hook。
 #
-# 兩個依 repo 調整的點:豁免清單(下方預設豁免的 env/.env.{dev,qas,prod} 是
-# fullstack-docker-template-multienv 的慣例——非機密環境設定刻意進版控,真密鑰放
-# env/*.local 或 secrets manager),以及改成強制擋下(檔尾警告分支的 exit 0 改 exit 1)。
+# 兩個依 repo 調整的點:改成強制擋下(檔尾警告分支的 exit 0 改 exit 1);以及豁免清單——
+# 預設不豁免任何檔,repo 若有刻意進版控的非機密 env 檔(例:env/.env.dev),在下方
+# 「檢查 1」的 case 加一條 continue。
 
 command -v python3 >/dev/null 2>&1 || exit 0
 command -v git >/dev/null 2>&1 || exit 0
@@ -18,13 +18,19 @@ case "$input" in
     *) exit 0 ;;
 esac
 
-command=$(echo "$input" | python3 -c 'import json, sys
+# 第一行 cwd、其餘是 command(command 可能多行)
+parsed=$(echo "$input" | python3 -c 'import json, sys
 try:
     data = json.load(sys.stdin)
+    print(data.get("cwd", ""))
     print(data.get("tool_input", {}).get("command", ""))
 except Exception:
     pass
 ' 2>/dev/null)
+cwd=${parsed%%$'\n'*}
+# 先剝 cwd 再剝換行:command 為空時 $(...) 吃掉結尾換行,parsed 只剩 cwd 一行
+command=${parsed#"$cwd"}
+command=${command#$'\n'}
 
 [ -z "$command" ] && exit 0
 
@@ -33,7 +39,8 @@ if ! echo "$command" | grep -qE '(^|[^a-zA-Z])git (commit|add)([^a-zA-Z]|$)'; th
     exit 0
 fi
 
-cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
+# 在 worktree 裡 CLAUDE_PROJECT_DIR 仍指向主 checkout,只有 cwd 是 session 實際所在的那個
+cd "${cwd:-${CLAUDE_PROJECT_DIR:-.}}" 2>/dev/null || exit 0
 
 # 收集 staged 檔案。純 `git add` 執行前還沒東西 staged → 掃不到就掃不到(advisory,不擋)
 staged=$(git diff --cached --name-only 2>/dev/null)
@@ -45,12 +52,6 @@ warnings=()
 # .example / .template / .sample 後綴放行(慣例上就是要進版控的範本)。
 while IFS= read -r file; do
     [ -z "$file" ] && continue
-    # 本 repo 慣例:非機密環境設定,刻意進版控
-    case "$file" in
-        env/.env.dev|env/.env.qas|env/.env.prod)
-            continue
-            ;;
-    esac
     base=$(basename "$file")
     case "$base" in
         *.example|*.template|*.sample)

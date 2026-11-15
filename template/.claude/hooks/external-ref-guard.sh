@@ -19,13 +19,19 @@ case "$input" in
     *) exit 0 ;;
 esac
 
-command=$(echo "$input" | python3 -c 'import json, sys
+# 第一行 cwd、其餘是 command(command 可能多行)
+parsed=$(echo "$input" | python3 -c 'import json, sys
 try:
     data = json.load(sys.stdin)
+    print(data.get("cwd", ""))
     print(data.get("tool_input", {}).get("command", ""))
 except Exception:
     pass
 ' 2>/dev/null)
+cwd=${parsed%%$'\n'*}
+# 先剝 cwd 再剝換行:command 為空時 $(...) 吃掉結尾換行,parsed 只剩 cwd 一行
+command=${parsed#"$cwd"}
+command=${command#$'\n'}
 
 [ -z "$command" ] && exit 0
 
@@ -34,7 +40,8 @@ if ! echo "$command" | grep -qE '(^|[^a-zA-Z])(git commit|gh (pr|issue) (create|
     exit 0
 fi
 
-cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
+# 在 worktree 裡 CLAUDE_PROJECT_DIR 仍指向主 checkout,只有 cwd 是 session 實際所在的那個
+cd "${cwd:-${CLAUDE_PROJECT_DIR:-.}}" 2>/dev/null || exit 0
 
 origin_url=$(git remote get-url origin 2>/dev/null)
 current_owner_repo=$(echo "$origin_url" | python3 -c 'import re, sys

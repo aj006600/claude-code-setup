@@ -18,20 +18,27 @@ case "$input" in
     *) exit 0 ;;
 esac
 
-command=$(echo "$input" | python3 -c 'import json, sys
+# 第一行 cwd、其餘是 command(command 可能多行)
+parsed=$(echo "$input" | python3 -c 'import json, sys
 try:
     data = json.load(sys.stdin)
+    print(data.get("cwd", ""))
     print(data.get("tool_input", {}).get("command", ""))
 except Exception:
     pass
 ' 2>/dev/null)
+cwd=${parsed%%$'\n'*}
+# 先剝 cwd 再剝換行:command 為空時 $(...) 吃掉結尾換行,parsed 只剩 cwd 一行
+command=${parsed#"$cwd"}
+command=${command#$'\n'}
 
 [ -z "$command" ] && exit 0
 
 # 只在 git push 時觸發(word-boundary 避免誤判)
 echo "$command" | grep -qE '(^|[^a-zA-Z])git +push([^a-zA-Z]|$)' || exit 0
 
-cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
+# 在 worktree 裡 CLAUDE_PROJECT_DIR 仍指向主 checkout,只有 cwd 是 session 實際所在的那個
+cd "${cwd:-${CLAUDE_PROJECT_DIR:-.}}" 2>/dev/null || exit 0
 current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
 verdict=$(INPUT_TEXT="$command" CURRENT_BRANCH="$current_branch" python3 <<'PYEOF'
@@ -90,6 +97,9 @@ def check_push(args):
     for spec in refspecs:
         dst = spec.split(":", 1)[1] if ":" in spec else spec
         dst = dst.lstrip("+").removeprefix("refs/heads/")
+        # `HEAD` 當 refspec 時目的端就是當前分支(常見於 git push -u origin HEAD)
+        if dst == "HEAD":
+            dst = current_branch
         # glob 目的端(refs/heads/*)可能涵蓋 main,一律視為命中
         if dst == "main" or "*" in dst:
             return True
@@ -113,7 +123,7 @@ PYEOF
 
 if [ "$verdict" = "block" ]; then
     echo "[block-push-main] BLOCKED — 這個 push 會寫入遠端 main。" >&2
-    echo "[block-push-main] 本 repo 是 trunk-based,所有變更走 feature branch -> PR -> squash merge(見 CLAUDE.md Development workflow)。" >&2
+    echo "[block-push-main] 本 repo 是 trunk-based,所有變更走 feature branch -> PR -> merge(見 CLAUDE.md Development workflow)。" >&2
     echo "[block-push-main] 尚未 commit:git switch -c feat/xxx,再 git push -u origin feat/xxx" >&2
     echo "[block-push-main] commit 已落在本地 main:git branch feat/xxx && git reset --keep origin/main(保留未提交的改動,會衝突時中止),再 git switch feat/xxx 推送。" >&2
     exit 1
