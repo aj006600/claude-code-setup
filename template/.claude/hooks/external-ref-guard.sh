@@ -107,7 +107,8 @@ if [ -n "$findings" ]; then
     done <<< "$findings"
     echo "[external-ref-guard] 這會建立不可逆的跨 repo 'mentioned in' backlink,並推播給對方 issue 的 watchers。本 repo:$current_owner_repo" >&2
     echo "[external-ref-guard] 安全寫法:用 backtick 包住(\`owner/repo#N\`)或改寫(例:「上游 issue 在 owner/repo,編號 N」)。" >&2
-    exit 1
+    # PreToolUse 只有 exit 2 會擋下並把 stderr 交給 Claude;exit 1 是 non-blocking error,指令照樣執行
+    exit 2
 fi
 
 exit 0

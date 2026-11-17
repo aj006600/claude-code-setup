@@ -126,7 +126,8 @@ if [ "$verdict" = "block" ]; then
     echo "[block-push-main] 本 repo 是 trunk-based,所有變更走 feature branch -> PR -> merge(見 CLAUDE.md Development workflow)。" >&2
     echo "[block-push-main] 尚未 commit:git switch -c feat/xxx,再 git push -u origin feat/xxx" >&2
     echo "[block-push-main] commit 已落在本地 main:git branch feat/xxx && git reset --keep origin/main(保留未提交的改動,會衝突時中止),再 git switch feat/xxx 推送。" >&2
-    exit 1
+    # PreToolUse 只有 exit 2 會擋下並把 stderr 交給 Claude;exit 1 是 non-blocking error,指令照樣執行
+    exit 2
 fi
 
 exit 0

@@ -58,7 +58,8 @@ if [ -n "$findings" ]; then
         echo "  - $f" >&2
     done <<< "$findings"
     echo "[ai-credit-guard] 本 repo 的 commit、PR、issue 不留 AI 工具署名(見 CLAUDE.md Conventions)。拿掉這幾行後重新執行。" >&2
-    exit 1
+    # PreToolUse 只有 exit 2 會擋下並把 stderr 交給 Claude;exit 1 是 non-blocking error,指令照樣執行
+    exit 2
 fi
 
 exit 0

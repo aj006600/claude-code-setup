@@ -3,7 +3,7 @@
 # 疑似密鑰(可疑檔名、已知 token pattern),有就警告。
 # Claude Code PreToolUse hook(註冊於 .claude/settings.json),不是 git pre-commit hook。
 #
-# 兩個依 repo 調整的點:改成強制擋下(檔尾警告分支的 exit 0 改 exit 1);以及豁免清單——
+# 兩個依 repo 調整的點:改成強制擋下(檔尾警告分支的 exit 0 改 exit 2——PreToolUse 只認 exit 2 為擋下);以及豁免清單——
 # 預設不豁免任何檔,repo 若有刻意進版控的非機密 env 檔(例:env/.env.dev),在下方
 # 「檢查 1」的 case 加一條 continue。
 
